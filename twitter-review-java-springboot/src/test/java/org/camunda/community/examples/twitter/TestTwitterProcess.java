@@ -90,7 +90,7 @@ public class TestTwitterProcess {
     }
 
     @Test
-    public void testDuplicate() throws Exception {
+    public void testDuplicateTweet() throws Exception {
         // throw exception simulating duplicateM
         Mockito.doThrow(new DuplicateTweetException("DUPLICATE")).when(twitterService).tweet(anyString());
 
@@ -119,8 +119,7 @@ public class TestTwitterProcess {
         List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs();
 
         // Should be only one
-        assertTrue(jobs.size()>0, "Job for user task '"+userTaskId+"' does not exist");
-        assertFalse(jobs.size()>1, "Whooha - too many jobs: " + jobs);
+        assertTrue(jobs.size()>0, "Job for user task '" + userTaskId + "' does not exist");
         ActivatedJob userTaskJob = jobs.get(0);
         // Make sure it is the right one
         if (userTaskId!=null) {
