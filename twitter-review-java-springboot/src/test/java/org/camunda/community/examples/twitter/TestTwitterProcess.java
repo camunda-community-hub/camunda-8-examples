@@ -5,6 +5,8 @@ import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
 import io.camunda.zeebe.process.test.assertions.BpmnAssert;
+import io.camunda.zeebe.process.test.inspections.InspectionUtility;
+import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
@@ -149,13 +151,14 @@ public class TestTwitterProcess {
      */
     @Test
     public void testTweetApprovedByRestApi() throws Exception {
-        ProcessInstanceEvent processInstance = restApi.startTweetReviewProcess("bernd", "Hello REST world", "Zeebot");
+        restApi.startTweetReviewProcess("bernd", "Hello REST world", "Zeebot");
+        InspectedProcessInstance processInstance = InspectionUtility.findProcessInstances().findLastProcessInstance().get();
 
         // Let the workflow engine do whatever it needs to do
         // And then retrieve the UserTask and complete it with 'approved = true'
         waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
 
-        waitForProcessInstanceCompleted(processInstance);
+        waitForProcessInstanceCompleted(processInstance.getProcessInstanceKey());
 
         // Let's assert that it passed certain BPMN elements (more to show off features here)
         assertThat(processInstance)
