@@ -3,7 +3,10 @@ package org.camunda.community.examples.twitter;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.testengine.InMemoryEngine;
+import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
+import io.camunda.zeebe.process.test.assertions.BpmnAssert;
+import io.camunda.zeebe.process.test.inspections.InspectionUtility;
+import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
@@ -15,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 import static io.camunda.zeebe.process.test.assertions.BpmnAssert.assertThat;
 import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
@@ -34,7 +39,7 @@ public class TestTwitterProcess {
     // TODO: We should probably get rid of this in Spring tests or at least hide it somewhere
     // At the moment we have two different ways of waiting: Multi-threaded waiting, and the "engine run to completion"
     @Autowired
-    private InMemoryEngine inMemoryEngine;
+    private ZeebeTestEngine zeebeTestEngine;
 
     @MockBean
     private TwitterService twitterService;
@@ -105,18 +110,21 @@ public class TestTwitterProcess {
                 .send().join();
 
         waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
-
         waitForProcessInstanceHasPassedElement(processInstance, "boundary_event_tweet_duplicated");
-        // TODO: Add human task to test case
         waitForUserTaskAndComplete("user_task_handle_duplicate", new HashMap<>());
+        // second try :-) --> TODO: Think about isolation of test cases when we can better cleanup the engine
+
+        Mockito.doNothing().when(twitterService).tweet(anyString());
+        waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
+        waitForProcessInstanceCompleted(processInstance);
     }
 
-    public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables) {
+    public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables) throws InterruptedException, TimeoutException {
         // Let the workflow engine do whatever it needs to do
-        inMemoryEngine.waitForIdleState();
+        zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
 
         // Now get all user tasks
-        List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs();
+        List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).workerName("waitForUserTaskAndComplete").send().join().getJobs();
 
         // Should be only one
         assertTrue(jobs.size()>0, "Job for user task '" + userTaskId + "' does not exist");
@@ -127,7 +135,7 @@ public class TestTwitterProcess {
         }
 
         // And complete it passing the variables
-        if (variables!=null) {
+        if (variables!=null && variables.size()>0) {
             zeebe.newCompleteCommand(userTaskJob.getKey()).variables(variables).send().join();
         } else {
             zeebe.newCompleteCommand(userTaskJob.getKey()).send().join();
@@ -143,33 +151,23 @@ public class TestTwitterProcess {
      */
     @Test
     public void testTweetApprovedByRestApi() throws Exception {
-        restApi.startTweetReviewProcess("bernd", "Hello world", "Zeebot");
+        restApi.startTweetReviewProcess("bernd", "Hello REST world", "Zeebot");
+        InspectedProcessInstance processInstance = InspectionUtility.findProcessInstances().findLastProcessInstance().get();
 
         // Let the workflow engine do whatever it needs to do
         // And then retrieve the UserTask and complete it with 'approved = true'
-        inMemoryEngine.waitForIdleState();
-        ActivatedJob userTaskJob = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs().get(0);
-        zeebe.newCompleteCommand(userTaskJob.getKey()).variables(
-                Collections.singletonMap("approved", true)
-        ).send().join();
+        waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
 
-        // TODO: How to retrieve the process instance here?
-        //inMemoryEngine.getRecordStream().processInstanceRecords().iterator().next().
-        Thread.sleep(2000); // Let's just give it some time :-)
-
-        /*
-        // Now the process should run to the end
-        waitForProcessInstanceCompleted(processInstance);
+        waitForProcessInstanceCompleted(processInstance.getProcessInstanceKey());
 
         // Let's assert that it passed certain BPMN elements (more to show off features here)
         assertThat(processInstance)
                 .hasPassedElement("end_event_tweet_published")
                 .hasNotPassedElement("end_event_tweet_rejected")
                 .isCompleted();
-        */
 
         // And verify it caused the right side effects b calling the business methods
-        Mockito.verify(twitterService).tweet("Hello world");
+        Mockito.verify(twitterService).tweet("Hello REST world");
         Mockito.verifyNoMoreInteractions(twitterService);
     }
 }

@@ -34,7 +34,7 @@ public class ReviewTweetRestApi {
                 .bpmnProcessId("TwitterDemoProcess")
                 .latestVersion()
                 .variables(processVariables)
-                .send().join(); // blocking call!
+                .send().join();// blocking call!
 
         return String.valueOf( processInstance.getProcessInstanceKey() );
     }
