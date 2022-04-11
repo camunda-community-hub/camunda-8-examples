@@ -9,7 +9,7 @@ The self-contained process solution contains
 
 Requirements:
 
-* Java >= 8
+* Java >= 17
 * Maven
 
 ## How to run
