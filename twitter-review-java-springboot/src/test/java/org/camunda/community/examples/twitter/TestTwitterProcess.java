@@ -4,6 +4,7 @@ import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
+import io.camunda.zeebe.process.test.assertions.BpmnAssert;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
@@ -107,10 +108,13 @@ public class TestTwitterProcess {
                 .send().join();
 
         waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
-
         waitForProcessInstanceHasPassedElement(processInstance, "boundary_event_tweet_duplicated");
-        // TODO: Add human task to test case
         waitForUserTaskAndComplete("user_task_handle_duplicate", new HashMap<>());
+        // second try :-) --> TODO: Think about isolation of test cases when we can better cleanup the engine
+
+        Mockito.doNothing().when(twitterService).tweet(anyString());
+        waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
+        waitForProcessInstanceCompleted(processInstance);
     }
 
     public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables) throws InterruptedException, TimeoutException {
@@ -118,7 +122,7 @@ public class TestTwitterProcess {
         zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
 
         // Now get all user tasks
-        List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs();
+        List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).workerName("waitForUserTaskAndComplete").send().join().getJobs();
 
         // Should be only one
         assertTrue(jobs.size()>0, "Job for user task '" + userTaskId + "' does not exist");
@@ -129,7 +133,7 @@ public class TestTwitterProcess {
         }
 
         // And complete it passing the variables
-        if (variables!=null) {
+        if (variables!=null && variables.size()>0) {
             zeebe.newCompleteCommand(userTaskJob.getKey()).variables(variables).send().join();
         } else {
             zeebe.newCompleteCommand(userTaskJob.getKey()).send().join();
@@ -145,22 +149,12 @@ public class TestTwitterProcess {
      */
     @Test
     public void testTweetApprovedByRestApi() throws Exception {
-        restApi.startTweetReviewProcess("bernd", "Hello world", "Zeebot");
+        ProcessInstanceEvent processInstance = restApi.startTweetReviewProcess("bernd", "Hello REST world", "Zeebot");
 
         // Let the workflow engine do whatever it needs to do
         // And then retrieve the UserTask and complete it with 'approved = true'
-        zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
-        ActivatedJob userTaskJob = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs().get(0);
-        zeebe.newCompleteCommand(userTaskJob.getKey()).variables(
-                Collections.singletonMap("approved", true)
-        ).send().join();
+        waitForUserTaskAndComplete("user_task_review_tweet", Collections.singletonMap("approved", true));
 
-        // TODO: How to retrieve the process instance here?
-        //inMemoryEngine.getRecordStream().processInstanceRecords().iterator().next().
-        Thread.sleep(2000); // Let's just give it some time :-)
-
-        /*
-        // Now the process should run to the end
         waitForProcessInstanceCompleted(processInstance);
 
         // Let's assert that it passed certain BPMN elements (more to show off features here)
@@ -168,10 +162,9 @@ public class TestTwitterProcess {
                 .hasPassedElement("end_event_tweet_published")
                 .hasNotPassedElement("end_event_tweet_rejected")
                 .isCompleted();
-        */
 
         // And verify it caused the right side effects b calling the business methods
-        Mockito.verify(twitterService).tweet("Hello world");
+        Mockito.verify(twitterService).tweet("Hello REST world");
         Mockito.verifyNoMoreInteractions(twitterService);
     }
 }

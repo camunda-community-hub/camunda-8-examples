@@ -19,7 +19,8 @@ public class ReviewTweetRestApi {
     @PutMapping("/tweet")
     public ResponseEntity<String> startTweetReviewProcess(ServerWebExchange exchange) {
         // TODO: add data to the process instance from REST request
-        String reference = startTweetReviewProcess("bernd", "Hello World", "Zeebot");
+        ProcessInstanceEvent processInstanceEvent = startTweetReviewProcess("bernd", "Hello World", "Zeebot");
+        String reference = String.valueOf(processInstanceEvent.getProcessInstanceKey());
 
         // And just return something for the sake of the example
         return ResponseEntity
@@ -27,7 +28,7 @@ public class ReviewTweetRestApi {
                 .body("Started process instance " + reference);
     }
 
-    public String startTweetReviewProcess(String author, String tweet, String boss) {
+    public ProcessInstanceEvent startTweetReviewProcess(String author, String tweet, String boss) {
         TwitterProcessVariables processVariables = new TwitterProcessVariables().setAuthor(author).setTweet(tweet).setBoss(boss);
 
         ProcessInstanceEvent processInstance = zeebeClient.newCreateInstanceCommand()
@@ -36,6 +37,8 @@ public class ReviewTweetRestApi {
                 .variables(processVariables)
                 .send().join(); // blocking call!
 
-        return String.valueOf( processInstance.getProcessInstanceKey() );
+        // TODO: Should switch to String, but because of limitations in test support returning processInstance object instead
+        //return String.valueOf( processInstance.getProcessInstanceKey() );
+        return processInstance;
     }
 }
