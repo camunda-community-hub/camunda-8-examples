@@ -3,7 +3,7 @@ package org.camunda.community.examples.twitter;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.testengine.InMemoryEngine;
+import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 import static io.camunda.zeebe.process.test.assertions.BpmnAssert.assertThat;
 import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
@@ -34,7 +36,7 @@ public class TestTwitterProcess {
     // TODO: We should probably get rid of this in Spring tests or at least hide it somewhere
     // At the moment we have two different ways of waiting: Multi-threaded waiting, and the "engine run to completion"
     @Autowired
-    private InMemoryEngine inMemoryEngine;
+    private ZeebeTestEngine zeebeTestEngine;
 
     @MockBean
     private TwitterService twitterService;
@@ -111,9 +113,9 @@ public class TestTwitterProcess {
         waitForUserTaskAndComplete("user_task_handle_duplicate", new HashMap<>());
     }
 
-    public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables) {
+    public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables) throws InterruptedException, TimeoutException {
         // Let the workflow engine do whatever it needs to do
-        inMemoryEngine.waitForIdleState();
+        zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
 
         // Now get all user tasks
         List<ActivatedJob> jobs = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs();
@@ -147,7 +149,7 @@ public class TestTwitterProcess {
 
         // Let the workflow engine do whatever it needs to do
         // And then retrieve the UserTask and complete it with 'approved = true'
-        inMemoryEngine.waitForIdleState();
+        zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
         ActivatedJob userTaskJob = zeebe.newActivateJobsCommand().jobType(USER_TASK_JOB_TYPE).maxJobsToActivate(1).send().join().getJobs().get(0);
         zeebe.newCompleteCommand(userTaskJob.getKey()).variables(
                 Collections.singletonMap("approved", true)
