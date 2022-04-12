@@ -1,4 +1,4 @@
-# Camunda Cloud / Spring Boot process solution
+# Camunda 8 Spring Boot Process Solution Example
 
 The self-contained process solution contains
 
@@ -9,13 +9,14 @@ The self-contained process solution contains
 
 Requirements:
 
+* Camunda Platform 8
 * Java >= 17
 * Maven
 
 ## How to run
 
 * Download/clone the code in this folder.
-* You need to set your Camunda cloud client connection details in the file `application.properties`. Simply replace the existing sample values.
+* Create a Camunda 8 SaaS cluster and add API client connection details in the file `application.properties`. Simply replace the existing sample values.
 * Run the application:
 
 ```
@@ -25,5 +26,3 @@ mvn package exec:java
 ```
 curl -i -X PUT http://localhost:8080/tweet
 ```
-
-* You should see something like this:
