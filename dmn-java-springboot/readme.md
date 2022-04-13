@@ -1,4 +1,4 @@
-# Camunda Cloud / Spring Boot Process Solution Showcasing DMN
+# Camunda 8 Spring Boot Process Solution Showcasing DMN
 
 This example implements a customer onboarding example from [Practical Process Automation](https://processautomationbook.com/), chapter 4:
 
@@ -19,6 +19,7 @@ This self-contained process solution contains
 
 Requirements:
 
+* Camunda 8
 * Java >= 17
 * Maven
 

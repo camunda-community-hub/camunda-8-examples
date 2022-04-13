@@ -12,7 +12,7 @@ import java.awt.*;
 
 @SpringBootApplication
 @EnableZeebeClient
-@ZeebeDeployment(resources = { "*.bpmn", "*.dmn"})
+@ZeebeDeployment(resources = { "classpath*:*.bpmn", "classpath*:*.dmn"})
 public class DmnExampleApplication {
 
 	public static void main(String[] args) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" id="Definitions_09mowge" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.0.0-nightly.20220315">
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/2.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_09mowge" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
   <decision id="applicability" name="Automatic Processing Applicability">
     <decisionTable id="DecisionTable_1on7xby" hitPolicy="FIRST">
       <input id="Input_1" label="Payment Type">
@@ -8,12 +8,12 @@
         </inputExpression>
       </input>
       <input id="InputClause_0kdt0u1" label="Customer Region Score">
-        <inputExpression id="LiteralExpression_0h1vz0e" typeRef="long">
+        <inputExpression id="LiteralExpression_0h1vz0e" typeRef="number">
           <text>customerRegionScore</text>
         </inputExpression>
       </input>
       <input id="InputClause_0wix1jq" label="Monthly Payment">
-        <inputExpression id="LiteralExpression_0dqbiu0" typeRef="long">
+        <inputExpression id="LiteralExpression_0dqbiu0" typeRef="number">
           <text>monthlyPayment</text>
         </inputExpression>
       </input>
