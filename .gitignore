@@ -1,1 +1,4 @@
 .idea
+/zeebe-client/target/
+/zeebe-client/.flattened-pom.xml
+/zeebe-client/zeebe-samples.iml
