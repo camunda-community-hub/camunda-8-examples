@@ -32,7 +32,7 @@ JobWorker worker = zeebe.newWorker().jobType(jobType)
 worker.close();
 ```
 
-In this example, this is used in the context of Webflux to indicate success towards the Mono of Webflux:
+In this example, this is used in the context of Webflux to indicate success towards the Mono of Webflux, as you can see in the [REST controller](src/main/java/org/example/camunda/process/solution/facade/ProcessController.java)
 
 ```java
 return Mono.create(sink -> {
