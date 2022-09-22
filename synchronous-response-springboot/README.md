@@ -67,9 +67,7 @@ Run the application via
 ./mvnw spring-boot:run
 ```
 
-Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
-Or 
+Then
 
 ```
 curl -X POST http://localhost:8080/process/start

@@ -2,6 +2,9 @@ package org.example.camunda.process.solution.facade;
 
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.worker.JobWorker;
+import io.camunda.zeebe.spring.client.annotation.ZeebeVariable;
+import io.camunda.zeebe.spring.client.annotation.value.ZeebeWorkerValue;
+import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ public class ProcessController {
   @Autowired
   private ZeebeClient zeebe;
 
+  @Autowired
+  private JobWorkerManager jobWorkerManager;
+
   @PostMapping("/start")
   public Mono<String> startProcessInstance() {
     LOG.info("Starting process `" + BPMN_PROCESS_ID + "`");
@@ -39,25 +45,22 @@ public class ProcessController {
         .send();
 
     // TODO: Think about exception handling here as well
+    // TODO: Where to define timeout exactly?
     return Mono.create(sink -> {
         // define a unique job type just for this conversation
         String jobType = "responseFor_" + requestId;
         // And start a worker for it
-        JobWorker worker = zeebe.newWorker()
-              .jobType(jobType)
-              .handler((client, job) -> {
-                  String response = (String)job.getVariablesAsMap().get("response");
-                  LOG.info(".. finished with response: `" + response + "`");
-
-                  // When the job is there, read the response payload and return our response via the Mono
-                  sink.success(response);
-                  // Make sure to complete the job (ignoring exceptions for now)
-                  client.newCompleteCommand(job).send();
-              })
-              .name(jobType)
-              .open();
+        ZeebeWorkerValue jobWorkerConfig = new ZeebeWorkerValue().setType(jobType).setAutoComplete(true)
+                .setFetchVariables(new String[0]); // need to do this because of bug in 8.0.9 that will be fixed >= 8.0.10
+        JobWorker jobWorker = jobWorkerManager.openWorker(zeebe, jobWorkerConfig, (client, job) -> {
+            // Read payload from process
+            String response = (String) job.getVariablesAsMap().get("response");
+            LOG.info(".. finished with response: `" + response + "`");
+            // When the job is there, read the response payload and return our response via the Mono
+            sink.success(response);
+        });
         // Make sure this worker is closed once the response was received
-        sink.onDispose(() -> worker.close());
+        sink.onDispose(() -> jobWorkerManager.closeWorker(jobWorker));
     });
   }
 

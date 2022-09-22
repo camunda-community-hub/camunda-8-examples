@@ -3,8 +3,6 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <name>Camunda Process Solution</name>
-  <description>A process solution for Camunda Platform 8</description>
   <groupId>org.example.camunda.process.solution</groupId>
   <artifactId>camunda-process-solution</artifactId>
   <version>1.0.0-SNAPSHOT</version>
@@ -18,7 +16,7 @@
 
   <properties>
     <java.version>8</java.version>
-    <spring-zeebe.version>8.0.8</spring-zeebe.version>
+    <spring-zeebe.version>8.0.9</spring-zeebe.version>
   </properties>
 
   <dependencies>
