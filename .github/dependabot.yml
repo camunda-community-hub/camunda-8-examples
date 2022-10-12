@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/twitter-review-java-springboot"
+  schedule:
+    interval: daily    
+  open-pull-requests-limit: 10
+- package-ecosystem: maven
+  directory: "/synchronous-response-springboot"
+  schedule:
+    interval: daily    
+  open-pull-requests-limit: 10
+- package-ecosystem: maven
+  directory: "/dmn-java-springboot"
+  schedule:
+    interval: daily    
+  open-pull-requests-limit: 10
+- package-ecosystem: maven
+  directory: "/zeebe-client-plain-java"
+  schedule:
+    interval: daily    
+  open-pull-requests-limit: 10
