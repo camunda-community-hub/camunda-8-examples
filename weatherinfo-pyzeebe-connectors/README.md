@@ -9,3 +9,7 @@ This project contains
 * a form for the user input
 * a worker written in Python, using the [pyzeebe](https://github.com/camunda-community-hub/pyzeebe) client
 * a custom template for the worker
+
+This example can be used most easily in [Camunda 8 SaaS](https://console.cloud.camunda.io) with the WebModeler and Connectors provided.
+
+Upload the process model to the web modeler and deploy it to your cluster. Process instances can be started from the Web Modeler.
