@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0" camunda:diagramRelationId="0dbbdc3b-484f-4fd5-bc99-ac63dda6642a">
+  <bpmn:process id="WeatherInfoProcess" name="Get and Send Weather Info" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_1bun0gp">{
+  "components": [
+    {
+      "label": "City",
+      "type": "textfield",
+      "id": "Field_1r7q8ri",
+      "key": "location",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "email",
+      "type": "textfield",
+      "id": "Field_10n1zpm",
+      "key": "email",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "ed3e962"
+  },
+  "type": "default",
+  "id": "Formular_LocationAndEmail",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1" name="Wetherinfo&#10;necessary">
+      <bpmn:outgoing>Flow_188gqtq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_188gqtq" sourceRef="StartEvent_1" targetRef="Activity_0yj7j2s" />
+    <bpmn:sequenceFlow id="Flow_0allrbb" sourceRef="Activity_0yj7j2s" targetRef="Activity_1gvjuhb" />
+    <bpmn:sequenceFlow id="Flow_0eyhmqy" sourceRef="Activity_1gvjuhb" targetRef="Activity_1skl7g5" />
+    <bpmn:endEvent id="Event_0lzaaul" name="Weatherinfo&#10;sent">
+      <bpmn:incoming>Flow_0a6llzp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0a6llzp" sourceRef="Activity_00f0g60" targetRef="Event_0lzaaul" />
+    <bpmn:userTask id="Activity_0yj7j2s" name="Choose&#10;location">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_1bun0gp" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_188gqtq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0allrbb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1gvjuhb" name="Get weather information" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M17.0335%208.99997C17.0335%2013.4475%2013.4281%2017.0529%208.98065%2017.0529C4.53316%2017.0529%200.927765%2013.4475%200.927765%208.99997C0.927765%204.55248%204.53316%200.947083%208.98065%200.947083C13.4281%200.947083%2017.0335%204.55248%2017.0335%208.99997Z%22%20fill%3D%22%23505562%22%2F%3E%0A%3Cpath%20d%3D%22M4.93126%2014.1571L6.78106%203.71471H10.1375C11.1917%203.71471%2011.9824%203.98323%2012.5095%204.52027C13.0465%205.04736%2013.315%205.73358%2013.315%206.57892C13.315%207.44414%2013.0714%208.15522%2012.5841%208.71215C12.1067%209.25913%2011.4553%209.63705%2010.6298%209.8459L12.0619%2014.1571H10.3315L9.03364%2010.0249H7.24351L6.51254%2014.1571H4.93126ZM7.49711%208.59281H9.24248C9.99832%208.59281%2010.5901%208.42374%2011.0177%208.08561C11.4553%207.73753%2011.6741%207.26513%2011.6741%206.66842C11.6741%206.19106%2011.5249%205.81811%2011.2265%205.54959C10.9282%205.27113%2010.4558%205.1319%209.80936%205.1319H8.10874L7.49711%208.59281Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E%0A">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="get" target="method" />
+          <zeebe:input source="https://api.openweathermap.org/data/2.5/weather" target="url" />
+          <zeebe:input source="={&#10;q: location,&#10;appid: &#34;openweathermap api key&#34;&#10;}" target="queryParameters" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="weatherInfo" />
+          <zeebe:header key="resultExpression" value="=response" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0allrbb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eyhmqy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_00f0g60" name="Send information&#10;via mail" zeebe:modelerTemplate="io.camunda.connectors.SendGrid.v2" zeebe:modelerTemplateIcon="data:image/svg+xml;utf8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%205.40847H5.43837V10.5611H0.285706V5.40847Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22white%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V15.6844H5.43837V10.5611Z%22%20fill%3D%22%2399E1F4%22%2F%3E%0A%3Cpath%20d%3D%22M0.285706%2015.6846L5.43837%2015.6844V15.7143H0.285706V15.6846ZM0.285706%2010.5619H5.43837V15.6844L0.285706%2015.6846V10.5619Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%200.285706H10.5611V5.40847H5.43837V0.285706ZM10.5616%205.43837H15.7143V10.5611H10.5616V5.43837Z%22%20fill%3D%22%2300B3E3%22%2F%3E%0A%3Cpath%20d%3D%22M5.43837%2010.5611L10.5611%2010.5616V5.40847H5.43837V10.5611Z%22%20fill%3D%22%23009DD9%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%200.285706H15.7143V5.40847H10.5611V0.285706Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3Cpath%20d%3D%22M10.5611%205.40847H15.7143V5.43837H10.5616L10.5611%205.40847Z%22%20fill%3D%22%231A82E2%22%2F%3E%0A%3C%2Fsvg%3E">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:sendgrid:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
+          <zeebe:input source="text/plain" target="content.type" />
+          <zeebe:input source="" target="apiKey" />
+          <zeebe:input source="=email" target="to.name" />
+          <zeebe:input source="=email" target="to.email" />
+          <zeebe:input source="weatherinfo@example.com" target="from.email" />
+          <zeebe:input source="Weatherinfo Service" target="from.name" />
+          <zeebe:input source="=&#34;The Weather for &#34; + location" target="content.subject" />
+          <zeebe:input source="=weatherInfo.body.weather[1].main + &#34;, &#34; + activity" target="content.value" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qmfbmz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a6llzp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qmfbmz" sourceRef="Activity_1skl7g5" targetRef="Activity_00f0g60" />
+    <bpmn:serviceTask id="Activity_1skl7g5" name="Search suited activity" zeebe:modelerTemplate="f71dbd8a-03d4-43b3-bf48-a70cea71134f" zeebe:modelerTemplateVersion="1666170212138" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PCEtLSBDcmVhdGVkIHdpdGggSW5rc2NhcGUgKGh0dHA6Ly93d3cuaW5rc2NhcGUub3JnLykgLS0+DQo8c3ZnIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6Y2M9Imh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL25zIyIgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIiB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiIHdpZHRoPSIxOTIuNSIgaGVpZ2h0PSIxOTIuNSIgaWQ9InN2ZzEwNDY0IiB2ZXJzaW9uPSIxLjEiIGlua3NjYXBlOnZlcnNpb249IjAuNDguNCByOTkzOSIgc29kaXBvZGk6ZG9jbmFtZT0iTmV1ZXMgRG9rdW1lbnQgMTMiPg0KICA8ZGVmcyBpZD0iZGVmczEwNDY2Ii8+DQogIDxzb2RpcG9kaTpuYW1lZHZpZXcgaWQ9ImJhc2UiIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIgYm9yZGVyY29sb3I9IiM2NjY2NjYiIGJvcmRlcm9wYWNpdHk9IjEuMCIgaW5rc2NhcGU6cGFnZW9wYWNpdHk9IjAuMCIgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIgaW5rc2NhcGU6em9vbT0iMC4zNSIgaW5rc2NhcGU6Y3g9Ijk2LjI1IiBpbmtzY2FwZTpjeT0iOTYuMjUiIGlua3NjYXBlOmRvY3VtZW50LXVuaXRzPSJweCIgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0ibGF5ZXIxIiBzaG93Z3JpZD0iZmFsc2UiIGZpdC1tYXJnaW4tdG9wPSIwIiBmaXQtbWFyZ2luLWxlZnQ9IjAiIGZpdC1tYXJnaW4tcmlnaHQ9IjAiIGZpdC1tYXJnaW4tYm90dG9tPSIwIiBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjUwNSIgaW5rc2NhcGU6d2luZG93LWhlaWdodD0iNDI1IiBpbmtzY2FwZTp3aW5kb3cteD0iNzgiIGlua3NjYXBlOndpbmRvdy15PSI3OCIgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMCIvPg0KICA8bWV0YWRhdGEgaWQ9Im1ldGFkYXRhMTA0NjkiPg0KICAgIDxyZGY6UkRGPg0KICAgICAgPGNjOldvcmsgcmRmOmFib3V0PSIiPg0KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4NCiAgICAgICAgPGRjOnR5cGUgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIvPg0KICAgICAgICA8ZGM6dGl0bGUvPg0KICAgICAgPC9jYzpXb3JrPg0KICAgIDwvcmRmOlJERj4NCiAgPC9tZXRhZGF0YT4NCiAgPGcgaW5rc2NhcGU6bGFiZWw9IkViZW5lIDEiIGlua3NjYXBlOmdyb3VwbW9kZT0ibGF5ZXIiIGlkPSJsYXllcjEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNTMuNzUsLTQzNi4xMTIxOCkiPg0KICAgIDxnIGlkPSJnMTA0NTkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDcyMi45NzE0NSwtMjkxNi40MDA4KSI+DQogICAgICA8cGF0aCBzdHlsZT0iZmlsbDojMzM5OTY2O2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lIiBkPSJtIC0zNzcuNzM5MjYsMzQ2OS4xNjIxIDQ3LjkxNTUzLDcyLjU3MTMgNS4yMTAzNSwtODYuODA2NCBjIC0xMy44OTQzNywxMy44OTQ0IC0zNC4xNDU4OCwxOS4zMjA4IC01My4xMjU4OCwxNC4yMzUxIHoiIGlkPSJwYXRoMTAzNjIiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz4NCiAgICAgIDxwYXRoIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiIGlkPSJwYXRoMTAzNjQiIGQ9Im0gLTMxOC44OTE5NiwzNDMzLjU3NDUgMzguODkwODcsLTc3Ljc4MTggLTc3Ljc4MTczLDM4Ljg5MDkgYyAxOC45ODAwNiw1LjA4NTcgMzMuODA1MTksMTkuOTEwOCAzOC44OTA4NiwzOC44OTA5IHoiIHN0eWxlPSJmaWxsOiM5OTAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmUiLz4NCiAgICAgIDxwYXRoIHN0eWxlPSJmaWxsOiMwMDY2OTk7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmUiIGQ9Im0gLTM3OS4xMzU0LDM0MDAuNDA1IC04Ni44MDY0MSw1LjIxMDQgNzIuNTcxMzgsNDcuOTE1NSBjIC01LjA4NTY5LC0xOC45OCAwLjM0MDY5LC0zOS4yMzE1IDE0LjIzNTAzLC01My4xMjU5IHoiIGlkPSJwYXRoMTAzNjYiIGlua3NjYXBlOmNvbm5lY3Rvci1jdXJ2YXR1cmU9IjAiLz4NCiAgICA8L2c+DQogIDwvZz4NCjwvc3ZnPg==">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="activitiy-lookup" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=weatherInfo.body.weather[1].main" target="weather" />
+          <zeebe:input source="=location" target="location" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0eyhmqy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qmfbmz</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="WeatherInfoProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="144" y="125" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lzaaul_di" bpmnElement="Event_0lzaaul">
+        <dc:Bounds x="882" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="871" y="125" width="59" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kqxlgq_di" bpmnElement="Activity_0yj7j2s">
+        <dc:Bounds x="240" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_02tc1oe_di" bpmnElement="Activity_1gvjuhb">
+        <dc:Bounds x="400" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vydcuj_di" bpmnElement="Activity_00f0g60">
+        <dc:Bounds x="720" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ymyo60_di" bpmnElement="Activity_1skl7g5">
+        <dc:Bounds x="560" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_188gqtq_di" bpmnElement="Flow_188gqtq">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="240" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0allrbb_di" bpmnElement="Flow_0allrbb">
+        <di:waypoint x="340" y="100" />
+        <di:waypoint x="400" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eyhmqy_di" bpmnElement="Flow_0eyhmqy">
+        <di:waypoint x="500" y="100" />
+        <di:waypoint x="560" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a6llzp_di" bpmnElement="Flow_0a6llzp">
+        <di:waypoint x="820" y="100" />
+        <di:waypoint x="882" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qmfbmz_di" bpmnElement="Flow_0qmfbmz">
+        <di:waypoint x="660" y="100" />
+        <di:waypoint x="720" y="100" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

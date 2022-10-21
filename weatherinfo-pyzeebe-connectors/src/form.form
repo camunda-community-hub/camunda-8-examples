@@ -1,0 +1,31 @@
+{
+  "components": [
+    {
+      "label": "City",
+      "type": "textfield",
+      "id": "Field_1r7q8ri",
+      "key": "location",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "email",
+      "type": "textfield",
+      "id": "Field_10n1zpm",
+      "key": "email",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "ed3e962"
+  },
+  "type": "default",
+  "id": "Formular_LocationAndEmail",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}
