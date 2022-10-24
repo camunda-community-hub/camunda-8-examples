@@ -58,7 +58,7 @@
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="get" target="method" />
           <zeebe:input source="https://api.openweathermap.org/data/2.5/weather" target="url" />
-          <zeebe:input source="={&#10;q: location,&#10;appid: &#34;openweathermap api key&#34;&#10;}" target="queryParameters" />
+          <zeebe:input source="={&#10;q: location,&#10;appid: secrets.OWM_API_KEY&#10;}" target="queryParameters" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="resultVariable" value="weatherInfo" />
@@ -74,7 +74,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="mail" target="unMappedFieldNotUseInModel.mailType" />
           <zeebe:input source="text/plain" target="content.type" />
-          <zeebe:input source="" target="apiKey" />
+          <zeebe:input source="=secrets.SEND_GRID_API_KEY" target="apiKey" />
           <zeebe:input source="=email" target="to.name" />
           <zeebe:input source="=email" target="to.email" />
           <zeebe:input source="weatherinfo@example.com" target="from.email" />
