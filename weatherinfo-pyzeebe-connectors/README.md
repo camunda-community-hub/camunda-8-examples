@@ -10,6 +10,10 @@ This project contains
 * a worker written in Python, using the [pyzeebe](https://github.com/camunda-community-hub/pyzeebe) client
 * a custom template for the worker
 
+This example can be used most easily in [Camunda 8 SaaS](https://console.cloud.camunda.io) with the WebModeler and Connectors provided.
+
+Upload the process model to the web modeler and deploy it to your cluster. Process instances can be started from the Web Modeler.
+
 To run the project, you have to add your personal configuration:
 1. Replace the Camunda SaaS credentials in `pyzeebeWorker.py` to match your cluster.
 2. Add API keys for Openweathermap and Send Grid as secrets to your cluster. Read more about it in the [documentation](https://docs.camunda.io/docs/components/console/manage-clusters/manage-secrets/)
