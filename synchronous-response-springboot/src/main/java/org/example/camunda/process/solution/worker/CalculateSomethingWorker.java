@@ -10,13 +10,14 @@ import java.util.Map;
 
 @Component
 public class CalculateSomethingWorker {
-
+  
   private static final Logger LOG = LoggerFactory.getLogger(CalculateSomethingWorker.class);
+
 
   @JobWorker
   public Map<String, Object> calculateSomething() {
     try {
-      LOG.info("Cause a 5 seconds delay");
+      LOG.info("Calculating something ...");
       Thread.sleep(5000);
     } catch (InterruptedException e) {
       LOG.error("Thread sleep got interrupted: {}", e.getMessage());
