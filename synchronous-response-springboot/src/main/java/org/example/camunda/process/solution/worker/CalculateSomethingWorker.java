@@ -13,7 +13,6 @@ public class CalculateSomethingWorker {
   
   private static final Logger LOG = LoggerFactory.getLogger(CalculateSomethingWorker.class);
 
-
   @JobWorker
   public Map<String, Object> calculateSomething() {
     try {
