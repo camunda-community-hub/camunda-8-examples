@@ -15,7 +15,7 @@ public class CalculateSomethingWorker {
 
   @JobWorker
   public Map<String, Object> calculateSomething() {
-    // To see a real delay on the request, uncomment the following lines    
+    // To see a real delay on the response, uncomment the following lines    
 //    try {
       LOG.info("Calculating something ...");
 //      Thread.sleep(5000);
