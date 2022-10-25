@@ -13,15 +13,15 @@ public class CalculateSomethingWorker {
   
   private static final Logger LOG = LoggerFactory.getLogger(CalculateSomethingWorker.class);
 
-
   @JobWorker
   public Map<String, Object> calculateSomething() {
-    try {
-      LOG.info("Cause a 5 seconds delay");
-      Thread.sleep(5000);
-    } catch (InterruptedException e) {
-      LOG.error("Thread sleep got interrupted: {}", e.getMessage());
-    }
+    // To see a real delay on the web page, uncomment the following lines    
+//    try {
+      LOG.info("Calculating something ...");
+//      Thread.sleep(5000);
+//    } catch (InterruptedException e) {
+//      LOG.error("Thread sleep got interrupted: {}", e.getMessage());
+//    }
     return Collections.singletonMap("response", "The response is - of course - 42");
   }
 }
