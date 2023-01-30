@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.camunda.zeebe.example.cluster.TopologyViewer;
 import io.camunda.zeebe.example.data.HandleVariablesAsPojo;
+import io.camunda.zeebe.example.decision.EvaluateDecisionCreator;
 import io.camunda.zeebe.example.job.JobWorkerCreator;
 import io.camunda.zeebe.example.process.NonBlockingProcessInstanceCreator;
 import io.camunda.zeebe.example.process.ProcessDeployer;
@@ -44,6 +45,7 @@ public final class DocsConsistencyTest {
           {ProcessDeployer.class, "io.camunda.zeebe.example.process.ProcessDeployer"},
           {ProcessInstanceCreator.class, "io.camunda.zeebe.example.process.ProcessInstanceCreator"},
           {HandleVariablesAsPojo.class, "io.camunda.zeebe.example.data.HandleVariablesAsPojo"},
+          {EvaluateDecisionCreator.class, "io.camunda.zeebe.example.decision.EvaluateDecisionCreator"},
         });
   }
 
