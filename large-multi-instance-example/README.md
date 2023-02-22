@@ -41,17 +41,11 @@ In the inner multi-instance call activity, you should again overwrite the list v
 
 ## Return results from the multi-instance call activity
 
-In case you want to collect the results from the multi-instance call activity, 
-currently (Jan 2023) only the last element is in the list, all other elements are null.
+In case you want to collect the results from the multi-instance call activity, you have to configure the output mapping correctly and only return the collected result.
 
-There is an issue filed for this: https://github.com/camunda/zeebe/issues/11476
+Have a look at the example process: [multi-instance-simple-example process model](src/test/resources/multi-instance-simple-example.bpmn)
 
-The [multi-instance-simple-example process model](src/test/resources/multi-instance-simple-example.bpmn) contains a failing diagram and a workaround: 
-Wrap the call activity into a multi-instance subprocess. 
+It is covered in a [Spring Zeebe Test](src/test/java/com/camunda/consulting/SimpleMultiInstanceTest.java)  
 
-The subprocess will collect all output elements into the list.
+If you naively return all variables to the super process, you will get race conditions: https://github.com/camunda/zeebe/issues/11476#issuecomment-1434292730
 
-There is also a test to proof if future Zeebe versions have resolved this issue: 
-[SimpleMultiInstanceTest.java](src/test/java/com/camunda/consulting/SimpleMultiInstanceTest.java)
-
-The failing test is disabled to let the build pass through.

@@ -15,9 +15,7 @@ import io.camunda.zeebe.spring.client.annotation.JobWorker;
 @Component
 public class SimpleMultiInstanceWorker {
   
-  
   private static final Logger LOG = LoggerFactory.getLogger(SimpleMultiInstanceWorker.class);
-
 
   @JobWorker
   public Map<String,Object> sequenceCreation(JobClient client, ActivatedJob job) {
