@@ -54,6 +54,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
 				<configuration>
 					<mainClass>org.camunda.community.examples.dmn.TwitterExampleApplication</mainClass>
 				</configuration>
