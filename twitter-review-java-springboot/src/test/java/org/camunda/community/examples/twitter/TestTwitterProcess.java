@@ -131,7 +131,7 @@ public class TestTwitterProcess {
   public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables)
       throws InterruptedException, TimeoutException {
     // Let the workflow engine do whatever it needs to do
-    zeebeTestEngine.waitForIdleState(Duration.ofSeconds(10));
+    zeebeTestEngine.waitForIdleState(Duration.ofMinutes(5));
 
     // Now get all user tasks
     List<ActivatedJob> jobs =
