@@ -1,9 +1,9 @@
-name: Java CI
+name: Build examples
 
 on: [push]
 
 jobs:
-  build-twitter:
+  build-twitter-review-java-springboot:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -13,9 +13,9 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package
+        run: mvn verify -PcheckFormat -B
         working-directory: twitter-review-java-springboot
-  build-dmn:
+  build-dmn-java-springboot:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,5 +25,53 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package
+        run: mvn verify -PcheckFormat -B
         working-directory: dmn-java-springboot
+  build-large-multi-instance-example:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn verify -PcheckFormat -B
+      working-directory: large-multi-instance-example
+  build-start-form-springboot:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn package -B
+      working-directory: start-form-springboot
+  build-synchronous-response-springboot:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn package -B
+      working-directory: synchronous-response-springboot
+  build-zeebe-client-plain-java:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn package -B
+      working-directory: zeebe-client-plain-java

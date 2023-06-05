@@ -6,9 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProcessingWorker {
 
-    @JobWorker( type = "processing")
-    public void handleTweet() throws Exception {
-        System.out.println("AUTOMATIC PROCESSING HAPPENING");
-    }
-
+  @JobWorker(type = "processing")
+  public void handleTweet() throws Exception {
+    System.out.println("AUTOMATIC PROCESSING HAPPENING");
+  }
 }

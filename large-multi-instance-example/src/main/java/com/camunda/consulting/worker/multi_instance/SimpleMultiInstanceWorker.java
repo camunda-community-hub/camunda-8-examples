@@ -1,24 +1,22 @@
 package com.camunda.consulting.worker.multi_instance;
 
+import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.client.api.worker.JobClient;
+import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
-
 @Component
 public class SimpleMultiInstanceWorker {
-  
+
   private static final Logger LOG = LoggerFactory.getLogger(SimpleMultiInstanceWorker.class);
 
   @JobWorker
-  public Map<String,Object> sequenceCreation(JobClient client, ActivatedJob job) {
+  public Map<String, Object> sequenceCreation(JobClient client, ActivatedJob job) {
     LOG.info("Create Sequence");
     Map<String, Object> outputVars = new HashMap<>();
     outputVars.put("sequence", List.of("A", "B", "C"));
@@ -40,5 +38,4 @@ public class SimpleMultiInstanceWorker {
     outputVars.put("result", (int) element.charAt(0));
     return outputVars;
   }
-
 }

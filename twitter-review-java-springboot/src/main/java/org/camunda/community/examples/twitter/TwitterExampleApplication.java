@@ -10,8 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Deployment(resources = "classpath*:*.bpmn")
 public class TwitterExampleApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TwitterExampleApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(TwitterExampleApplication.class, args);
+  }
 }

@@ -8,13 +8,13 @@ Right now (Jan 2023) the Zeebe engine can not distribute the load of a multi-ins
 
 All subprocesses or tasks are handled on the same node.
 
-If you have a large sequence of items to process, you have to split the sequence into smaller chucks to be handled on a single node and 
+If you have a large sequence of items to process, you have to split the sequence into smaller chucks to be handled on a single node and
 use messaging to distribute the load over all cluster nodes.
 
 <img src="documentation/modeling-concept.png" alt="concept for large multi-instance processing" width="100%" />
 
-For this example I choose a campaign that should generate 10000 letters to be send by mail. 
-The Campaign Process will divide the elements in a number of buckets. Each bucket contains up to 2000 elements. 
+For this example I choose a campaign that should generate 10000 letters to be send by mail.
+The Campaign Process will divide the elements in a number of buckets. Each bucket contains up to 2000 elements.
 The Letter Process will handle only a single letter.
 
 The example doesn't collect the elements from the multi-instance processing. The results are saved as ids in the lowest level letter process, that creates just a single letter.
@@ -27,9 +27,9 @@ A variable called `businessKey` helps to identify all processes that belong to a
 
 To minimize the data load per element, some additional modeling hints will help.
 
-In the super process, only you will get the begin and end indexes for each bucket. 
+In the super process, only you will get the begin and end indexes for each bucket.
 
-In the multi-instance scope, you can overwrite the list with a dummy value via an input mapping. 
+In the multi-instance scope, you can overwrite the list with a dummy value via an input mapping.
 Otherwise, the complete list will be passed to the subprocess.
 This is a huge overload, as from now on only the element of the multi-instance is required.
 
@@ -45,7 +45,6 @@ In case you want to collect the results from the multi-instance call activity, y
 
 Have a look at the example process: [multi-instance-simple-example process model](src/test/resources/multi-instance-simple-example.bpmn)
 
-It is covered in a [Spring Zeebe Test](src/test/java/com/camunda/consulting/SimpleMultiInstanceTest.java)  
+It is covered in a [Spring Zeebe Test](src/test/java/com/camunda/consulting/SimpleMultiInstanceTest.java)
 
 If you naively return all variables to the super process, you will get race conditions: https://github.com/camunda/zeebe/issues/11476#issuecomment-1434292730
-
