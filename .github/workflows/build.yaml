@@ -13,7 +13,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Build with Maven
-        run: mvn package -B
+        run: mvn verify -PcheckFormat -B
         working-directory: twitter-review-java-springboot
   build-dmn-java-springboot:
     runs-on: ubuntu-latest
