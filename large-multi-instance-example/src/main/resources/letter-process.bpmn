@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0n3wghz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.7.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:collaboration id="Collaboration_0753x21">
+    <bpmn:participant id="Participant_05atv5l" name="Letterprocessing" processRef="letterProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="letterProcess" name="Letter Process" isExecutable="true">
+    <bpmn:startEvent id="Event_0rw31ru" name="Letter should be created">
+      <bpmn:outgoing>Flow_180bzms</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_1rm3wel" name="Create letter">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="letterCreation" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_180bzms</bpmn:incoming>
+      <bpmn:outgoing>Flow_09bonft</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0z0lyrb" name="Letter completed">
+      <bpmn:incoming>Flow_09bonft</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_180bzms" sourceRef="Event_0rw31ru" targetRef="Activity_1rm3wel" />
+    <bpmn:sequenceFlow id="Flow_09bonft" sourceRef="Activity_1rm3wel" targetRef="Event_0z0lyrb" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0753x21">
+      <bpmndi:BPMNShape id="Participant_05atv5l_di" bpmnElement="Participant_05atv5l" isHorizontal="true">
+        <dc:Bounds x="140" y="80" width="400" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0rw31ru_di" bpmnElement="Event_0rw31ru">
+        <dc:Bounds x="202" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="181" y="225" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yyl94s_di" bpmnElement="Activity_1rm3wel">
+        <dc:Bounds x="290" y="160" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0z0lyrb_di" bpmnElement="Event_0z0lyrb">
+        <dc:Bounds x="442" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="419" y="225" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_180bzms_di" bpmnElement="Flow_180bzms">
+        <di:waypoint x="238" y="200" />
+        <di:waypoint x="290" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09bonft_di" bpmnElement="Flow_09bonft">
+        <di:waypoint x="390" y="200" />
+        <di:waypoint x="442" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "multi-instance-example.number-of-buckets",
+    "type": "java.lang.Integer",
+    "description": "The number of buckets"
+  },
+  {
+    "name": "multi-instance-example.number-of-elements",
+    "type": "java.lang.Integer",
+    "description": "The numebr of elements per bucket"
+  }
+]}
