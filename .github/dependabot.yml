@@ -21,7 +21,7 @@ updates:
     interval: daily    
   open-pull-requests-limit: 10
 - package-ecosystem: maven
-  directory: "/large-multi-instace-example"
+  directory: "/large-multi-instance-example"
   schedule:
     interval: daily
   open-pull-requests-limit: 10
