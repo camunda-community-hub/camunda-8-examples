@@ -9,14 +9,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
 @EnableZeebeClient
-@Deployment(resources = { "classpath*:*.bpmn", "classpath*:*.dmn"})
+@Deployment(resources = {"classpath*:*.bpmn", "classpath*:*.dmn"})
 public class DmnExampleApplication {
 
-	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(DmnExampleApplication.class, args);
+  public static void main(String[] args) {
+    ConfigurableApplicationContext context =
+        SpringApplication.run(DmnExampleApplication.class, args);
 
-		context.getBean(OnboardCustomerRestApi.class).startOnboarding("prepaid", 75, 10);
-		context.getBean(OnboardCustomerRestApi.class).startOnboarding("invoice", 25, 10);
-	}
-
+    context.getBean(OnboardCustomerRestApi.class).startOnboarding("prepaid", 75, 10);
+    context.getBean(OnboardCustomerRestApi.class).startOnboarding("invoice", 25, 10);
+  }
 }

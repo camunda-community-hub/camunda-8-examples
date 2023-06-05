@@ -13,29 +13,33 @@ import org.springframework.web.server.ServerWebExchange;
 @RestController
 public class OnboardCustomerRestApi {
 
-    @Autowired
-    private ZeebeClient zeebeClient;
+  @Autowired private ZeebeClient zeebeClient;
 
-    @PutMapping("/customer")
-    public ResponseEntity<String> startOnboarding(ServerWebExchange exchange) {
-        // TODO: add data to the process instance from REST request
-        String reference = startOnboarding("prepaid", 75, 10);
+  @PutMapping("/customer")
+  public ResponseEntity<String> startOnboarding(ServerWebExchange exchange) {
+    // TODO: add data to the process instance from REST request
+    String reference = startOnboarding("prepaid", 75, 10);
 
-        // And just return something for the sake of the example
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Started process instance " + reference);
-    }
+    // And just return something for the sake of the example
+    return ResponseEntity.status(HttpStatus.OK).body("Started process instance " + reference);
+  }
 
-    public String startOnboarding(String paymentType, long customerRegionScore, long monthlyPayment) {
-        OnboardingProcessVariables processVariables = new OnboardingProcessVariables().setPaymentType(paymentType).setCustomerRegionScore(customerRegionScore).setMonthlyPayment(monthlyPayment);
+  public String startOnboarding(String paymentType, long customerRegionScore, long monthlyPayment) {
+    OnboardingProcessVariables processVariables =
+        new OnboardingProcessVariables()
+            .setPaymentType(paymentType)
+            .setCustomerRegionScore(customerRegionScore)
+            .setMonthlyPayment(monthlyPayment);
 
-        ProcessInstanceEvent processInstance = zeebeClient.newCreateInstanceCommand()
-                .bpmnProcessId("CustomerOnboarding")
-                .latestVersion()
-                .variables(processVariables)
-                .send().join(); // blocking call!
+    ProcessInstanceEvent processInstance =
+        zeebeClient
+            .newCreateInstanceCommand()
+            .bpmnProcessId("CustomerOnboarding")
+            .latestVersion()
+            .variables(processVariables)
+            .send()
+            .join(); // blocking call!
 
-        return String.valueOf( processInstance.getProcessInstanceKey() );
-    }
+    return String.valueOf(processInstance.getProcessInstanceKey());
+  }
 }
