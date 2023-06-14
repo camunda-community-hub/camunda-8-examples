@@ -12,6 +12,7 @@ Zeebe-internal improvements:
 https://zeebe-io.github.io/zeebe-chaos/2023/06/02/Using-Large-Multi-Instance/
 
 These are the simple process models:
+
 <img alt="Campaign process" src="documentation/campaign-process.png" width="66%"/>
 
 <img src="documentation/letter-process.png" alt="Letter process" width="50%"/>
@@ -30,9 +31,11 @@ sequential multi-instance as everything is running on a single node of the
 cluster.
 
 This is the new Campaign process:
+
 <img alt="Large Campaign process" src="documentation/large-campaign-process.png" width="75%" />
 
 And the Bucket process looks like Campaign process from the beginning:
+
 <img alt="Bucket process" src="documentation/bucket-process.png" width="75%" />
 
 The Letter process is the same for all examples.
