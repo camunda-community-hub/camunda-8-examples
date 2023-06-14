@@ -21,11 +21,11 @@ public class MultiInstanceTest {
   @Autowired ZeebeClient client;
 
   @Test
-  public void testCampaignWithFewElements() {
+  public void testHugeCampaignWithFewElements() {
     ProcessInstanceEvent processInstance =
         client
             .newCreateInstanceCommand()
-            .bpmnProcessId("campaignProcess")
+            .bpmnProcessId("HugeCampaignProcess")
             .latestVersion()
             .variables(Map.of("campaignId", "1"))
             .send()
