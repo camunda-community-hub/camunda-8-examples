@@ -12,9 +12,9 @@ Zeebe-internal improvements:
 https://zeebe-io.github.io/zeebe-chaos/2023/06/02/Using-Large-Multi-Instance/
 
 These are the simple process models:
-![Campaign process](documentation/campaign-process.png)
+<img alt="Campaign process" src="documentation/campaign-process.png" width="66%"/>
 
-<img src="documentation/letter-process.png" alt="Letter process" width="66%"/>
+<img src="documentation/letter-process.png" alt="Letter process" width="50%"/>
 
 The example doesn't collect the elements from the multi-instance processing. The
 results are saved as ids in the lowest level letter process, that creates just a
@@ -30,10 +30,10 @@ sequential multi-instance as everything is running on a single node of the
 cluster.
 
 This is the new Campaign process:
-![Large Campaign process](documentation/large-campaign-process.png)
+<img alt="Large Campaign process" src="documentation/large-campaign-process.png" width="75%" />
 
 And the Bucket process looks like Campaign process from the beginning:
-![Bucket process](documentation/bucket-process.png)
+<img alt="Bucket process" src="documentation/bucket-process.png" width="75%" />
 
 The Letter process is the same for all examples.
 
