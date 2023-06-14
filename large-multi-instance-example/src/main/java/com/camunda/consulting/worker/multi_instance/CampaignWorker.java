@@ -80,7 +80,10 @@ public class CampaignWorker {
   public Map<String, Object> letterCreation(JobClient client, ActivatedJob job) {
     Map<String, Object> variables = job.getVariablesAsMap();
     LOG.info("Create a letter with variables {}", variables);
-    String letterId = "letter-" + variables.get("itemId") + variables.get("bucketId");
+    String letterId =
+        "letter-"
+            + variables.get("itemId")
+            + (variables.get("bucketId") != null ? "-" + variables.get("bucketId") : "");
     LOG.info("Letter with id {} created.", letterId);
     return Map.of("letterId", letterId);
   }

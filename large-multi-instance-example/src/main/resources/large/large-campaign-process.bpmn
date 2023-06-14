@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1od6ffk" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
+  <bpmn:collaboration id="Collaboration_13iwyo5">
+    <bpmn:participant id="Participant_1fiwscn" name="Large Campaign" processRef="LargeCampaignProcess" />
+  </bpmn:collaboration>
+  <bpmn:process id="LargeCampaignProcess" name="Large Campaign Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Campaign started">
+      <bpmn:outgoing>Flow_0z8ltwf</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_103ipqc" name="Create buckets">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="bucketCreation" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0z8ltwf</bpmn:incoming>
+      <bpmn:outgoing>Flow_01r4552</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_160u0ab" name="Bucket processing">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="BucketProcess" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;notNeededHere&#34;" target="bucketList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01r4552</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a1r3di</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=bucketList" inputElement="bucketId" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="Event_0vkjw1v" name="Campaign completed">
+      <bpmn:incoming>Flow_0a1r3di</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0z8ltwf" sourceRef="StartEvent_1" targetRef="Activity_103ipqc" />
+    <bpmn:sequenceFlow id="Flow_01r4552" sourceRef="Activity_103ipqc" targetRef="Activity_160u0ab" />
+    <bpmn:sequenceFlow id="Flow_0a1r3di" sourceRef="Activity_160u0ab" targetRef="Event_0vkjw1v" />
+    <bpmn:textAnnotation id="TextAnnotation_1vwzztu">
+      <bpmn:text>As all is done on the same cluster node, sequential is better</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ldgw0n" sourceRef="Activity_160u0ab" targetRef="TextAnnotation_1vwzztu" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_13iwyo5">
+      <bpmndi:BPMNShape id="Participant_1fiwscn_di" bpmnElement="Participant_1fiwscn" isHorizontal="true">
+        <dc:Bounds x="129" y="80" width="561" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="192" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="167" y="185" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_050lm8p_di" bpmnElement="Activity_103ipqc">
+        <dc:Bounds x="280" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tcm69b_di" bpmnElement="Activity_160u0ab">
+        <dc:Bounds x="440" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vkjw1v_di" bpmnElement="Event_0vkjw1v">
+        <dc:Bounds x="602" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="595" y="185" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1vwzztu_di" bpmnElement="TextAnnotation_1vwzztu">
+        <dc:Bounds x="440" y="240" width="140" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0z8ltwf_di" bpmnElement="Flow_0z8ltwf">
+        <di:waypoint x="228" y="160" />
+        <di:waypoint x="280" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01r4552_di" bpmnElement="Flow_01r4552">
+        <di:waypoint x="380" y="160" />
+        <di:waypoint x="440" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a1r3di_di" bpmnElement="Flow_0a1r3di">
+        <di:waypoint x="540" y="160" />
+        <di:waypoint x="602" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ldgw0n_di" bpmnElement="Association_1ldgw0n">
+        <di:waypoint x="490" y="200" />
+        <di:waypoint x="490" y="240" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

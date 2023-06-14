@@ -1,20 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0b3gqk2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.7.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0b3gqk2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.11.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
   <bpmn:collaboration id="Collaboration_08c09cs">
-    <bpmn:participant id="Participant_0hizimk" name="Bucketprocessing" processRef="bucketProcess" />
+    <bpmn:participant id="Participant_0hizimk" name="Bucketprocessing" processRef="BucketProcess" />
   </bpmn:collaboration>
-  <bpmn:process id="bucketProcess" name="Bucket Process" isExecutable="true">
-    <bpmn:startEvent id="Event_1ju1rbf" name="Bucket should be processes">
-      <bpmn:outgoing>Flow_0589dw7</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_19ovm59" messageRef="Message_2jbc1sk" />
-    </bpmn:startEvent>
-    <bpmn:endEvent id="Event_0p7uh4v" name="Bucket done">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="bucketResultSender" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1in484f</bpmn:incoming>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_1ef3on5" />
-    </bpmn:endEvent>
+  <bpmn:process id="BucketProcess" name="Bucket Process" isExecutable="true">
     <bpmn:callActivity id="Activity_1565dj9" name="Letter processing">
       <bpmn:extensionElements>
         <zeebe:calledElement processId="letterProcess" propagateAllChildVariables="false" />
@@ -40,20 +29,17 @@
     <bpmn:sequenceFlow id="Flow_0589dw7" sourceRef="Event_1ju1rbf" targetRef="Activity_1b37bjl" />
     <bpmn:sequenceFlow id="Flow_1in484f" sourceRef="Activity_1565dj9" targetRef="Event_0p7uh4v" />
     <bpmn:sequenceFlow id="Flow_06mtv3e" sourceRef="Activity_1b37bjl" targetRef="Activity_1565dj9" />
-    <bpmn:textAnnotation id="TextAnnotation_1ds3324">
-      <bpmn:text>2000 times</bpmn:text>
-    </bpmn:textAnnotation>
+    <bpmn:startEvent id="Event_1ju1rbf" name="Bucket should be processes">
+      <bpmn:outgoing>Flow_0589dw7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0p7uh4v" name="Bucket done">
+      <bpmn:incoming>Flow_1in484f</bpmn:incoming>
+    </bpmn:endEvent>
     <bpmn:textAnnotation id="TextAnnotation_1w7mvk4">
       <bpmn:text>Input mapping:
 provide empty list</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_1p4esoa">
-      <bpmn:text>creates
-2000 Units</bpmn:text>
-    </bpmn:textAnnotation>
-    <bpmn:association id="Association_0y45fep" sourceRef="Activity_1565dj9" targetRef="TextAnnotation_1ds3324" />
     <bpmn:association id="Association_0mvqr23" sourceRef="Activity_1565dj9" targetRef="TextAnnotation_1w7mvk4" />
-    <bpmn:association id="Association_1lsx75m" sourceRef="Activity_1b37bjl" targetRef="TextAnnotation_1p4esoa" />
   </bpmn:process>
   <bpmn:message id="Message_2jbc1sk" name="StartBucketMessage" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -61,18 +47,6 @@ provide empty list</bpmn:text>
       <bpmndi:BPMNShape id="Participant_0hizimk_di" bpmnElement="Participant_0hizimk" isHorizontal="true">
         <dc:Bounds x="130" y="90" width="600" height="250" />
         <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_10swil2_di" bpmnElement="Event_1ju1rbf">
-        <dc:Bounds x="212" y="182" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="188" y="225" width="85" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0au9dbn_di" bpmnElement="Event_0p7uh4v">
-        <dc:Bounds x="652" y="182" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="639" y="225" width="62" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0p5jvac_di" bpmnElement="Activity_1565dj9">
         <dc:Bounds x="470" y="160" width="100" height="80" />
@@ -82,17 +56,21 @@ provide empty list</bpmn:text>
         <dc:Bounds x="310" y="160" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1ds3324_di" bpmnElement="TextAnnotation_1ds3324">
-        <dc:Bounds x="470" y="110" width="100" height="30" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1w7mvk4_di" bpmnElement="TextAnnotation_1w7mvk4">
         <dc:Bounds x="510" y="280" width="142" height="41" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_1p4esoa_di" bpmnElement="TextAnnotation_1p4esoa">
-        <dc:Bounds x="320" y="285" width="80" height="41" />
-        <bpmndi:BPMNLabel />
+      <bpmndi:BPMNShape id="Event_08cqdaa_di" bpmnElement="Event_1ju1rbf">
+        <dc:Bounds x="212" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="188" y="225" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kush9y_di" bpmnElement="Event_0p7uh4v">
+        <dc:Bounds x="652" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="639" y="225" width="62" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0589dw7_di" bpmnElement="Flow_0589dw7">
         <di:waypoint x="248" y="200" />
@@ -106,17 +84,9 @@ provide empty list</bpmn:text>
         <di:waypoint x="410" y="200" />
         <di:waypoint x="470" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_0y45fep_di" bpmnElement="Association_0y45fep">
-        <di:waypoint x="520" y="160" />
-        <di:waypoint x="520" y="140" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0mvqr23_di" bpmnElement="Association_0mvqr23">
         <di:waypoint x="537" y="240" />
         <di:waypoint x="554" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Association_1lsx75m_di" bpmnElement="Association_1lsx75m">
-        <di:waypoint x="364" y="240" />
-        <di:waypoint x="369" y="285" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
