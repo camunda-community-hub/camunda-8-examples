@@ -6,9 +6,10 @@ multi-instance subprocess.
 ## Multi instance handling
 
 This is possible now (Jun 2023) much better than before. The example completed
-with 40.000 letters to send in about 22 minutes on a self managed Camunda 8
-installation with 3 nodes. Check the blog post for further details of
-Zeebe-internal improvements:
+with 40.000 letters to send in about 22 minutes on a self-managed Camunda 8
+installation with 3 nodes. Don't take the number as given, it depends highly on
+the amount of data you are dealing with. Check the blog post for further details
+of Zeebe-internal improvements:
 https://zeebe-io.github.io/zeebe-chaos/2023/06/02/Using-Large-Multi-Instance/
 
 These are the simple process models:
@@ -18,7 +19,7 @@ These are the simple process models:
 <img src="documentation/letter-process.png" alt="Letter process" width="50%"/>
 
 The example doesn't collect the elements from the multi-instance processing. The
-results are saved as ids in the lowest level letter process, that creates just a
+results are saved as IDs in the lowest level letter process, that creates just a
 single letter.
 
 ## Process modeling for large sequences
