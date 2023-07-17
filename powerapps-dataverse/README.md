@@ -91,7 +91,7 @@ Create a new request in Postman to send a `POST` request to the OAuth2 Token URL
 - Remember that the `OAuth2` token url looks something like this: `https://login.microsoftonline.com/<MY_TENANT_ID>/oauth2/v2.0/token`
 - Note that `client_id` is the `Application (client) ID` gathered above
 - The `grant_type` MUST be `client_credentials` for this to work in the Camunda 8 Rest Connector
-- The `scope` should look something like this: `https://<MY_ORG_NAME>.crm.dynamics.com/.default`. (Note that you should NOT use the WEB API URL. This won't work: `https://<MY_ORG_NAME>.api.crm.dynamics.com/.default`)
+- The `scope` should look something like this: `https://<MY_ORG_NAME>.api.crm.dynamics.com/.default`. (Note that you can also use a url without the `api` subdomain, for example: `https://<MY_ORG_NAME>.crm.dynamics.com/.default`. If you do this, make sure you use the same url, without `api`, when making the actual request)
 
 Try submitting this request. A successful response should include an access token like this:
 
@@ -102,7 +102,7 @@ Copy that `access_token` and paste it as the value of the Postman Environment va
 ### Make a api request
 
 - Create a new request in Postman to send at `GET` request to get all records from the Accounts table. The url will look something like this: 
-`https://<MY_ORG_NAME>.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
+`https://<MY_ORG_NAME>.api.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
 - Add a custom header named `Authorization`. The value of this header should be `Bearer <access_token>` as shown here:
 ![](screenshots/postman3.png)
 
@@ -114,10 +114,10 @@ Now that all the details about connecting to Microsoft are out of the way, it sh
 - Choose Authentication type `OAuth 2.0`
 - Enter the same OAuth Token Endpoint as shown above when getting the bearer token. It will look similar to this: `https://login.microsoftonline.com/<TENANT_ID/oauth2/v2.0/token`
 - Enter client id and secret with same values as used in Postman above
-- Enter the same `scope` as in the postman example above. It will look like this: `https://<MY_ORG_NAME>.crm.dynamics.com/.default` 
+- Enter the same `scope` as in the postman example above. It will look like this: `https://<MY_ORG_NAME>.api.crm.dynamics.com/.default` 
 - Make sure to select `Send as Basic Auth Header` as this is what Microsoft supports. 
 ![](screenshots/connectors1.png)
-- Now configure the GET request. The url should be something similar to this `https://<MY_ORG_NAME>.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
+- Now configure the GET request. The url should be something similar to this `https://<MY_ORG_NAME>.api.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
 - Don't forget to set a result variable name (or result expression depending on your requirements)
 ![](screenshots/connectors2.png)
 - Deploy and run your process and if all goes well, you should see results similar to the following:
