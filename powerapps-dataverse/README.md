@@ -15,7 +15,7 @@ Browse to your PowerApps Environment URL, which will look something like this. (
 
 Click `Settings` -> `Developer Resources` in the upper right corner as shown here: 
 
-![](screenshots/Screen Shot 2023-07-17 at 7.55.57 AM.png)
+![](screenshots/prerequisite.png)
 
 The Developer Resources screen should show you your Organization Id and your Web App API Endpoint. My Web App API Endpoint looks like this: 
 
@@ -28,17 +28,17 @@ There are several ways to accomplish this task. Here are the steps that worked f
 - Browse to [https://admin.microsoft.com/AdminPortal/Home#/homepage](https://admin.microsoft.com/AdminPortal/Home#/homepage)
 - On the left navigation panel, click the link named `Identity` under `Admin Centers` to navigate to [https://entra.microsoft.com/](https://entra.microsoft.com/)
 - On the left navigation panel, click the link named `Applications`, you should see a screen that looks like this:
-![](screenshots/Screen Shot 2023-07-17 at 8.10.03 AM.png)
+![](screenshots/appRegistration1.png)
 - Click `New Registration`. Enter a name for your app registration, accept the defaults and click `Register`
 - Click to edit your new App Registration. Note the information inside the `Overview` section. For example, here's what my screen looks like:
-![](screenshots/Screen Shot 2023-07-17 at 8.13.03 AM.png)
+![](screenshots/appRegistration2.png)
 - Note the `Directory (tenant) ID` and `Application (client) ID`
 
 ## Create a client secret
 
 - Click to view the App Registration you created in the previous step. 
 - On the nested left navigation menu, click `Certificates & secrets`
-![](screenshots/Screen Shot 2023-07-17 at 8.17.30 AM.png)
+![](screenshots/clientSecret.png)
 - Click `New Client Secret`, enter a memorable description and click `Add`
 - Remember to copy the `Value` of the secret (NOT the Secret ID)
 
@@ -52,9 +52,9 @@ There are several ways to accomplish this task. Here are the steps that worked f
 
 - Browse to the admin screen for powerplatform here: [https://admin.powerplatform.microsoft.com/](https://admin.powerplatform.microsoft.com/)
 - Click `Environments`, choose your environment, and click `Settings`
-![](../../../screenshots/Screen Shot 2023-07-17 at 8.49.43 AM.png)
+![](screenshots/appUser1.png)
 - Click `Users and Permissions` -> `Application Users` and click `New App User`
-![](screenshots/Screen Shot 2023-07-17 at 8.51.43 AM.png)
+![](screenshots/appUser2.png)
 - Select the app registration you created above and choose your organization
 
 ## Create Custom Role in PowerPlatform
@@ -62,11 +62,11 @@ There are several ways to accomplish this task. Here are the steps that worked f
 - Navigate back to the admin screen for powerplatform here: [https://admin.powerplatform.microsoft.com/](https://admin.powerplatform.microsoft.com/)
 - Click `Environments`, choose your environment, and click `Settings` (same as above)
 - This time, select `Users + Permissions` and then select `Security Roles`
-![](../../../screenshots/Screen Shot 2023-07-17 at 8.57.57 AM.png)
+![](screenshots/securityRole1.png)
 - Click to create a new Role
 - Copy the `Basic User` role and then add additional permissions. 
 - Edit the role and grant access to the individual tables
-![](screenshots/Screen Shot 2023-07-17 at 9.02.09 AM.png)
+![](screenshots/securityRole2.png)
 
 ## Setup Postman
 
@@ -77,7 +77,7 @@ Once you can connect to Microsoft PowerApps from Postman, configuring the Camund
 This post from microsoft was helpful: [Use Postman with the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/use-postman-web-api)
 
 First, I created a new `Environment` in Postman with all the details gathered above that looks like this: 
-![](screenshots/Screen Shot 2023-07-17 at 8.28.27 AM.png)
+![](screenshots/environment1.png)
 
 - Note that the `CLIENT_ID` is the `Application (client) ID` you gathered above
 - Note that the `DYNAMICS_URL` is the host name from `WEB_API_URL` WITHOUT the `api` subdomain
@@ -86,7 +86,7 @@ First, I created a new `Environment` in Postman with all the details gathered ab
 ### Create a PostMan Request to get a Bearer Token
 
 Create a new request in Postman to send a `POST` request to the OAuth2 Token URL to get a bearer token. 
-![](screenshots/Screen Shot 2023-07-17 at 8.30.37 AM.png)
+![](screenshots/postman1.png)
 
 - Remember that the `OAuth2` token url looks something like this: `https://login.microsoftonline.com/<MY_TENANT_ID>/oauth2/v2.0/token`
 - Note that `client_id` is the `Application (client) ID` gathered above
@@ -95,7 +95,7 @@ Create a new request in Postman to send a `POST` request to the OAuth2 Token URL
 
 Try submitting this request. A successful response should include an access token like this:
 
-![](screenshots/Screen Shot 2023-07-17 at 8.43.39 AM.png)
+![](screenshots/postman2.png)
 
 Copy that `access_token` and paste it as the value of the Postman Environment variable named `DYNAMICS_BEARER_TOKEN`
 
@@ -104,7 +104,7 @@ Copy that `access_token` and paste it as the value of the Postman Environment va
 - Create a new request in Postman to send at `GET` request to get all records from the Accounts table. The url will look something like this: 
 `https://<MY_ORG_NAME>.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
 - Add a custom header named `Authorization`. The value of this header should be `Bearer <access_token>` as shown here:
-![](screenshots/Screen Shot 2023-07-17 at 9.32.44 AM.png)
+![](screenshots/postman3.png)
 
 ## Configure Camunda HTTP Rest Connector
 
@@ -116,9 +116,9 @@ Now that all the details about connecting to Microsoft are out of the way, it sh
 - Enter client id and secret with same values as used in Postman above
 - Enter the same `scope` as in the postman example above. It will look like this: `https://<MY_ORG_NAME>.crm.dynamics.com/.default` 
 - Make sure to select `Send as Basic Auth Header` as this is what Microsoft supports. 
-![](screenshots/Screen Shot 2023-07-17 at 9.49.34 AM.png)
+![](screenshots/connectors1.png)
 - Now configure the GET request. The url should be something similar to this `https://<MY_ORG_NAME>.crm.dynamics.com/api/data/v9.2/accounts?$select=name`
 - Don't forget to set a result variable name (or result expression depending on your requirements)
-![](screenshots/Screen Shot 2023-07-17 at 9.49.07 AM.png)
+![](screenshots/connectors2.png)
 - Deploy and run your process and if all goes well, you should see results similar to the following:
-![](screenshots/Screen Shot 2023-07-17 at 9.53.04 AM.png)
+![](screenshots/bpmn1.png)
