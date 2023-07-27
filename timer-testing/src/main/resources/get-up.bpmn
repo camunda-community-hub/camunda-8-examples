@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0nlacrn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
+  <bpmn:process id="GetUpProcess" name="Get Up" isExecutable="true">
+    <bpmn:startEvent id="KidsNeedToGetUpForSchoolStartEvent" name="Kids need to get up for school">
+      <bpmn:outgoing>Flow_0lin8i4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Gateway_09a2iuf">
+      <bpmn:incoming>Flow_0nkx488</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dptckr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1m7we6c</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="GetKidsDressedTask" name="Get kids dressed">
+      <bpmn:incoming>Flow_0dptckr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tdq750</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0dptckr" sourceRef="Gateway_09a2iuf" targetRef="GetKidsDressedTask" />
+    <bpmn:sequenceFlow id="Flow_1tdq750" sourceRef="GetKidsDressedTask" targetRef="Gateway_1a1rrop" />
+    <bpmn:parallelGateway id="Gateway_1a1rrop">
+      <bpmn:incoming>Flow_1tdq750</bpmn:incoming>
+      <bpmn:incoming>Flow_0nxql0b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j8vm25</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1m7we6c" sourceRef="Gateway_09a2iuf" targetRef="Wait5MinutesEvent1" />
+    <bpmn:intermediateCatchEvent id="Wait5MinutesEvent1" name="Wait 5 minutes">
+      <bpmn:incoming>Flow_1m7we6c</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nxql0b</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0xnag2v">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0nxql0b" sourceRef="Wait5MinutesEvent1" targetRef="Gateway_1a1rrop" />
+    <bpmn:task id="DriveKidsToSchoolTask" name="Drive kids to school">
+      <bpmn:incoming>Flow_0j8vm25</bpmn:incoming>
+      <bpmn:outgoing>Flow_0555ejd</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0j8vm25" sourceRef="Gateway_1a1rrop" targetRef="DriveKidsToSchoolTask" />
+    <bpmn:endEvent id="KidsAreAtSchoolEndEvent" name="Kids are at school">
+      <bpmn:incoming>Flow_0555ejd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0555ejd" sourceRef="DriveKidsToSchoolTask" targetRef="KidsAreAtSchoolEndEvent" />
+    <bpmn:subProcess id="GetEmFedSubProcess" name="Get &#39;em fed">
+      <bpmn:incoming>Flow_0lin8i4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fu80rx</bpmn:outgoing>
+      <bpmn:startEvent id="KidsAreHangryStartEvent" name="Kids are hangry">
+        <bpmn:outgoing>Flow_12farbr</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="TellKidsToGetUpTask" name="Tell kids to get up">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="callKids" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=&#34;Please get up&#34;" target="message" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>InBedSequenceFlow</bpmn:incoming>
+        <bpmn:incoming>Flow_12farbr</bpmn:incoming>
+        <bpmn:outgoing>Flow_0wk8jy9</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="Wait15MinutesEvent" name="Wait 15 minutes">
+        <bpmn:incoming>Flow_0qnm8kh</bpmn:incoming>
+        <bpmn:outgoing>Flow_1bnzxxc</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0mw1if0">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:parallelGateway id="Gateway_100oayt">
+        <bpmn:incoming>Flow_0wk8jy9</bpmn:incoming>
+        <bpmn:outgoing>Flow_0qnm8kh</bpmn:outgoing>
+        <bpmn:outgoing>Flow_12ryj08</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:parallelGateway id="Gateway_0elxfmr">
+        <bpmn:incoming>Flow_1bnzxxc</bpmn:incoming>
+        <bpmn:incoming>Flow_1jwk37j</bpmn:incoming>
+        <bpmn:outgoing>Flow_0p0upe4</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:serviceTask id="CheckCurrentProgressTask" name="Check current progress">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="checkProgress" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=[&#34;in bed&#34;,&#34;in bathroom&#34;,&#34;dressing&#34;,&#34;ready&#34;]" target="options" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0p0upe4</bpmn:incoming>
+        <bpmn:incoming>Flow_0n66e5m</bpmn:incoming>
+        <bpmn:outgoing>Flow_0ou5a82</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="CurrentProgressGateway" name="Current progress?" default="Flow_13zyqyt">
+        <bpmn:incoming>Flow_0ou5a82</bpmn:incoming>
+        <bpmn:outgoing>InBedSequenceFlow</bpmn:outgoing>
+        <bpmn:outgoing>ReadySequenceFlow</bpmn:outgoing>
+        <bpmn:outgoing>Flow_13zyqyt</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:task id="HaveBreakfastTask" name="Have breakfast">
+        <bpmn:incoming>Flow_14nugz7</bpmn:incoming>
+        <bpmn:outgoing>Flow_1dh3m0h</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:intermediateCatchEvent id="Wait5MinutesEvent" name="Wait 5 minutes">
+        <bpmn:incoming>Flow_13zyqyt</bpmn:incoming>
+        <bpmn:outgoing>Flow_0n66e5m</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1oq487m">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:parallelGateway id="Gateway_0fop05q">
+        <bpmn:incoming>ReadySequenceFlow</bpmn:incoming>
+        <bpmn:outgoing>Flow_14nugz7</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0ih5vlk</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:intermediateCatchEvent id="Wait15MinutesEvent1" name="Wait 15 minutes">
+        <bpmn:incoming>Flow_0ih5vlk</bpmn:incoming>
+        <bpmn:outgoing>Flow_0j2xfnn</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0kkywwd">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15M</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:parallelGateway id="Gateway_1po0o0g">
+        <bpmn:incoming>Flow_1dh3m0h</bpmn:incoming>
+        <bpmn:incoming>Flow_0j2xfnn</bpmn:incoming>
+        <bpmn:outgoing>Flow_05j17jg</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:sequenceFlow id="InBedSequenceFlow" name="in bed" sourceRef="CurrentProgressGateway" targetRef="TellKidsToGetUpTask">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=progress = "in bed"</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0wk8jy9" sourceRef="TellKidsToGetUpTask" targetRef="Gateway_100oayt" />
+      <bpmn:sequenceFlow id="Flow_0qnm8kh" sourceRef="Gateway_100oayt" targetRef="Wait15MinutesEvent" />
+      <bpmn:sequenceFlow id="Flow_1bnzxxc" sourceRef="Wait15MinutesEvent" targetRef="Gateway_0elxfmr" />
+      <bpmn:sequenceFlow id="Flow_12ryj08" sourceRef="Gateway_100oayt" targetRef="BreakfastAlreadyPreparedGateway" />
+      <bpmn:sequenceFlow id="Flow_0dz740p" sourceRef="PrepareBreakfastTask" targetRef="Gateway_1puef2j" />
+      <bpmn:sequenceFlow id="Flow_0p0upe4" sourceRef="Gateway_0elxfmr" targetRef="CheckCurrentProgressTask" />
+      <bpmn:sequenceFlow id="Flow_0n66e5m" sourceRef="Wait5MinutesEvent" targetRef="CheckCurrentProgressTask" />
+      <bpmn:sequenceFlow id="Flow_0ou5a82" sourceRef="CheckCurrentProgressTask" targetRef="CurrentProgressGateway" />
+      <bpmn:sequenceFlow id="ReadySequenceFlow" name="ready" sourceRef="CurrentProgressGateway" targetRef="Gateway_0fop05q">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=progress = "ready"</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_13zyqyt" sourceRef="CurrentProgressGateway" targetRef="Wait5MinutesEvent" />
+      <bpmn:sequenceFlow id="Flow_14nugz7" sourceRef="Gateway_0fop05q" targetRef="HaveBreakfastTask" />
+      <bpmn:sequenceFlow id="Flow_1dh3m0h" sourceRef="HaveBreakfastTask" targetRef="Gateway_1po0o0g" />
+      <bpmn:sequenceFlow id="Flow_0ih5vlk" sourceRef="Gateway_0fop05q" targetRef="Wait15MinutesEvent1" />
+      <bpmn:sequenceFlow id="Flow_0j2xfnn" sourceRef="Wait15MinutesEvent1" targetRef="Gateway_1po0o0g" />
+      <bpmn:sequenceFlow id="Flow_12farbr" sourceRef="KidsAreHangryStartEvent" targetRef="TellKidsToGetUpTask" />
+      <bpmn:endEvent id="KidsAreFedEndEvent" name="Kids are fed">
+        <bpmn:incoming>Flow_05j17jg</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_05j17jg" sourceRef="Gateway_1po0o0g" targetRef="KidsAreFedEndEvent" />
+      <bpmn:exclusiveGateway id="BreakfastAlreadyPreparedGateway" name="Breakfast already prepared?">
+        <bpmn:incoming>Flow_12ryj08</bpmn:incoming>
+        <bpmn:outgoing>NoSequenceFlow</bpmn:outgoing>
+        <bpmn:outgoing>YesSequenceFlow</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="NoSequenceFlow" name="no" sourceRef="BreakfastAlreadyPreparedGateway" targetRef="PrepareBreakfastTask">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=not(is defined(breakfastPrepared))</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:exclusiveGateway id="Gateway_1puef2j">
+        <bpmn:incoming>Flow_0dz740p</bpmn:incoming>
+        <bpmn:incoming>YesSequenceFlow</bpmn:incoming>
+        <bpmn:outgoing>Flow_1jwk37j</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_1jwk37j" sourceRef="Gateway_1puef2j" targetRef="Gateway_0elxfmr" />
+      <bpmn:sequenceFlow id="YesSequenceFlow" name="yes" sourceRef="BreakfastAlreadyPreparedGateway" targetRef="Gateway_1puef2j">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=is defined(breakfastPrepared)</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:scriptTask id="PrepareBreakfastTask" name="Prepare breakfast">
+        <bpmn:extensionElements>
+          <zeebe:script expression="=true" resultVariable="breakfastPrepared" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>NoSequenceFlow</bpmn:incoming>
+        <bpmn:outgoing>Flow_0dz740p</bpmn:outgoing>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0lin8i4" sourceRef="KidsNeedToGetUpForSchoolStartEvent" targetRef="GetEmFedSubProcess" />
+    <bpmn:sequenceFlow id="Flow_0fu80rx" sourceRef="GetEmFedSubProcess" targetRef="Gateway_197ueec" />
+    <bpmn:boundaryEvent id="RunningLateBoundaryEvent" name="Running late" attachedToRef="GetEmFedSubProcess">
+      <bpmn:outgoing>Flow_1ntpkvz</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1ogpeb7">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:task id="MakeThemReadyTask" name="Make them ready">
+      <bpmn:incoming>Flow_1ntpkvz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r954fl</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_1ntpkvz" sourceRef="RunningLateBoundaryEvent" targetRef="MakeThemReadyTask" />
+    <bpmn:exclusiveGateway id="Gateway_197ueec">
+      <bpmn:incoming>Flow_0fu80rx</bpmn:incoming>
+      <bpmn:incoming>Flow_0r954fl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nkx488</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0nkx488" sourceRef="Gateway_197ueec" targetRef="Gateway_09a2iuf" />
+    <bpmn:sequenceFlow id="Flow_0r954fl" sourceRef="MakeThemReadyTask" targetRef="Gateway_197ueec" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GetUpProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="KidsNeedToGetUpForSchoolStartEvent">
+        <dc:Bounds x="182" y="307" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="350" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07nze30_di" bpmnElement="Gateway_09a2iuf">
+        <dc:Bounds x="1675" y="300" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qq5x3l_di" bpmnElement="GetKidsDressedTask">
+        <dc:Bounds x="1780" y="285" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ms05by_di" bpmnElement="Gateway_1a1rrop">
+        <dc:Bounds x="1935" y="300" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tcsm17_di" bpmnElement="Wait5MinutesEvent1">
+        <dc:Bounds x="1812" y="200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1794" y="243" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1c60h93_di" bpmnElement="DriveKidsToSchoolTask">
+        <dc:Bounds x="2040" y="285" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1mf34dh_di" bpmnElement="KidsAreAtSchoolEndEvent">
+        <dc:Bounds x="2202" y="307" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2176" y="350" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_197ueec_di" bpmnElement="Gateway_197ueec" isMarkerVisible="true">
+        <dc:Bounds x="1575" y="300" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_078gc3a_di" bpmnElement="MakeThemReadyTask">
+        <dc:Bounds x="1470" y="570" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cneyek_di" bpmnElement="GetEmFedSubProcess" isExpanded="true">
+        <dc:Bounds x="270" y="80" width="1250" height="440" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0izzhru_di" bpmnElement="TellKidsToGetUpTask">
+        <dc:Bounds x="390" y="257" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0j6hhwj_di" bpmnElement="Wait15MinutesEvent">
+        <dc:Bounds x="652" y="279" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="631" y="322" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09xe5q2_di" bpmnElement="Gateway_100oayt">
+        <dc:Bounds x="545" y="272" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_18fdjtq_di" bpmnElement="Gateway_0elxfmr">
+        <dc:Bounds x="755" y="272" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06xu7nt_di" bpmnElement="CheckCurrentProgressTask">
+        <dc:Bounds x="860" y="257" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_10kf4yb_di" bpmnElement="CurrentProgressGateway" isMarkerVisible="true">
+        <dc:Bounds x="1015" y="272" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="996" y="329" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yezvza_di" bpmnElement="HaveBreakfastTask">
+        <dc:Bounds x="1220" y="257" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05g1783_di" bpmnElement="Wait5MinutesEvent">
+        <dc:Bounds x="962" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="944" y="435" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1mhogxy_di" bpmnElement="Gateway_0fop05q">
+        <dc:Bounds x="1125" y="272" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1fhcsph_di" bpmnElement="Wait15MinutesEvent1">
+        <dc:Bounds x="1252" y="172" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1231" y="215" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0rp37iu_di" bpmnElement="Gateway_1po0o0g">
+        <dc:Bounds x="1365" y="272" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1an8ej1_di" bpmnElement="KidsAreHangryStartEvent">
+        <dc:Bounds x="312" y="279" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="291" y="322" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hm9opq_di" bpmnElement="KidsAreFedEndEvent">
+        <dc:Bounds x="1462" y="279" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1451" y="322" width="59" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0te5bkb_di" bpmnElement="PrepareBreakfastTask">
+        <dc:Bounds x="620" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1puef2j_di" bpmnElement="Gateway_1puef2j" isMarkerVisible="true">
+        <dc:Bounds x="755" y="345" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0l2ommd_di" bpmnElement="BreakfastAlreadyPreparedGateway" isMarkerVisible="true">
+        <dc:Bounds x="545" y="345" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="447" y="360" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0dsnuky_di" bpmnElement="InBedSequenceFlow">
+        <di:waypoint x="1040" y="272" />
+        <di:waypoint x="1040" y="190" />
+        <di:waypoint x="440" y="190" />
+        <di:waypoint x="440" y="257" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="725" y="172" width="30" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12farbr_di" bpmnElement="Flow_12farbr">
+        <di:waypoint x="348" y="297" />
+        <di:waypoint x="390" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wk8jy9_di" bpmnElement="Flow_0wk8jy9">
+        <di:waypoint x="490" y="297" />
+        <di:waypoint x="545" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qnm8kh_di" bpmnElement="Flow_0qnm8kh">
+        <di:waypoint x="595" y="297" />
+        <di:waypoint x="652" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bnzxxc_di" bpmnElement="Flow_1bnzxxc">
+        <di:waypoint x="688" y="297" />
+        <di:waypoint x="755" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12ryj08_di" bpmnElement="Flow_12ryj08">
+        <di:waypoint x="570" y="322" />
+        <di:waypoint x="570" y="345" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jwk37j_di" bpmnElement="Flow_1jwk37j">
+        <di:waypoint x="780" y="345" />
+        <di:waypoint x="780" y="322" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p0upe4_di" bpmnElement="Flow_0p0upe4">
+        <di:waypoint x="805" y="297" />
+        <di:waypoint x="860" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n66e5m_di" bpmnElement="Flow_0n66e5m">
+        <di:waypoint x="962" y="410" />
+        <di:waypoint x="910" y="410" />
+        <di:waypoint x="910" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ou5a82_di" bpmnElement="Flow_0ou5a82">
+        <di:waypoint x="960" y="297" />
+        <di:waypoint x="1015" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05z101z_di" bpmnElement="ReadySequenceFlow">
+        <di:waypoint x="1065" y="297" />
+        <di:waypoint x="1125" y="297" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1092" y="279" width="28" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13zyqyt_di" bpmnElement="Flow_13zyqyt">
+        <di:waypoint x="1040" y="322" />
+        <di:waypoint x="1040" y="410" />
+        <di:waypoint x="998" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14nugz7_di" bpmnElement="Flow_14nugz7">
+        <di:waypoint x="1175" y="297" />
+        <di:waypoint x="1220" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dh3m0h_di" bpmnElement="Flow_1dh3m0h">
+        <di:waypoint x="1320" y="297" />
+        <di:waypoint x="1365" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ih5vlk_di" bpmnElement="Flow_0ih5vlk">
+        <di:waypoint x="1150" y="272" />
+        <di:waypoint x="1150" y="190" />
+        <di:waypoint x="1252" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j2xfnn_di" bpmnElement="Flow_0j2xfnn">
+        <di:waypoint x="1288" y="190" />
+        <di:waypoint x="1390" y="190" />
+        <di:waypoint x="1390" y="272" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05j17jg_di" bpmnElement="Flow_05j17jg">
+        <di:waypoint x="1415" y="297" />
+        <di:waypoint x="1462" y="297" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k15q2v_di" bpmnElement="NoSequenceFlow">
+        <di:waypoint x="570" y="395" />
+        <di:waypoint x="570" y="450" />
+        <di:waypoint x="620" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="579" y="419" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dz740p_di" bpmnElement="Flow_0dz740p">
+        <di:waypoint x="720" y="450" />
+        <di:waypoint x="780" y="450" />
+        <di:waypoint x="780" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o8zuy5_di" bpmnElement="YesSequenceFlow">
+        <di:waypoint x="595" y="370" />
+        <di:waypoint x="755" y="370" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="666" y="352" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0iw8lvm_di" bpmnElement="RunningLateBoundaryEvent">
+        <dc:Bounds x="1412" y="502" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1399" y="545" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0lin8i4_di" bpmnElement="Flow_0lin8i4">
+        <di:waypoint x="218" y="325" />
+        <di:waypoint x="270" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nkx488_di" bpmnElement="Flow_0nkx488">
+        <di:waypoint x="1625" y="325" />
+        <di:waypoint x="1675" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dptckr_di" bpmnElement="Flow_0dptckr">
+        <di:waypoint x="1725" y="325" />
+        <di:waypoint x="1780" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m7we6c_di" bpmnElement="Flow_1m7we6c">
+        <di:waypoint x="1700" y="300" />
+        <di:waypoint x="1700" y="218" />
+        <di:waypoint x="1812" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tdq750_di" bpmnElement="Flow_1tdq750">
+        <di:waypoint x="1880" y="325" />
+        <di:waypoint x="1935" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nxql0b_di" bpmnElement="Flow_0nxql0b">
+        <di:waypoint x="1848" y="218" />
+        <di:waypoint x="1960" y="218" />
+        <di:waypoint x="1960" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j8vm25_di" bpmnElement="Flow_0j8vm25">
+        <di:waypoint x="1985" y="325" />
+        <di:waypoint x="2040" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0555ejd_di" bpmnElement="Flow_0555ejd">
+        <di:waypoint x="2140" y="325" />
+        <di:waypoint x="2202" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fu80rx_di" bpmnElement="Flow_0fu80rx">
+        <di:waypoint x="1520" y="325" />
+        <di:waypoint x="1575" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r954fl_di" bpmnElement="Flow_0r954fl">
+        <di:waypoint x="1570" y="610" />
+        <di:waypoint x="1600" y="610" />
+        <di:waypoint x="1600" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ntpkvz_di" bpmnElement="Flow_1ntpkvz">
+        <di:waypoint x="1430" y="538" />
+        <di:waypoint x="1430" y="610" />
+        <di:waypoint x="1470" y="610" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
