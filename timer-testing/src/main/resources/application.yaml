@@ -1,0 +1,7 @@
+
+zeebe:
+  client:
+    security:
+      plaintext: true
+    broker:
+      gateway-address: localhost:26500
