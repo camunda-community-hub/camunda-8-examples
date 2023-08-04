@@ -2,9 +2,17 @@ package com.camunda.consulting;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.JsonMapper;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.worker.JobWorker;
 import io.camunda.zeebe.model.bpmn.Bpmn;
+import io.camunda.zeebe.spring.client.annotation.value.ZeebeWorkerValue;
+import io.camunda.zeebe.spring.client.event.ZeebeClientClosingEvent;
+import io.camunda.zeebe.spring.client.event.ZeebeClientCreatedEvent;
+import io.camunda.zeebe.spring.client.jobhandling.CommandExceptionHandlingStrategy;
+import io.camunda.zeebe.spring.client.jobhandling.JobHandlerInvokingSpringBeans;
+import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
+import io.camunda.zeebe.spring.client.metrics.MetricsRecorder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -21,23 +29,34 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.SmartLifecycle;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserTaskService implements SmartLifecycle {
+public class UserTaskService {
   private static final String ORIGINAL_KEY = "originalKey";
   private static final Logger LOG = LoggerFactory.getLogger(UserTaskService.class);
   private static final Duration REFRESH_DURATION = Duration.ofSeconds(15);
   private final Map<Long, UserTask> userTasks = new ConcurrentHashMap<>();
   private final Map<LocalDateTime, List<Long>> timeouts = new ConcurrentHashMap<>();
   private final ZeebeClient zeebeClient;
-  private final Set<DynamicJobHandler> jobHandlers;
+  private final JobWorkerManager jobWorkerManager;
+  private final CommandExceptionHandlingStrategy commandExceptionHandlingStrategy;
+  private final JsonMapper jsonMapper;
+  private final MetricsRecorder metricsRecorder;
   private JobWorker userTaskWorker;
 
-  public UserTaskService(ZeebeClient zeebeClient, Set<DynamicJobHandler> jobHandlers) {
+  public UserTaskService(
+      ZeebeClient zeebeClient,
+      JobWorkerManager jobWorkerManager,
+      CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
+      JsonMapper jsonMapper,
+      MetricsRecorder metricsRecorder) {
     this.zeebeClient = zeebeClient;
-    this.jobHandlers = jobHandlers;
+    this.jobWorkerManager = jobWorkerManager;
+    this.commandExceptionHandlingStrategy = commandExceptionHandlingStrategy;
+    this.jsonMapper = jsonMapper;
+    this.metricsRecorder = metricsRecorder;
   }
 
   private void add(UserTask userTask, Duration timeToLive) {
@@ -59,7 +78,6 @@ public class UserTaskService implements SmartLifecycle {
   public void complete(Long key, ObjectNode variables) {
     UserTask userTask = getUserTask(key);
     assert userTask != null;
-    remove(key);
     // create random job types for each future job
     Map<String, String> taskTypes =
         userTask.getRollbackTaskTypes().stream()
@@ -70,30 +88,34 @@ public class UserTaskService implements SmartLifecycle {
     // add them to variables
     taskTypes.forEach(variables::put);
     Set<JobWorker> rollbackableWorkers = ConcurrentHashMap.newKeySet();
-    AtomicReference<Exception> e = new AtomicReference<>();
+    AtomicReference<Exception> failedJobException = new AtomicReference<>();
     // define subscriptions for future tasks
     taskTypes.forEach(
         (jobTypeName, jobType) -> {
-          DynamicJobHandler dynamicJobHandler =
-              jobHandlers.stream()
-                  .filter(djh -> djh.getJobTypeName().equals(jobTypeName))
-                  .findFirst()
-                  .orElseThrow();
+          // find the worker value by the jobTypeName (as the actual job type is dynamic)
+          ZeebeWorkerValue zeebeWorkerValue =
+              jobWorkerManager.findJobWorkerConfigByType(jobTypeName).orElseThrow();
+          // create the invoker for this worker value
+          JobHandlerInvokingSpringBeans jobHandlerInvokingSpringBeans =
+              new JobHandlerInvokingSpringBeans(
+                  zeebeWorkerValue, commandExceptionHandlingStrategy, jsonMapper, metricsRecorder);
+          // wrap it to be able to react on the outcome
           RollbackJobHandler jobHandler =
               new RollbackJobHandler(
-                  dynamicJobHandler,
+                  jobHandlerInvokingSpringBeans,
                   userTask.getElementId(),
                   getOriginalKeyVariableName(userTask),
                   userTask.getOriginalKey(),
-                  e::set,
-                  zeebeClient);
+                  failedJobException::set,
+                  zeebeClient,
+                  jsonMapper);
 
           JobWorker jobWorker =
               zeebeClient.newWorker().jobType(jobType).handler(jobHandler).name(jobTypeName).open();
           rollbackableWorkers.add(jobWorker);
           jobHandler.setCloser(
               () -> {
-                if (e.get() != null) {
+                if (failedJobException.get() != null) {
                   rollbackableWorkers.forEach(JobWorker::close);
                   rollbackableWorkers.clear();
                 } else {
@@ -111,15 +133,17 @@ public class UserTaskService implements SmartLifecycle {
         // this is bad style
       }
     }
-    if (e.get() != null) {
+    remove(userTask.getKey());
+    remove(userTask.getOriginalKey());
+    if (failedJobException.get() != null) {
       throw new RuntimeException(
-          "An exception happened while completing rollbackable tasks", e.get());
+          "An exception happened while completing rollbackable tasks", failedJobException.get());
     }
   }
 
   public List<UserTask> getUserTasks() {
     removeTimedOutTasks();
-    return new ArrayList<>(userTasks.values());
+    return userTasks.values().stream().distinct().toList();
   }
 
   public UserTask getUserTask(Long key) {
@@ -135,7 +159,7 @@ public class UserTaskService implements SmartLifecycle {
         .forEach(this::remove);
   }
 
-  @Override
+  @EventListener(ZeebeClientCreatedEvent.class)
   public void start() {
     userTaskWorker =
         zeebeClient
@@ -179,16 +203,11 @@ public class UserTaskService implements SmartLifecycle {
     }
   }
 
-  @Override
+  @EventListener(ZeebeClientClosingEvent.class)
   public void stop() {
     if (userTaskWorker != null) {
       userTaskWorker.close();
       userTaskWorker = null;
     }
-  }
-
-  @Override
-  public boolean isRunning() {
-    return userTaskWorker != null;
   }
 }

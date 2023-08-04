@@ -2,6 +2,7 @@ package com.camunda.consulting;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.util.List;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,7 +32,7 @@ public class UserTaskController {
       service.complete(key, variables);
       return ResponseEntity.ok().build();
     } catch (Exception e) {
-      return ResponseEntity.internalServerError().body(e.getMessage());
+      return ResponseEntity.internalServerError().body(ExceptionUtils.getStackTrace(e));
     }
   }
 }
