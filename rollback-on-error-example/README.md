@@ -2,6 +2,8 @@
 
 ## What is the use case?
 
+![Rollback Process](./docs/rollback-process.png)
+
 After a user task, a validation can follow and possibly also saving data to a service.
 
 These 2 actions might be required to be run synchronous.
