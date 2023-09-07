@@ -75,6 +75,18 @@ jobs:
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: zeebe-client-plain-java
+  build-rollback-on-error-example:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Build with Maven
+      run: mvn package -B
+      working-directory: rollback-on-error-example
   build-timer-testing:
     runs-on: ubuntu-latest
     steps:

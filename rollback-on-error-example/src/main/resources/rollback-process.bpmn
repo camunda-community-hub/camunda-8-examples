@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1hvo0c0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.13.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
+  <bpmn:process id="RollbackOnErrorProcess" name="Rollback On Error" isExecutable="true">
+    <bpmn:startEvent id="ProcessStartedStartEvent" name="Process started">
+      <bpmn:outgoing>Flow_1u3gtgj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1u3gtgj" sourceRef="ProcessStartedStartEvent" targetRef="EnterDataTask" />
+    <bpmn:userTask id="EnterDataTask" name="Enter data">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="rollbackOnError" value="validateDataType, saveDataType" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u3gtgj</bpmn:incoming>
+      <bpmn:outgoing>Flow_197auj7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_197auj7" sourceRef="EnterDataTask" targetRef="ValidateDataTask" />
+    <bpmn:serviceTask id="ValidateDataTask" name="Validate data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="=validateDataType" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_197auj7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c50qt2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1c50qt2" sourceRef="ValidateDataTask" targetRef="SaveDataTask" />
+    <bpmn:serviceTask id="SaveDataTask" name="Save data">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="=saveDataType" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c50qt2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zk11sd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="ProcessCompleteEndEvent" name="Process complete">
+      <bpmn:incoming>Flow_0zk11sd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0zk11sd" sourceRef="SaveDataTask" targetRef="ProcessCompleteEndEvent" />
+    <bpmn:textAnnotation id="TextAnnotation_0q9efln">
+      <bpmn:text>In case this task fails, you should go back to "Enter data".
+
+This should happen just like in Camunda Platform 7, where you could use a transaction.</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0v64ut6" sourceRef="ValidateDataTask" targetRef="TextAnnotation_0q9efln" />
+    <bpmn:association id="Association_1ilbrmk" sourceRef="TextAnnotation_0q9efln" targetRef="SaveDataTask" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="RollbackOnErrorProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="ProcessStartedStartEvent">
+        <dc:Bounds x="179" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="262" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01hea1n_di" bpmnElement="EnterDataTask">
+        <dc:Bounds x="270" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0cgxojz_di" bpmnElement="ValidateDataTask">
+        <dc:Bounds x="430" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t54z8a_di" bpmnElement="SaveDataTask">
+        <dc:Bounds x="590" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1lgu38o_di" bpmnElement="ProcessCompleteEndEvent">
+        <dc:Bounds x="752" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="726" y="262" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0q9efln_di" bpmnElement="TextAnnotation_0q9efln">
+        <dc:Bounds x="450" y="90" width="320" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1u3gtgj_di" bpmnElement="Flow_1u3gtgj">
+        <di:waypoint x="215" y="237" />
+        <di:waypoint x="270" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_197auj7_di" bpmnElement="Flow_197auj7">
+        <di:waypoint x="370" y="237" />
+        <di:waypoint x="430" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c50qt2_di" bpmnElement="Flow_1c50qt2">
+        <di:waypoint x="530" y="237" />
+        <di:waypoint x="590" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zk11sd_di" bpmnElement="Flow_0zk11sd">
+        <di:waypoint x="690" y="237" />
+        <di:waypoint x="752" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0v64ut6_di" bpmnElement="Association_0v64ut6">
+        <di:waypoint x="486" y="197" />
+        <di:waypoint x="490" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ilbrmk_di" bpmnElement="Association_1ilbrmk">
+        <di:waypoint x="621" y="170" />
+        <di:waypoint x="629" y="197" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
