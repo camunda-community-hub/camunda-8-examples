@@ -40,3 +40,8 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
+- package-ecosystem: maven
+  directory: "/async-service-task"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
