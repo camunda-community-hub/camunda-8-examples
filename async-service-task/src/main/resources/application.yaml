@@ -1,0 +1,4 @@
+zeebe:
+  client:
+    security:
+      plaintext: true
