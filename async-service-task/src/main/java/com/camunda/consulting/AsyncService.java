@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 public class AsyncService {
   private static final Logger LOG = LoggerFactory.getLogger(AsyncService.class);
   private final Map<String, LocalDateTime> transactions = new HashMap<>();
+  private final AsyncServiceProperties properties;
+
+  public AsyncService(AsyncServiceProperties properties) {
+    this.properties = properties;
+  }
 
   /**
    * Creates a transactionId that is guaranteed to be available
@@ -36,7 +41,7 @@ public class AsyncService {
       LOG.info("Transaction '{}' already started, request will be ignored", transactionId);
     } else {
       LOG.info("Creating transaction '{}'", transactionId);
-      transactions.put(transactionId, LocalDateTime.now().plusMinutes(1L));
+      transactions.put(transactionId, LocalDateTime.now().plus(properties.getDuration()));
     }
   }
 

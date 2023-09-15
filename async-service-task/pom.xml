@@ -44,6 +44,12 @@
       <groupId>io.camunda.spring</groupId>
       <artifactId>spring-boot-starter-camunda-test</artifactId>
       <version>${spring-zeebe.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 

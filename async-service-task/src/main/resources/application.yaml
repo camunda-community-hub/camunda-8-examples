@@ -2,3 +2,6 @@ zeebe:
   client:
     security:
       plaintext: true
+
+async-service:
+  duration: PT1M
