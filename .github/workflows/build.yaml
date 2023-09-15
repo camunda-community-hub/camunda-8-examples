@@ -99,3 +99,15 @@ jobs:
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: timer-testing
+  build-async-service-task:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+    - name: Build with Maven
+      run: mvn verify -PcheckFormat -B
+      working-directory: async-service-task
