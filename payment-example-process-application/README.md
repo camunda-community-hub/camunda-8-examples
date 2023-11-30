@@ -30,6 +30,27 @@ https://github.com/camunda-community-hub/spring-zeebe#configuring-camunda-platfo
 Spring Boot offers configuration over environment variables:
 https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config
 
+The application.yaml, that is included in the image, contains values for local
+development.
+
+```
+zeebe.client.broker.gateway-address=localhost:26500
+zeebe.client.security.plaintext=true
+```
+
+Maybe you have to override the values in your cluster.
+
+## Using a Camunda 8 SaaS cluster
+
+If you want to connect the container to a Camunda 8 cloud cluster, the docker
+command looks like this:
+
+```
+docker run -e ZEEBE_CLIENT_CLOUD_CLUSTERID -e ZEEBE_CLIENT_CLOUD_CLIENTID -e ZEEBE_CLIENT_CLOUD_CLIENTSECRET -e ZEEBE_CLIENT_CLOUD_REGION -e ZEEBE_CLIENT_SECURITY_PLAINTEXT -p 8080:8080 --name payment-example-process-application payment-example-process-application:0.0.1-SNAPSHOT
+```
+
+The environment variables were set in the shell before.
+
 ## Running
 
 The application exposes a webserver on port 8080 with an HTML page containing a
