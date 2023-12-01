@@ -11,14 +11,12 @@ public class CustomerService {
 
   private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);
 
-  /**
-   * The customer credit are the last digits of the customer id
-   */
+  /** The customer credit are the last digits of the customer id */
   private Pattern pattern = Pattern.compile("(.*?)(\\d*)");
 
   /**
    * Deduct the credit for the given customer and the given amount
-   * 
+   *
    * @param customerId
    * @param amount
    * @param credit
@@ -41,7 +39,7 @@ public class CustomerService {
 
   /**
    * Get the current customer credit
-   * 
+   *
    * @param customerId
    * @return the current credit of the given customer
    */
@@ -59,5 +57,4 @@ public class CustomerService {
 
     return credit;
   }
-
 }
