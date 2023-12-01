@@ -111,7 +111,7 @@ jobs:
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: async-service-task
-  build-payment-example-process-application
+  build-payment-example-process-application:
     runs-on: ubuntu-latest
     steps: 
     - uses: actions/checkout@v3
