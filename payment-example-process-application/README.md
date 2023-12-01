@@ -13,7 +13,19 @@ first running example in your Self-managed installation of a Camunda 8 cluster.
 - REST Api to start process instance (scripted by yourself)
 - Workers with business logic included
 
-## Building the container
+## Use the application
+
+The application is provided as a container image here:
+https://registry.camunda.cloud/harbor/projects/1/repositories/payment-example-process-application/artifacts-tab.
+
+You can pull it from `library` in `registry.camunda.cloud` as
+`payment-example-process-application:0.0.1-SNAPSHOT`
+
+```
+docker pull registry.camunda.cloud/library/payment-example-process-application:0.0.1-SNAPSHOT
+```
+
+## Build the image
 
 ```
 mvn clean spring-boot:build-image
