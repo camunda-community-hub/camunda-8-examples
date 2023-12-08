@@ -17,5 +17,4 @@
 - [ ] My code is formatted by spotless
 - [ ] I have added at least one meaningful test to assert the behaviour of the example.
 - [ ] I have created documentation that informs about the purpose, the functionality and how to setup the example
-- [ ] I have added my example to `.github/dependabot.yml`
 - [ ] I have added a build job for my example to `.github/workflows/build.yaml`
