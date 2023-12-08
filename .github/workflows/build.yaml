@@ -6,7 +6,7 @@ jobs:
   build-twitter-review-java-springboot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -18,7 +18,7 @@ jobs:
   build-dmn-java-springboot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -30,7 +30,7 @@ jobs:
   build-large-multi-instance-example:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -42,7 +42,7 @@ jobs:
   build-start-form-springboot:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -54,7 +54,7 @@ jobs:
   build-synchronous-response-springboot:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -66,7 +66,7 @@ jobs:
   build-zeebe-client-plain-java:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -78,7 +78,7 @@ jobs:
   build-rollback-on-error-example:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -90,7 +90,7 @@ jobs:
   build-timer-testing:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
@@ -102,7 +102,7 @@ jobs:
   build-async-service-task:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
