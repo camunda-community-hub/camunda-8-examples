@@ -45,9 +45,9 @@ public class TaskService {
     }
   }
 
-  public List<TaskOverviewDto> getTasks() {
+  public List<TaskOverviewDto> getTasks(boolean assignedOnly) {
     try {
-      return camundaTaskListClient.getTasks(new TaskSearch().setState(TaskState.CREATED)).getItems().stream()
+      return camundaTaskListClient.getTasks(new TaskSearch().setState(TaskState.CREATED).setAssigned(assignedOnly)).getItems().stream()
                                   .map(this::map)
                                   .toList();
     } catch (TaskListException e) {

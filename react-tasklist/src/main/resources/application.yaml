@@ -1,13 +1,13 @@
 camunda:
   tasklist:
-    url: http://localhost:8082
+    url: https://platform.consulting-sandbox.camunda.cloud/tasklist
     authentication:
       client-id: tasklist
-      client-secret: XALaRPl5qwTEItdwCMiPS62nVpKs7dL7
-      keycloak-url: http://localhost:18080
+      client-secret: 03MWzRHY0e
+      keycloak-url: https://platform.consulting-sandbox.camunda.cloud
       keycloak-realm: camunda-platform
   webhook:
-    url: http://localhost:8085/inbound
+    url: https://platform.consulting-sandbox.camunda.cloud/connectors/inbound
     authorization:
       username: demo
       password: demo
