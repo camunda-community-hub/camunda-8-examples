@@ -1,0 +1,15 @@
+zeebe:
+  client:
+    security:
+      plaintext: true
+    broker:
+      gateway-address: localhost:26500
+spring:
+  main:
+    web-application-type: none
+camunda:
+  connector:
+    webhook:
+      enabled: false
+    polling:
+      enabled: false
