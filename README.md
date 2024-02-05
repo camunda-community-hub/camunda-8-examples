@@ -8,6 +8,10 @@ A collection of examples related to the usage of Camunda 8.
 
 Check out the repo. Navigate to the project you are interested in. Each project should contain a guide on how to use it.
 
+* an introduction to the purpose
+* a brief description of the functionality
+* a guide on how to setup and test the example
+
 ## Report problems
 
 If problems occur, please file an issue containing:
