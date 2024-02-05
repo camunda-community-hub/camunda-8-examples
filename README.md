@@ -6,7 +6,7 @@ A collection of examples related to the usage of Camunda 8.
 
 ## How to use
 
-Check out the repo. Navigate to the project you are interested in. Each project should contain a guide on how to use it.
+Check out the repo. Navigate to the project you are interested in. Each project should contain:
 
 * an introduction to the purpose
 * a brief description of the functionality
