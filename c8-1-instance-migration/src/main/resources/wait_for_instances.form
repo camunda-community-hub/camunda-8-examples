@@ -1,0 +1,18 @@
+{
+  "components": [
+    {
+      "text": "# Wait until waiting state\nPlease wait until all process instances have reached the desired waiting state. Afterward, complete the task to start the instance migration.",
+      "type": "text",
+      "id": "Field_0xdo7kr"
+    }
+  ],
+  "type": "default",
+  "id": "Form_064so1a",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}
