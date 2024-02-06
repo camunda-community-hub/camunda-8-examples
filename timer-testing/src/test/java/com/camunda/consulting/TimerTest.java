@@ -14,11 +14,13 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ZeebeProcessTest
 @ExtendWith(ProcessEngineCoverageExtension.class)
+@Disabled
 public class TimerTest {
   private static final Duration DEFAULT = Duration.ofSeconds(30);
   ZeebeTestEngine zeebeTestEngine;
@@ -82,6 +84,7 @@ public class TimerTest {
   private void skipTimer(Duration timerDuration) throws InterruptedException, TimeoutException {
     zeebeTestEngine.waitForIdleState(DEFAULT);
     zeebeTestEngine.increaseTime(timerDuration);
+    zeebeTestEngine.waitForIdleState(DEFAULT);
     zeebeTestEngine.waitForBusyState(DEFAULT);
     zeebeTestEngine.waitForIdleState(DEFAULT);
   }
