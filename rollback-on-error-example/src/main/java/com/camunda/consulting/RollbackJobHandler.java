@@ -3,10 +3,12 @@ package com.camunda.consulting;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.JsonMapper;
 import io.camunda.zeebe.client.api.ZeebeFuture;
+import io.camunda.zeebe.client.api.command.ActivateJobsCommandStep1;
 import io.camunda.zeebe.client.api.command.CompleteJobCommandStep1;
 import io.camunda.zeebe.client.api.command.FailJobCommandStep1;
 import io.camunda.zeebe.client.api.command.FailJobCommandStep1.FailJobCommandStep2;
 import io.camunda.zeebe.client.api.command.FinalCommandStep;
+import io.camunda.zeebe.client.api.command.StreamJobsCommandStep1;
 import io.camunda.zeebe.client.api.command.ThrowErrorCommandStep1;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.FailJobResponse;
@@ -121,6 +123,16 @@ public class RollbackJobHandler implements JobHandler {
     @Override
     public ThrowErrorCommandStep1 newThrowErrorCommand(ActivatedJob job) {
       return jobClient.newThrowErrorCommand(job);
+    }
+
+    @Override
+    public ActivateJobsCommandStep1 newActivateJobsCommand() {
+      return jobClient.newActivateJobsCommand();
+    }
+
+    @Override
+    public StreamJobsCommandStep1 newStreamJobsCommand() {
+      return jobClient.newStreamJobsCommand();
     }
   }
 
