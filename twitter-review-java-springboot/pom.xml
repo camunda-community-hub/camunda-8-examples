@@ -10,7 +10,7 @@
   <properties>
     <java.version>21</java.version>
     <spring-boot.version>3.2.2</spring-boot.version>
-    <zeebe.version>8.4.2</zeebe.version>
+    <zeebe.version>8.4.3</zeebe.version>
     <spring-zeebe.version>8.4.1</spring-zeebe.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>

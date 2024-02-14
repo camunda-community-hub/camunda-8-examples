@@ -10,7 +10,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <zeebe.version>8.4.2</zeebe.version>
+    <zeebe.version>8.4.3</zeebe.version>
     <spring-zeebe.version>8.4.1</spring-zeebe.version>
     <spring-boot.version>3.2.2</spring-boot.version>
   </properties>
