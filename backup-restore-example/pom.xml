@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>Backup and Restore Example</name>
+  <groupId>org.example.camunda.process.solution</groupId>
+  <artifactId>backup-restore-example</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.9</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+
+  <properties>
+    <java.version>17</java.version>
+    <spring-zeebe.version>8.3.1</spring-zeebe.version>
+    <zeebe.version>8.3.1</zeebe.version>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>zeebe-client-java</artifactId>
+      <version>${zeebe.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-zeebe-starter</artifactId>
+      <version>${spring-zeebe.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.30</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <!-- use Java 17 dependencies if available -->
+      <id>jdk17+</id>
+      <activation>
+          <jdk>[17,)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <!-- see: https://docs.camunda.io/docs/components/best-practices/development/testing-process-definitions/#writing-process-tests-in-java -->
+          <groupId>io.camunda</groupId>
+          <artifactId>zeebe-process-test-extension</artifactId>
+          <version>${zeebe.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <!-- see: https://github.com/camunda-community-hub/spring-zeebe#writing-test-cases -->
+          <groupId>io.camunda</groupId>
+          <artifactId>spring-zeebe-test</artifactId>
+          <version>${spring-zeebe.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <!-- use alternative dependencies if Java 17 is not available -->
+      <id>jdk8-16</id>
+      <activation>
+          <jdk>[8,17)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <!-- see: https://github.com/camunda/zeebe-process-test#testcontainers-jdk-8 -->
+          <groupId>io.camunda</groupId>
+          <artifactId>zeebe-process-test-extension-testcontainer</artifactId>
+          <version>${zeebe.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <!-- see: https://github.com/camunda-community-hub/spring-zeebe#writing-test-cases -->
+          <groupId>io.camunda</groupId>
+          <artifactId>spring-zeebe-test-testcontainer</artifactId>
+          <version>${spring-zeebe.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+</project>

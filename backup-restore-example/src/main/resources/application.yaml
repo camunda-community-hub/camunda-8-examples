@@ -1,0 +1,38 @@
+zeebe:
+  client:
+    broker:
+      gateway-address: your-cluster-address:443
+    cloud:
+      auth-url: https://your-cluster-address:443/auth/realms/camunda-platform/protocol/openid-connect/token
+      client-id: zeebe
+      client-secret: EasySecret
+
+##########################
+### Backup and Restore ###
+##########################
+backup:
+  zeebe:
+    url: http://localhost:9600
+    es-bucket: bucket-for-zeebe-es-backup
+    es-region: eu-central-1
+    es-repository: zeebe_es_backup_repository
+    component: zeebe
+  operate:
+    url: http://localhost:8081/operate
+    es-bucket: bucket-for-operate-es-backup
+    es-region: eu-central-1
+    es-repository: operate_es_backup_repository
+    component: operate
+  tasklist:
+    url: http://localhost:8082/tasklist
+    es-bucket: bucket-for-tasklist-es-backup
+    es-region: eu-central-1
+    es-repository: tasklist_es_backup_repository
+    component: tasklist
+  optimize:
+    url: http://localhost:8092
+    es-bucket: bucket-for-optimize-es-backup
+    es-region: eu-central-1
+    component: optimize
+    es-repository: optimize_es_backup_repository
+  elasticsearch-url: http://localhost:9200

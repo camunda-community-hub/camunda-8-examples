@@ -1,0 +1,149 @@
+global:
+  multitenancy:
+    enabled: false
+  ingress:
+    enabled: true
+    className: nginx
+    host: "your-cluster-address"
+    tls:
+      enabled: true
+      secretName: "tls-secret"
+  image:
+    tag: 8.3.1
+    pullPolicy: Always
+  identity:
+    auth:
+      publicIssuerUrl: "https://your-cluster-address/auth/realms/camunda-platform"
+      zeebe:
+        existingSecret: EasySecret
+      operate:
+        redirectUrl: "https://your-cluster-address/operate"
+        existingSecret: EasySecret
+      tasklist:
+        redirectUrl: "https://your-cluster-address/tasklist"
+        existingSecret: EasySecret
+      optimize:
+        redirectUrl: "https://your-cluster-address/optimize"
+        existingSecret: EasySecret
+  postgresql:
+    auth:
+      postgresPassword: EasySecret
+      password: EasySecret
+
+operate:
+  enabled: true
+  contextPath: "/operate"
+  env:
+    - name: CAMUNDA_OPERATE_BACKUP_REPOSITORY_NAME
+      value: operate_es_backup_repository
+
+tasklist:
+  enabled: true
+  contextPath: "/tasklist"
+  env:
+    - name: CAMUNDA_TASKLIST_BACKUP_REPOSITORY_NAME
+      value: tasklist_es_backup_repository
+
+optimize:
+  enabled: true
+  contextPath: "/optimize"
+  env:
+    - name: CAMUNDA_OPTIMIZE_BACKUP_REPOSITORY_NAME
+      value: optimize_es_backup_repository
+
+webModeler:
+  enabled: false
+
+#web modeler
+postgresql:
+  enabled: false
+
+prometheusServiceMonitor:
+  enabled: false
+
+connectors:
+  enabled: false
+
+identity:
+  contextPath: "/identity"
+  fullURL: "https://your-cluster-address/identity"
+  keycloak:
+    auth:
+      adminPassword: EasySecret
+      managementPassword: EasySecret
+    postgresql:
+      auth:
+        password: EasySecret
+    extraEnvVars:
+      - name: KEYCLOAK_PROXY_ADDRESS_FORWARDING
+        value: "true"
+      - name: KEYCLOAK_FRONTEND_URL
+        value: "https://your-cluster-address/auth"
+  # for multi-tenancy
+  postgresql:
+    enabled: false
+
+zeebe-gateway:
+  ingress:
+    enabled: true
+    className: nginx
+    host: "your-cluster-address"
+    tls:
+      enabled: true
+      secretName: "tls-secret"
+  replicas: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2048Mi"
+      cpu: "1000m"
+
+zeebe:
+  clusterSize: 3
+  partitionCount: 3
+  replicationFactor: 3
+  pvcSize: 32Gi
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512M"
+    limits:
+      cpu: "512m"
+      memory: "2Gi"
+  env:
+    - name: ZEEBE_BROKER_DATA_BACKUP_STORE
+      value: S3
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_BUCKETNAME
+      value: <my-s3-zeebe-backup-bucket>
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_BASEPATH
+      value: <my-s3-zeebe-backup-basepath>
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_ENDPOINT
+      value: https://s3.eu-central-1.amazonaws.com
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_REGION
+      value: eu-central-1
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_ACCESSKEY
+      value: <my-s3-accesskey>
+    - name: ZEEBE_BROKER_DATA_BACKUP_S3_SECRETKEY
+      value: <my-s3-secretkey>
+
+elasticsearch:
+  master:
+    replicaCount: 1
+    persistence:
+      size: 15Gi
+  initScripts:
+    init-keystore.sh: |
+      #!/bin/bash
+      set -e
+      # Add S3 client default keys to the keystore
+      echo "$S3_SECRET_KEY" | elasticsearch-keystore add -x s3.client.default.secret_key
+      echo "$S3_ACCESS_KEY" | elasticsearch-keystore add -x s3.client.default.access_key
+
+      echo "S3 keys added to Elasticsearch keystore"
+  extraEnvVars:
+    - name: S3_SECRET_KEY
+      value: <my-s3-secretkey>
+    - name: S3_ACCESS_KEY
+      value: <my-s3-accesskey>
