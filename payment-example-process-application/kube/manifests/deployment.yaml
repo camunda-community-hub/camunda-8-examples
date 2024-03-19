@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-example-process-application
+  namespace: c8-payment-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-example-process-application
+  template:
+    metadata:
+      labels:
+        app: payment-example-process-application
+    spec:
+      containers:
+      - name: payment-example-process-application
+        image: registry.camunda.cloud/library/payment-example-process-application:0.0.1-SNAPSHOT
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS
+          value: "camunda-platform-zeebe-gateway.camunda-platform.svc.cluster.local:26500"
+        - name: ZEEBE_CLIENT_SECURITY_PLAINTEXT
+          value: "true"
+        - name: ZEEBE_CLIENT_ID
+          value: "payment-app"
+        - name: ZEEBE_AUTHORIZATION_SERVER_URL
+          value: http://camunda-platform-keycloak.camunda-platform.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token
+        - name: ZEEBE_TOKEN_AUDIENCE
+          value: zeebe-api
+        - name: ZEEBE_CLIENT_CLOUD_CLIENTSECRET
+          valueFrom:
+            secretKeyRef:
+              name: payment-example-process-application-secrets
+              key: ZEEBE_CLIENT_CLOUD_CLIENTSECRET
+        resources:
+          limits:
+            memory: "768Mi"
+            cpu: "500m"
+          requests:
+            memory: "768Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
