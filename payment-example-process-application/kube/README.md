@@ -50,7 +50,8 @@ By creating a dedicated namespace for application installation, we ensure proper
 
 To enable communication with Zeebe, any application needs an authentication token if the authentication layer is enabled. The **Identity** component ([documentation](https://docs.camunda.io/docs/self-managed/identity/what-is-identity/)) is responsible for managing this authentication.
 
-### 1. Accessing the Identity URL
+<details>
+  <summary>How to get the Identity URL?</summary>
 
 To obtain the Identity URL, retrieve the ingress of the platform:
 
@@ -96,6 +97,7 @@ Rules:
 ```
 
 We are interested in the `/identity` backend, which provides the URL `https://local.distro.ultrawombat.com/identity`. Keep in mind that accessing a service via the ingress corresponds to external access.
+</details>
 
 ### 2. Generating the Token via the UI
 
