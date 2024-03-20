@@ -99,8 +99,9 @@ Rules:
 We are interested in the `/identity` backend, which provides the URL `https://local.distro.ultrawombat.com/identity`. Keep in mind that accessing a service via the ingress corresponds to external access.
 </details>
 
-### 2. Generating the Token via the UI
+### Generating the Token via the Identity UI
 
+0. Log on the **Identity** web page
 1. Click on "Add application".
    ![Add Application](identity-add-app.png)
 2. Set the Name to "payment-app" and select type "M2M".
