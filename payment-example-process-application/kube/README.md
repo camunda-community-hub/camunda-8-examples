@@ -1,8 +1,8 @@
-# Tutorial: Deploying an Application on C8 Platform
+# Tutorial: Deploying an Application on C8 Platform (kubernetes)
 
 ## Introduction
 
-In this tutorial, we'll walk you through deploying an application on the C8 platform using Kubernetes. We'll cover both local deployment with Kind and deployment with EKS.
+In this tutorial, we'll walk you through deploying an application on the C8 platform using Kubernetes.
 
 ## Prerequisites
 
