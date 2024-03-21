@@ -103,13 +103,13 @@ We are interested in the `/identity` backend, which provides the URL `https://lo
 
 0. Log on the **Identity** web page
 1. Click on "Add application".
-   ![Add Application](identity-add-app.png)
+   ![Add Application](doc-images/identity-add-app.png)
 2. Set the Name to "payment-app" and select type "M2M".
-   ![M2M App](identity-add-m2m-app.png)
+   ![M2M App](doc-images/identity-add-m2m-app.png)
 3. Click on "Add".
 4. In the list of applications, click on the newly created "payment-app".
 5. Reveal or copy the "Client Secret".
-   ![Reveal Secret](identity-reveal-secret.png)
+   ![Reveal Secret](doc-images/identity-reveal-secret.png)
 
 Save both the **Client ID** and the **Client secret** for later use.
 
@@ -204,7 +204,7 @@ Note: In Kubernetes, services are accessible through the following composition (
 
   4. You should be able to access the application through the host you have set in the ingress using plain HTTP: `http://your-host.dv`
   5. You should observe on the dashboard [Operate](https://camunda.com/platform/operate/) the payment business process appearing. The application has loaded it automatically.
-  ![Business Process](bp.png)
+  ![Business Process](doc-images/bp.png)
 
 ### 3. Application Usage
 
