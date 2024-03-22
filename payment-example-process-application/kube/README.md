@@ -135,12 +135,90 @@ The structure of the manifests is as follows:
 
 - **deployment.yaml**: Describes the deployment of the application. In this case, we will use a single replica and pass some configuration variables to the container.
 - **service.yaml**: Describes how the application is exposed on its HTTP stream.
-- **ingress.yaml**: Describes the exposure of the application service outside the cluster, allowing access to it.
 - **secrets.yaml**: This file is used to store sensitive application data, such as the **Client secret** retrieved in the previous step.
+
+- **ingress.yaml** _(optional)_: Describes the exposure of the application service outside the cluster, allowing access to it.
 
 ### 1. Configuring the Application Before Deployment
 
 0. Edit the `ingress.yaml` file and replace the value of `- host: your-host.dv` with a domain pointing to your cluster. Important: The sample application does not currently support hosting in a subdirectory.
+
+<details>
+  <summary>Optional: Using Port Forwarding Instead of Ingress</summary>
+
+If you prefer not to set up an Ingress or if your environment does not support it, you can use port forwarding with `kubectl` to access your application. This method allows you to access your application's service locally without exposing it externally.
+
+###### Port Forwarding Command
+
+To forward a local port to a port on a pod, you can use the following `kubectl` command:
+
+```bash
+kubectl port-forward <pod-name> <local-port>:<pod-port> -n <namespace>
+```
+
+Replace `<pod-name>` with the name of your pod, `<local-port>` with the local port you want to use on your machine, `<pod-port>` with the port on the pod where your application is running, and `<namespace>` with the namespace where your application is deployed.
+
+For example, if your application's pod is named `payment-example-process-application-6d99cdc9cd-c7lmt` and it exposes port `8080`, and you want to forward it to local port `8080`, you would run:
+
+```bash
+kubectl port-forward payment-example-process-application-6d99cdc9cd-c7lmt 8080:8080 -n c8-payment-demo
+```
+
+After running this command, you can access your application locally at `http://localhost:8080`.
+
+Keep in mind that port forwarding is a convenient way for development and testing but may not be suitable for production environments where you need a more robust networking solution like Ingress.
+
+###### References
+
+- [Kubernetes Port Forwarding Documentation](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
+
+</details>
+
+<details>
+  <summary>Optional: Using Routes Instead of Ingress (OpenShift)</summary>
+
+
+If you prefer to use OpenShift's Routes instead of Kubernetes' Ingress for external access to your application, you can configure routes instead. 
+
+###### Creating Routes
+
+Routes in OpenShift allow external traffic to access services inside the cluster. Here's how you can create a route for your application:
+
+1. Create a route for your application using the `oc` command-line tool:
+
+```bash
+oc expose service <service-name> --port=<port> --name=<route-name>
+```
+
+Replace `<service-name>` with the name of your service, `<port>` with the port your application is listening on, and `<route-name>` with the desired name for your route.
+
+For example:
+
+```bash
+oc expose service payment-example-process-application --port=8080 --name=payment-route
+```
+
+This command creates a route named `payment-route` to expose the service `payment-example-process-application` on port `8080`.
+
+2. Retrieve the hostname for your route:
+
+```bash
+oc get route payment-route
+```
+
+This command will display the hostname for your route, which you can use to access your application externally.
+
+###### Accessing Your Application
+
+Once the route is created, you can access your application using the provided hostname. For example, if the hostname for your route is `payment-route.apps.example.com`, you can access your application at `http://payment-route.apps.example.com`.
+
+
+###### References
+
+- [OpenShift Routes Documentation](https://docs.openshift.com/container-platform/latest/networking/routes/route-configuration.html)
+
+</details>
+
 
 1. To keep things simple, the demo application is configured through its deployment (`deployment.yaml`) via its environment variables. Edit this file and adjust the following values:
 ```yaml
