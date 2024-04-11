@@ -25,6 +25,10 @@ You can pull it from `library` in `registry.camunda.cloud` as
 docker pull registry.camunda.cloud/library/payment-example-process-application:0.0.1-SNAPSHOT
 ```
 
+### Kubernetes Deployment Tutorial
+
+To deploy this Payment Example Process Application on Kubernetes, follow the detailed tutorial available [here](./kube/README.md).
+
 ## Build the image
 
 ```
