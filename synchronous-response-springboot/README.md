@@ -47,7 +47,7 @@ return Mono.create(sink -> {
 
               // When the job is there, read the response payload and return our response via the Mono
               sink.success(response);
-              
+
               // Make sure to complete the job (ignoring exceptions for now)
               client.newCompleteCommand(job).send();
           })
