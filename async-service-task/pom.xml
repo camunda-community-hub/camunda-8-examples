@@ -12,7 +12,7 @@
     <java.version>17</java.version>
     <spring-boot.version>3.2.4</spring-boot.version>
     <camunda-process-test-coverage.version>2.1.0</camunda-process-test-coverage.version>
-    <spring-zeebe.version>8.3.1</spring-zeebe.version>
+    <spring-zeebe.version>8.4.2</spring-zeebe.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +81,11 @@
             <pom/>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.2.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -98,8 +103,12 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
       </plugin>
     </plugins>
   </build>
