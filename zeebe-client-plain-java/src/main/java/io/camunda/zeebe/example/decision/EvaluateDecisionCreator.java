@@ -10,7 +10,6 @@ package io.camunda.zeebe.example.decision;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.ZeebeClientBuilder;
 import io.camunda.zeebe.client.api.response.EvaluateDecisionResponse;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 
 /**
  * Example application that connects to a cluster on Camunda Cloud, or a locally deployed cluster.
@@ -62,8 +61,7 @@ public final class EvaluateDecisionCreator {
               .send()
               .join();
 
-      System.out.println(
-          "Decision evaluation result: " + decisionEvaluation.getDecisionOutput());
+      System.out.println("Decision evaluation result: " + decisionEvaluation.getDecisionOutput());
     }
   }
 }
