@@ -45,7 +45,10 @@ public final class DocsConsistencyTest {
           {ProcessDeployer.class, "io.camunda.zeebe.example.process.ProcessDeployer"},
           {ProcessInstanceCreator.class, "io.camunda.zeebe.example.process.ProcessInstanceCreator"},
           {HandleVariablesAsPojo.class, "io.camunda.zeebe.example.data.HandleVariablesAsPojo"},
-          {EvaluateDecisionCreator.class, "io.camunda.zeebe.example.decision.EvaluateDecisionCreator"},
+          {
+            EvaluateDecisionCreator.class,
+            "io.camunda.zeebe.example.decision.EvaluateDecisionCreator"
+          },
         });
   }
 
