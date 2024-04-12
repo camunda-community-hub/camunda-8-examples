@@ -50,8 +50,8 @@ public class ProcessController {
         // define a unique job type just for this conversation
         String jobType = "responseFor_" + requestId;
         // And start a worker for it
-        ZeebeWorkerValue jobWorkerConfig = new ZeebeWorkerValue().setType(jobType).setAutoComplete(true)
-                .setFetchVariables(new String[0]); // need to do this because of bug in 8.0.9 that will be fixed >= 8.0.10
+        ZeebeWorkerValue jobWorkerConfig = new ZeebeWorkerValue().type(jobType).autoComplete(true)
+                .fetchVariables(new String[0]); // need to do this because of bug in 8.0.9 that will be fixed >= 8.0.10
         JobWorker jobWorker = jobWorkerManager.openWorker(zeebe, jobWorkerConfig, (client, job) -> {
             // Read payload from process
             String response = (String) job.getVariablesAsMap().get("response");
