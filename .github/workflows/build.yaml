@@ -11,7 +11,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Build with Maven
         run: mvn verify -PcheckFormat -B
         working-directory: twitter-review-java-springboot
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'adopt'
+          distribution: 'temurin'
       - name: Build with Maven
         run: mvn verify -PcheckFormat -B
         working-directory: dmn-java-springboot
@@ -35,7 +35,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: large-multi-instance-example
@@ -47,7 +47,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: start-form-springboot
@@ -59,7 +59,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: synchronous-response-springboot
@@ -71,7 +71,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: zeebe-client-plain-java
@@ -95,7 +95,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: timer-testing
@@ -107,7 +107,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: async-service-task
@@ -119,7 +119,7 @@ jobs:
       uses: actions/setup-java@v4
       with: 
         java-version: '21'
-        distribution: 'adopt'
+        distribution: 'temurin'
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: payment-example-process-application
