@@ -18,7 +18,7 @@
 
   <properties>
     <java.version>21</java.version>
-    <spring-zeebe.version>8.4.2</spring-zeebe.version>
+    <spring-zeebe.version>8.4.3</spring-zeebe.version>
   </properties>
 
   <dependencies>
