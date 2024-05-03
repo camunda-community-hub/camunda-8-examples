@@ -57,4 +57,3 @@ POST http://localhost:8080/process
 ```
 
 You can then go to [Camunda 7 cockpit](http://localhost:8080/camunda) and [Camunda 8 Operate](http://localhost:8081) and inspect the run process instances.
-
