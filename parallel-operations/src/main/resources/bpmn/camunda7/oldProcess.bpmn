@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0ekn2fi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.21.0">
+  <bpmn:process id="OldProcessProcess" name="Old Process" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="ProcessStartedStartEvent" name="Process started">
+      <bpmn:outgoing>Flow_0hy7yv6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0hy7yv6" sourceRef="ProcessStartedStartEvent" targetRef="OldTaskOneTask" />
+    <bpmn:sequenceFlow id="Flow_15az5lx" sourceRef="SharedTaskTask" targetRef="OldTaskTwoTask" />
+    <bpmn:endEvent id="ProcessCompleteEndEvent" name="Process complete">
+      <bpmn:incoming>Flow_1cnk3kz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1qsulcr" sourceRef="OldTaskTwoTask" targetRef="ContinueMigratedProcessTask" />
+    <bpmn:serviceTask id="SharedTaskTask" name="shared task" camunda:asyncBefore="true" camunda:expression="${myDelegates.sharedTask(someText).someOtherText()}" camunda:resultVariable="someOtherText">
+      <bpmn:incoming>Flow_0xac6gf</bpmn:incoming>
+      <bpmn:outgoing>Flow_15az5lx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="OldTaskOneTask" name="old task one" camunda:asyncBefore="true" camunda:expression="${myDelegates.oldTaskOne().someText()}" camunda:resultVariable="someText">
+      <bpmn:incoming>Flow_0hy7yv6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xac6gf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="OldTaskTwoTask" name="old task two" camunda:asyncBefore="true" camunda:expression="${myDelegates.oldTaskTwo(someOtherText).lastText()}" camunda:resultVariable="lastText">
+      <bpmn:incoming>Flow_15az5lx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qsulcr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0xac6gf" sourceRef="OldTaskOneTask" targetRef="SharedTaskTask" />
+    <bpmn:sequenceFlow id="Flow_1cnk3kz" sourceRef="ContinueMigratedProcessTask" targetRef="ProcessCompleteEndEvent" />
+    <bpmn:sendTask id="ContinueMigratedProcessTask" name="Continue migrated process" camunda:expression="${myDelegates.continueMigratedProcess(callbackId)}">
+      <bpmn:incoming>Flow_1qsulcr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cnk3kz</bpmn:outgoing>
+    </bpmn:sendTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="OldProcessProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="ProcessStartedStartEvent">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="142" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05vzf3i_di" bpmnElement="OldTaskTwoTask">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01kp4ck_di" bpmnElement="SharedTaskTask">
+        <dc:Bounds x="440" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01l821r_di" bpmnElement="OldTaskOneTask">
+        <dc:Bounds x="278" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yoej9w_di" bpmnElement="ProcessCompleteEndEvent">
+        <dc:Bounds x="902" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876" y="142" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_00lhh1m_di" bpmnElement="ContinueMigratedProcessTask">
+        <dc:Bounds x="730" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0hy7yv6_di" bpmnElement="Flow_0hy7yv6">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="278" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qsulcr_di" bpmnElement="Flow_1qsulcr">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="730" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15az5lx_di" bpmnElement="Flow_15az5lx">
+        <di:waypoint x="540" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xac6gf_di" bpmnElement="Flow_0xac6gf">
+        <di:waypoint x="378" y="117" />
+        <di:waypoint x="440" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cnk3kz_di" bpmnElement="Flow_1cnk3kz">
+        <di:waypoint x="830" y="117" />
+        <di:waypoint x="902" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_02zy4dx" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="MigratedProcessProcess" name="Migrated Process" isExecutable="true">
+    <bpmn:startEvent id="ProcessStartedStartEvent" name="Process started">
+      <bpmn:outgoing>Flow_16jx2ld</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_16jx2ld" sourceRef="ProcessStartedStartEvent" targetRef="StartOldProcessTask" />
+    <bpmn:serviceTask id="FirstTaskTask" name="first task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="firstTask" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1se7xb6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pggvgk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1pggvgk" sourceRef="FirstTaskTask" targetRef="SharedTaskTask" />
+    <bpmn:sequenceFlow id="Flow_0bwmy15" sourceRef="SharedTaskTask" targetRef="AnotherTaskTask" />
+    <bpmn:serviceTask id="SharedTaskTask" name="shared task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sharedTask" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pggvgk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bwmy15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="AnotherTaskTask" name="another task">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="anotherTask" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bwmy15</bpmn:incoming>
+      <bpmn:outgoing>Flow_00obnyx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="ProcessCompleteEndEvent" name="Process complete">
+      <bpmn:incoming>Flow_1bop4fj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="StartOldProcessTask" name="Start old process">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="startOldProcess" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16jx2ld</bpmn:incoming>
+      <bpmn:outgoing>Flow_1se7xb6</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_00obnyx" sourceRef="AnotherTaskTask" targetRef="OldProcessIsDoneEvent" />
+    <bpmn:intermediateCatchEvent id="OldProcessIsDoneEvent" name="Old Process is done">
+      <bpmn:incoming>Flow_00obnyx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bop4fj</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1odh19q" messageRef="Message_29crpi7" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1bop4fj" sourceRef="OldProcessIsDoneEvent" targetRef="ProcessCompleteEndEvent" />
+    <bpmn:sequenceFlow id="Flow_1se7xb6" sourceRef="StartOldProcessTask" targetRef="FirstTaskTask" />
+  </bpmn:process>
+  <bpmn:message id="Message_29crpi7" name="oldProcessComplete">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=callbackId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="MigratedProcessProcess">
+      <bpmndi:BPMNShape id="Activity_1qsqipg_di" bpmnElement="FirstTaskTask">
+        <dc:Bounds x="460" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04igg2h_di" bpmnElement="SharedTaskTask">
+        <dc:Bounds x="620" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xb0oa1_di" bpmnElement="AnotherTaskTask">
+        <dc:Bounds x="780" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0f5s0vt_di" bpmnElement="ProcessCompleteEndEvent">
+        <dc:Bounds x="1082" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1056" y="142" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qpht67_di" bpmnElement="OldProcessIsDoneEvent">
+        <dc:Bounds x="942" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="925" y="142" width="71" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="ProcessStartedStartEvent">
+        <dc:Bounds x="172" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="142" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17fbckv_di" bpmnElement="StartOldProcessTask">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1se7xb6_di" bpmnElement="Flow_1se7xb6">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="460" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pggvgk_di" bpmnElement="Flow_1pggvgk">
+        <di:waypoint x="560" y="117" />
+        <di:waypoint x="620" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bwmy15_di" bpmnElement="Flow_0bwmy15">
+        <di:waypoint x="720" y="117" />
+        <di:waypoint x="780" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00obnyx_di" bpmnElement="Flow_00obnyx">
+        <di:waypoint x="880" y="117" />
+        <di:waypoint x="942" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bop4fj_di" bpmnElement="Flow_1bop4fj">
+        <di:waypoint x="978" y="117" />
+        <di:waypoint x="1082" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16jx2ld_di" bpmnElement="Flow_16jx2ld">
+        <di:waypoint x="208" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
