@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="35760c9" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0" camunda:diagramRelationId="a670214f-4c38-440b-88e2-e7c44e458d79">
+  <bpmn:process id="Process_callBackupApi" name="Backup - Call Backup API" isExecutable="true">
+    <bpmn:startEvent id="Event_1f2chum" name="Start Snapshot Backup">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if is defined(retryCount) then retryCount else 0" target="retryCount" />
+          <zeebe:output source="=if is defined(maxTries) then maxTries else 6" target="maxTries" />
+          <zeebe:output source="=if is defined(waitTime) then waitTime else &#34;PT5S&#34;" target="waitTime" />
+          <zeebe:output source="=if is defined(item.serviceName) then item.serviceName else if is defined(serviceName) then serviceName else null" target="serviceName" />
+          <zeebe:output source="=if is defined(item.servicePort) then item.servicePort else if is defined(servicePort) then servicePort else null" target="servicePort" />
+          <zeebe:output source="=if is defined(item.pathPrefix) then item.pathPrefix else if is defined(pathPrefix) then pathPrefix else null" target="pathPrefix" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_15tnhmy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_16as3sg" name="Start Backup" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="=&#34;http://camunda-&#34;+serviceName+&#34;:&#34;+servicePort+pathPrefix+&#34;/actuator/backups&#34;" target="url" />
+          <zeebe:input source="={&#10;  &#34;Content-Type&#34;: &#34;application/json&#34;&#10;}" target="headers" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="={&#10;  &#34;backupId&#34;: backupId&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="startBackupResponse" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1rb95cr</bpmn:incoming>
+      <bpmn:outgoing>Flow_10uiciv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="Event_1yi69fg" name="Wait">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=retryCount + 1" target="retryCount" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0b0nn3r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hy5zkp</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_10ihbef">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">=waitTime</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:serviceTask id="Activity_1tyrzdg" name="Check Backup Status" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="GET" target="method" />
+          <zeebe:input source="=&#34;http://camunda-&#34;+serviceName+&#34;:&#34;+servicePort+pathPrefix+&#34;/actuator/backups/&#34;+string(backupId)" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultVariable" value="checkBackupResponse" />
+          <zeebe:header key="resultExpression" value="={&#10;  &#34;state&#34;: response.body.state&#10;}" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hy5zkp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r73yv6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1g8woec" name="Backup Complete?" default="Flow_10hh67g">
+      <bpmn:incoming>Flow_1r73yv6</bpmn:incoming>
+      <bpmn:outgoing>Flow_04omdzv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10hh67g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1csulpg" name="Snapshot Backup Complete">
+      <bpmn:incoming>Flow_04omdzv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_15tnhmy" sourceRef="Event_1f2chum" targetRef="Gateway_06nns74" />
+    <bpmn:sequenceFlow id="Flow_10uiciv" sourceRef="Activity_16as3sg" targetRef="Gateway_1g5ihr4" />
+    <bpmn:sequenceFlow id="Flow_10hh67g" name="no" sourceRef="Gateway_1g8woec" targetRef="Gateway_1g5ihr4" />
+    <bpmn:sequenceFlow id="Flow_1hy5zkp" sourceRef="Event_1yi69fg" targetRef="Activity_1tyrzdg" />
+    <bpmn:sequenceFlow id="Flow_1r73yv6" sourceRef="Activity_1tyrzdg" targetRef="Gateway_1g8woec" />
+    <bpmn:sequenceFlow id="Flow_04omdzv" name="yes" sourceRef="Gateway_1g8woec" targetRef="Event_1csulpg">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=state = "COMPLETED" or retryCount &gt;= maxTries</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_06nns74" name="Backup Id?" default="Flow_03ne97u">
+      <bpmn:incoming>Flow_15tnhmy</bpmn:incoming>
+      <bpmn:outgoing>Flow_1rb95cr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_03ne97u</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1rb95cr" name="Yes" sourceRef="Gateway_06nns74" targetRef="Activity_16as3sg">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=is defined(backupId)</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_03ne97u" name="No" sourceRef="Gateway_06nns74" targetRef="Event_0a68kjb" />
+    <bpmn:endEvent id="Event_0a68kjb" name="No Backup Id">
+      <bpmn:incoming>Flow_03ne97u</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0bs8ai0" errorRef="Error_098dxqu" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1g5ihr4">
+      <bpmn:incoming>Flow_10uiciv</bpmn:incoming>
+      <bpmn:incoming>Flow_10hh67g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b0nn3r</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0b0nn3r" sourceRef="Gateway_1g5ihr4" targetRef="Event_1yi69fg" />
+  </bpmn:process>
+  <bpmn:error id="Error_098dxqu" name="Error_backupFail" errorCode="BACKUP_FAIL" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_callBackupApi">
+      <bpmndi:BPMNShape id="Event_1f2chum_di" bpmnElement="Event_1f2chum">
+        <dc:Bounds x="172" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="165" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1p95ene_di" bpmnElement="Activity_16as3sg">
+        <dc:Bounds x="370" y="100" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00ui9nc_di" bpmnElement="Event_1yi69fg">
+        <dc:Bounds x="602" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="609" y="103" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lnrac3_di" bpmnElement="Activity_1tyrzdg">
+        <dc:Bounds x="690" y="100" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1g8woec_di" bpmnElement="Gateway_1g8woec" isMarkerVisible="true">
+        <dc:Bounds x="825" y="115" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="833" y="86" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1csulpg_di" bpmnElement="Event_1csulpg">
+        <dc:Bounds x="932" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="907" y="165" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06nns74_di" bpmnElement="Gateway_06nns74" isMarkerVisible="true">
+        <dc:Bounds x="265" y="115" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="262" y="85" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1g9ow9f_di" bpmnElement="Event_0a68kjb">
+        <dc:Bounds x="272" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="255" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1g5ihr4_di" bpmnElement="Gateway_1g5ihr4" isMarkerVisible="true">
+        <dc:Bounds x="505" y="115" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15tnhmy_di" bpmnElement="Flow_15tnhmy">
+        <di:waypoint x="208" y="140" />
+        <di:waypoint x="265" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10uiciv_di" bpmnElement="Flow_10uiciv">
+        <di:waypoint x="470" y="140" />
+        <di:waypoint x="505" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10hh67g_di" bpmnElement="Flow_10hh67g">
+        <di:waypoint x="850" y="165" />
+        <di:waypoint x="850" y="210" />
+        <di:waypoint x="530" y="210" />
+        <di:waypoint x="530" y="165" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="823" y="173" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hy5zkp_di" bpmnElement="Flow_1hy5zkp">
+        <di:waypoint x="638" y="140" />
+        <di:waypoint x="690" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r73yv6_di" bpmnElement="Flow_1r73yv6">
+        <di:waypoint x="790" y="140" />
+        <di:waypoint x="825" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04omdzv_di" bpmnElement="Flow_04omdzv">
+        <di:waypoint x="875" y="140" />
+        <di:waypoint x="932" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="896" y="143" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1rb95cr_di" bpmnElement="Flow_1rb95cr">
+        <di:waypoint x="315" y="140" />
+        <di:waypoint x="370" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="334" y="122" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03ne97u_di" bpmnElement="Flow_03ne97u">
+        <di:waypoint x="290" y="165" />
+        <di:waypoint x="290" y="212" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="298" y="184" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b0nn3r_di" bpmnElement="Flow_0b0nn3r">
+        <di:waypoint x="555" y="140" />
+        <di:waypoint x="602" y="140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

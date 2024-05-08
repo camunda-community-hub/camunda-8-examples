@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="35760c9" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0" camunda:diagramRelationId="a670214f-4c38-440b-88e2-e7c44e458d79">
+  <bpmn:process id="Process_backup" name="Backup" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if is defined(backupId) then backupId else (now() - date and time(&#34;1970-01-01T00:00Z&#34;)) / duration(&#34;PT1S&#34;)" target="backupId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1ndvje2</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1hsdeqm">
+      <bpmn:incoming>Flow_1jm1s2r</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ndvje2" sourceRef="StartEvent_1" targetRef="Activity_1dmvwky" />
+    <bpmn:callActivity id="Activity_1dmvwky" name="Create Snapshot Repos">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="process_backupSnapshotRepos" propagateAllChildVariables="false" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ndvje2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jsxwfb</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1jsxwfb" sourceRef="Activity_1dmvwky" targetRef="Activity_0iuqj7w" />
+    <bpmn:callActivity id="Activity_0iuqj7w" name="Create SnapshotBackups">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Process_callBackupApi" propagateAllChildVariables="false" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jsxwfb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1efppyi</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=[&#10;  {&#10;    &#34;serviceName&#34;: &#34;optimize&#34;,&#10;    &#34;servicePort&#34;: &#34;8092&#34;,&#10;    &#34;pathPrefix&#34;: &#34;&#34;&#10;  },&#10;  {&#10;    &#34;serviceName&#34;: &#34;operate&#34;,&#10;    &#34;servicePort&#34;: &#34;80&#34;,&#10;    &#34;pathPrefix&#34;: &#34;/operate&#34;&#10;  },&#10;  {&#10;    &#34;serviceName&#34;: &#34;tasklist&#34;,&#10;    &#34;servicePort&#34;: &#34;80&#34;,&#10;    &#34;pathPrefix&#34;: &#34;/tasklist&#34;&#10;  }&#10;]" inputElement="item" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1efppyi" sourceRef="Activity_0iuqj7w" targetRef="Activity_10sr9x7" />
+    <bpmn:sequenceFlow id="Flow_1jm1s2r" sourceRef="Activity_10sr9x7" targetRef="Event_1hsdeqm" />
+    <bpmn:callActivity id="Activity_10sr9x7" name="Create Zeebe Backup">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="Process_backupZeebe" propagateAllChildVariables="false" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1efppyi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jm1s2r</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_backup">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="142" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hsdeqm_di" bpmnElement="Event_1hsdeqm">
+        <dc:Bounds x="722" y="100" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_013hip6_di" bpmnElement="Activity_1dmvwky">
+        <dc:Bounds x="240" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1os7inl_di" bpmnElement="Activity_0iuqj7w">
+        <dc:Bounds x="400" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h8zf00_di" bpmnElement="Activity_10sr9x7">
+        <dc:Bounds x="560" y="78" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ndvje2_di" bpmnElement="Flow_1ndvje2">
+        <di:waypoint x="178" y="118" />
+        <di:waypoint x="240" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jsxwfb_di" bpmnElement="Flow_1jsxwfb">
+        <di:waypoint x="340" y="118" />
+        <di:waypoint x="400" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1efppyi_di" bpmnElement="Flow_1efppyi">
+        <di:waypoint x="500" y="118" />
+        <di:waypoint x="560" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jm1s2r_di" bpmnElement="Flow_1jm1s2r">
+        <di:waypoint x="660" y="118" />
+        <di:waypoint x="722" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
