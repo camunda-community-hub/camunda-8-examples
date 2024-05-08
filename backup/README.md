@@ -31,7 +31,7 @@ If you'd like to edit the bpmn files, you'll need to configure the Rest Element 
 
 If you're using Web Modeler, then publish the [http-json-connector.json](src/main/resources/http-json-connector.json) connector template.
 
-If you're using Desktop Modeler, save the [http-json-connector.json](src/main/resources/http-json-connector.json) into `resources/templates` as [described here](https://docs.camunda.io/docs/next/components/modeler/desktop-modeler/element-templates/configuring-templates/)
+If you're using Desktop Modeler, save the [http-json-connector.json](src/main/resources/http-json-connector.json) into `resources/element-templates` as [described here](https://docs.camunda.io/docs/next/components/modeler/desktop-modeler/element-templates/configuring-templates/)
 
 # Prerequisites for S3
 
