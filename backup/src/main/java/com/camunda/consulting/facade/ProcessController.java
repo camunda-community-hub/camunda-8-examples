@@ -23,7 +23,11 @@ public class ProcessController {
   }
 
   @PostMapping("/start")
-  public void startProcessInstance(@RequestBody ProcessVariables variables) {
+  public String startProcessInstance(@RequestBody ProcessVariables variables) {
+
+    if (variables.getS3BucketName() == null || variables.getS3BucketName().length() <= 0) {
+      return "Unable to create backup because s3BucketName is required";
+    }
 
     LOG.info(
         "Starting process `" + ProcessConstants.BPMN_PROCESS_ID + "` with variables: " + variables);
@@ -34,6 +38,8 @@ public class ProcessController {
         .latestVersion()
         .variables(variables)
         .send();
+
+    return "Successfully started process `" + ProcessConstants.BPMN_PROCESS_ID + "`";
   }
 
   @PostMapping("/message/{messageName}/{correlationKey}")

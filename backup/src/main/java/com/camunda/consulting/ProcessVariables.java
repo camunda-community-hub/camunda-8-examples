@@ -9,24 +9,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @JsonInclude(Include.NON_NULL)
 public class ProcessVariables {
 
-  private String businessKey;
-  private Boolean result;
+  private String s3BucketName;
 
-  public String getBusinessKey() {
-    return businessKey;
+  public String getS3BucketName() {
+    return s3BucketName;
   }
 
-  public ProcessVariables setBusinessKey(String businessKey) {
-    this.businessKey = businessKey;
-    return this;
-  }
-
-  public Boolean getResult() {
-    return result;
-  }
-
-  public ProcessVariables setResult(Boolean result) {
-    this.result = result;
+  public ProcessVariables setS3BucketName(String s3BucketName) {
+    this.s3BucketName = s3BucketName;
     return this;
   }
 

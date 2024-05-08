@@ -4,18 +4,34 @@
 
 # Use a Camunda Process to Backup Camunda 8 SM
  
-Creating a successful backup of Camunda 8 involves sending http requests to various components in the correct sequence as described [here](https://docs.camunda.io/docs/self-managed/operational-guides/backup-restore/backup-and-restore/).
+Creating a successful backup of Camunda 8 Self Managed involves the steps described [here](https://docs.camunda.io/docs/self-managed/operational-guides/backup-restore/backup-and-restore/).
 
-This can be automated using the camunda processes found inside the [models](src/main/resources/models) directory. 
+This project contains several `bpmn` process definitions that automate these steps. 
+
+> [!NOTE]  
+> This solution should not be used in Camunda SaaS environments. This only works in Camunda 8 Self Managed. See [this documentation](https://docs.camunda.io/docs/components/concepts/backups/) for information about managing Backups in SaaS.  
+
+Here are the steps to create a Camunda 8 SM backup using this project: 
 
 1. Make sure to configure the prerequisites below.
-2. Publish the [http-json-connector.json](src/main/resources/http-json-connector.json) connector template. 
-3. Deploy all the artifacts found inside the [models](src/main/resources/models) directory. 
-4. Start an instance of the [backup.bpmn](src/main/resources/models/backup.bpmn) process to create a backup. 
+2. Deploy all the artifacts found inside the [models](src/main/resources/models) directory. 
+3. Start an instance of the [backup.bpmn](src/main/resources/models/backup.bpmn) process to create a backup with the following payload:
+
+```json
+{
+  "s3BucketName": "YOUR_BUCKET_NAME" 
+}
+```
 
 If convenient, this project also contains a Spring Boot App which will auto deploy the resources. Configure [application.properties](src/main/resources/application.properties) to point to your zeebe gateway, and start the app. 
 
 Then send a `POST` to `https://localhost:8080/process/start`
+
+If you'd like to edit the bpmn files, you'll need to configure the Rest Element Template
+
+If you're using Web Modeler, then publish the [http-json-connector.json](src/main/resources/http-json-connector.json) connector template.
+
+If you're using Desktop Modeler, save the [http-json-connector.json](src/main/resources/http-json-connector.json) into `resources/templates` as [described here](https://docs.camunda.io/docs/next/components/modeler/desktop-modeler/element-templates/configuring-templates/)
 
 # Prerequisites for S3
 
@@ -59,11 +75,14 @@ Find the version of Elasticsearch that is currently installed in your environmen
 
 Then, add the following `initContainer` definition to your Camunda `values.yaml` file under the [elasticsearch](https://github.com/camunda/camunda-platform-helm/tree/main/charts/camunda-platform#elasticsearch-parameters) section: 
 
+> [!INFO]  
+> Remember to change the version (`YOUR_VERSION` below) of the elasticsearch image to match the current version of your existing elasticsearch 
+
 ```shell
 elasticsearch:
   extraInitContainers:
     - name: s3
-      image: elasticsearch:7.17.18
+      image: elasticsearch:YOUR_VERSION
       securityContext:
         privileged: true
       command:
@@ -123,7 +142,7 @@ tasklist:
 ## Configure Operate
 
 ```shell
-tasklist:
+operate:
   env:
     - name: CAMUNDA_OPERATE_BACKUP_REPOSITORY_NAME
       value: "operate-backup"

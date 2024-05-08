@@ -22,10 +22,6 @@ public class MyWorker {
   @JobWorker(type = "helloService")
   public ProcessVariables invokeMyService(@VariablesAsType ProcessVariables variables) {
     LOG.info("Invoking myService with variables: " + variables);
-
-    boolean result = myService.myOperation(variables.getBusinessKey());
-
-    return new ProcessVariables()
-        .setResult(result); // new object to avoid sending unchanged variables
+    return variables;
   }
 }

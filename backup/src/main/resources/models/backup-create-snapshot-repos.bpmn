@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="35760c9" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0" camunda:diagramRelationId="a670214f-4c38-440b-88e2-e7c44e458d79">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.21.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0" camunda:diagramRelationId="a670214f-4c38-440b-88e2-e7c44e458d79">
   <bpmn:process id="process_backupSnapshotRepos" name="Backup - Create Snapshot Repos" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;http://elasticsearch-master:9200&#34;" target="es_url" />
-          <zeebe:output source="=&#34;dave-c8&#34;" target="s3BucketName" />
+          <zeebe:output source="=if is defined(es_url) then es_url else &#34;http://elasticsearch-master:9200&#34;" target="es_url" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_06ucjzg</bpmn:outgoing>
@@ -15,23 +14,6 @@
       <bpmn:incoming>Flow_0o3ol7d</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1d49mdd" sourceRef="Activity_1lyrl90" targetRef="Gateway_06ubpdq" />
-    <bpmn:serviceTask id="Activity_1lyrl90" name="Get Snapshot Repositories" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="noAuth" target="authentication.type" />
-          <zeebe:input source="GET" target="method" />
-          <zeebe:input source="=es_url+&#34;/_snapshot&#34;" target="url" />
-          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={&#10;  &#34;snapshotRepos&#34;: response.body&#10;}" />
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_06ucjzg</bpmn:incoming>
-      <bpmn:outgoing>Flow_1d49mdd</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1ol0zav" sourceRef="Gateway_06ubpdq" targetRef="Gateway_0qgecdj" />
     <bpmn:parallelGateway id="Gateway_06ubpdq">
       <bpmn:incoming>Flow_1d49mdd</bpmn:incoming>
@@ -55,78 +37,6 @@
     <bpmn:sequenceFlow id="Flow_0nf6ivn" sourceRef="Activity_094tocw" targetRef="Gateway_0owjl1w" />
     <bpmn:sequenceFlow id="Flow_02o89xf" sourceRef="Activity_13pucib" targetRef="Gateway_008cjw6" />
     <bpmn:sequenceFlow id="Flow_09wmxpp" sourceRef="Activity_0udrhcg" targetRef="Gateway_1lqs6ht" />
-    <bpmn:serviceTask id="Activity_0pceku8" name="Create Operate Snapshot Repository" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="noAuth" target="authentication.type" />
-          <zeebe:input source="PUT" target="method" />
-          <zeebe:input source="=es_url+&#34;/_snapshot/operate-backup&#34;" target="url" />
-          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;operate-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1csrsft</bpmn:incoming>
-      <bpmn:outgoing>Flow_0lx44z3</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0udrhcg" name="Create Optimize Snapshot Repository" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="noAuth" target="authentication.type" />
-          <zeebe:input source="PUT" target="method" />
-          <zeebe:input source="=es_url+&#34;/_snapshot/optimize-backup&#34;" target="url" />
-          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;optimize-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1mwmhsk</bpmn:incoming>
-      <bpmn:outgoing>Flow_09wmxpp</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_094tocw" name="Create Tasklist Snapshot Repository" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="noAuth" target="authentication.type" />
-          <zeebe:input source="PUT" target="method" />
-          <zeebe:input source="=es_url+&#34;/_snapshot/tasklist-backup&#34;" target="url" />
-          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;tasklist-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_05qj5ys</bpmn:incoming>
-      <bpmn:outgoing>Flow_0nf6ivn</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_13pucib" name="Create Zeebe Snapshot Repository" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="1714848983107" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="io.camunda:http-json:1" />
-        <zeebe:ioMapping>
-          <zeebe:input source="noAuth" target="authentication.type" />
-          <zeebe:input source="PUT" target="method" />
-          <zeebe:input source="=es_url+&#34;/_snapshot/zeebe-backup&#34;" target="url" />
-          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
-          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;zeebe-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
-        </zeebe:ioMapping>
-        <zeebe:taskHeaders>
-          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
-          <zeebe:header key="retryBackoff" value="PT0S" />
-        </zeebe:taskHeaders>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0j8z4nd</bpmn:incoming>
-      <bpmn:outgoing>Flow_02o89xf</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_0qgecdj" name="Create Operate Snapshot Repo?" default="Flow_1csrsft">
       <bpmn:incoming>Flow_1ol0zav</bpmn:incoming>
       <bpmn:outgoing>Flow_1csrsft</bpmn:outgoing>
@@ -187,204 +97,291 @@
       <bpmn:outgoing>Flow_0hrfxgx</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_0hrfxgx" sourceRef="Gateway_008cjw6" targetRef="Gateway_07nx79b" />
+    <bpmn:serviceTask id="Activity_1lyrl90" name="Get Snapshot Repositories" zeebe:modelerTemplate="c720aa70-32a7-44b8-8ba7-6a2334102d25" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="GET" target="method" />
+          <zeebe:input source="=es_url+&#34;/_snapshot&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="resultExpression" value="={&#10;  &#34;snapshotRepos&#34;: response.body&#10;}" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06ucjzg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1d49mdd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0pceku8" name="Create Operate Snapshot Repository" zeebe:modelerTemplate="c720aa70-32a7-44b8-8ba7-6a2334102d25" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="PUT" target="method" />
+          <zeebe:input source="=es_url+&#34;/_snapshot/operate-backup&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;operate-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1csrsft</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lx44z3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0udrhcg" name="Create Optimize Snapshot Repository" zeebe:modelerTemplate="c720aa70-32a7-44b8-8ba7-6a2334102d25" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="PUT" target="method" />
+          <zeebe:input source="=es_url+&#34;/_snapshot/optimize-backup&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;optimize-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mwmhsk</bpmn:incoming>
+      <bpmn:outgoing>Flow_09wmxpp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_094tocw" name="Create Tasklist Snapshot Repository" zeebe:modelerTemplate="c720aa70-32a7-44b8-8ba7-6a2334102d25" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="PUT" target="method" />
+          <zeebe:input source="=es_url+&#34;/_snapshot/tasklist-backup&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;tasklist-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05qj5ys</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nf6ivn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_13pucib" name="Create Zeebe Snapshot Repository" zeebe:modelerTemplate="c720aa70-32a7-44b8-8ba7-6a2334102d25" zeebe:modelerTemplateVersion="4" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="io.camunda:http-json:1" />
+        <zeebe:ioMapping>
+          <zeebe:input source="noAuth" target="authentication.type" />
+          <zeebe:input source="PUT" target="method" />
+          <zeebe:input source="=es_url+&#34;/_snapshot/zeebe-backup&#34;" target="url" />
+          <zeebe:input source="20" target="connectionTimeoutInSeconds" />
+          <zeebe:input source="={&#10;    &#34;type&#34;: &#34;s3&#34;,&#10;    &#34;settings&#34;: {&#10;        &#34;bucket&#34;: s3BucketName,&#10;        &#34;base_path&#34;: &#34;zeebe-backup&#34;,&#10;        &#34;client&#34;: &#34;default&#34;&#10;    }&#10;}" target="body" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="errorExpression" value="=if response.body.acknowledged != &#34;true&#34; then bmpnError(&#34;FAILED&#34;, &#34;The attempt to create snapshot repo failed&#34;, response.body) else null" />
+          <zeebe:header key="retryBackoff" value="PT0S" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0j8z4nd</bpmn:incoming>
+      <bpmn:outgoing>Flow_02o89xf</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
+  <bpmn:error id="Error_1qhzrzr" name="Error_backupFail" errorCode="BACKUP_FAIL" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_backupSnapshotRepos">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="160" y="160" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1hsdeqm_di" bpmnElement="Event_1hsdeqm">
-        <dc:Bounds x="952" y="160" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_107f01m_di" bpmnElement="Activity_1lyrl90">
-        <dc:Bounds x="250" y="138" width="100" height="80" />
+        <dc:Bounds x="962" y="160" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0ok57hd_di" bpmnElement="Gateway_06ubpdq">
-        <dc:Bounds x="395" y="153" width="50" height="50" />
+        <dc:Bounds x="405" y="153" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1pjxbg8_di" bpmnElement="Gateway_07nx79b">
-        <dc:Bounds x="835" y="153" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1as5lpt_di" bpmnElement="Activity_0pceku8">
-        <dc:Bounds x="600" y="138" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wouicz_di" bpmnElement="Activity_0udrhcg">
-        <dc:Bounds x="600" y="280" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_12mnl6t_di" bpmnElement="Activity_094tocw">
-        <dc:Bounds x="600" y="430" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0qb60xg_di" bpmnElement="Activity_13pucib">
-        <dc:Bounds x="600" y="570" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+        <dc:Bounds x="845" y="153" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0qgecdj_di" bpmnElement="Gateway_0qgecdj" isMarkerVisible="true">
-        <dc:Bounds x="485" y="153" width="50" height="50" />
+        <dc:Bounds x="495" y="153" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="469" y="116" width="82" height="27" />
+          <dc:Bounds x="479" y="116" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_04k813t" bpmnElement="Gateway_0hu9oc4" isMarkerVisible="true">
-        <dc:Bounds x="485" y="295" width="50" height="50" />
+        <dc:Bounds x="495" y="295" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="469" y="258" width="82" height="27" />
+          <dc:Bounds x="479" y="258" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1jgds20" bpmnElement="Gateway_0a45s01" isMarkerVisible="true">
-        <dc:Bounds x="485" y="445" width="50" height="50" />
+        <dc:Bounds x="495" y="445" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="469" y="408" width="82" height="27" />
+          <dc:Bounds x="479" y="408" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0px4yvv" bpmnElement="Gateway_05iny8d" isMarkerVisible="true">
-        <dc:Bounds x="485" y="585" width="50" height="50" />
+        <dc:Bounds x="495" y="585" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="469" y="548" width="82" height="27" />
+          <dc:Bounds x="479" y="548" width="82" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1nwsfxf_di" bpmnElement="Gateway_1nwsfxf" isMarkerVisible="true">
-        <dc:Bounds x="735" y="153" width="50" height="50" />
+        <dc:Bounds x="745" y="153" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1lqs6ht_di" bpmnElement="Gateway_1lqs6ht" isMarkerVisible="true">
-        <dc:Bounds x="735" y="295" width="50" height="50" />
+        <dc:Bounds x="745" y="295" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0owjl1w_di" bpmnElement="Gateway_0owjl1w" isMarkerVisible="true">
-        <dc:Bounds x="735" y="445" width="50" height="50" />
+        <dc:Bounds x="745" y="445" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_008cjw6_di" bpmnElement="Gateway_008cjw6" isMarkerVisible="true">
-        <dc:Bounds x="735" y="585" width="50" height="50" />
+        <dc:Bounds x="745" y="585" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o91qej_di" bpmnElement="Activity_1lyrl90">
+        <dc:Bounds x="260" y="138" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0pqgc6f_di" bpmnElement="Activity_0pceku8">
+        <dc:Bounds x="610" y="138" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u7yhhg_di" bpmnElement="Activity_0udrhcg">
+        <dc:Bounds x="610" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03775jz_di" bpmnElement="Activity_094tocw">
+        <dc:Bounds x="610" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ooiqvi_di" bpmnElement="Activity_13pucib">
+        <dc:Bounds x="610" y="570" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="160" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_06ucjzg_di" bpmnElement="Flow_06ucjzg">
-        <di:waypoint x="196" y="178" />
-        <di:waypoint x="250" y="178" />
+        <di:waypoint x="188" y="178" />
+        <di:waypoint x="260" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1d49mdd_di" bpmnElement="Flow_1d49mdd">
-        <di:waypoint x="350" y="178" />
-        <di:waypoint x="395" y="178" />
+        <di:waypoint x="360" y="178" />
+        <di:waypoint x="405" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1ol0zav_di" bpmnElement="Flow_1ol0zav">
-        <di:waypoint x="445" y="178" />
-        <di:waypoint x="485" y="178" />
+        <di:waypoint x="455" y="178" />
+        <di:waypoint x="495" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0x18fst_di" bpmnElement="Flow_0x18fst">
-        <di:waypoint x="420" y="203" />
-        <di:waypoint x="420" y="320" />
-        <di:waypoint x="485" y="320" />
+        <di:waypoint x="430" y="203" />
+        <di:waypoint x="430" y="320" />
+        <di:waypoint x="495" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0a8eayj_di" bpmnElement="Flow_0a8eayj">
-        <di:waypoint x="420" y="203" />
-        <di:waypoint x="420" y="470" />
-        <di:waypoint x="485" y="470" />
+        <di:waypoint x="430" y="203" />
+        <di:waypoint x="430" y="470" />
+        <di:waypoint x="495" y="470" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qppkmg_di" bpmnElement="Flow_1qppkmg">
-        <di:waypoint x="420" y="203" />
-        <di:waypoint x="420" y="610" />
-        <di:waypoint x="485" y="610" />
+        <di:waypoint x="430" y="203" />
+        <di:waypoint x="430" y="610" />
+        <di:waypoint x="495" y="610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0lx44z3_di" bpmnElement="Flow_0lx44z3">
-        <di:waypoint x="700" y="178" />
-        <di:waypoint x="735" y="178" />
+        <di:waypoint x="710" y="178" />
+        <di:waypoint x="745" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0o3ol7d_di" bpmnElement="Flow_0o3ol7d">
-        <di:waypoint x="885" y="178" />
-        <di:waypoint x="952" y="178" />
+        <di:waypoint x="895" y="178" />
+        <di:waypoint x="962" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0nf6ivn_di" bpmnElement="Flow_0nf6ivn">
-        <di:waypoint x="700" y="470" />
-        <di:waypoint x="735" y="470" />
+        <di:waypoint x="710" y="470" />
+        <di:waypoint x="745" y="470" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02o89xf_di" bpmnElement="Flow_02o89xf">
-        <di:waypoint x="700" y="610" />
-        <di:waypoint x="735" y="610" />
+        <di:waypoint x="710" y="610" />
+        <di:waypoint x="745" y="610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_09wmxpp_di" bpmnElement="Flow_09wmxpp">
-        <di:waypoint x="700" y="320" />
-        <di:waypoint x="735" y="320" />
+        <di:waypoint x="710" y="320" />
+        <di:waypoint x="745" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1csrsft_di" bpmnElement="Flow_1csrsft">
-        <di:waypoint x="535" y="178" />
-        <di:waypoint x="600" y="178" />
+        <di:waypoint x="545" y="178" />
+        <di:waypoint x="610" y="178" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="559" y="160" width="18" height="14" />
+          <dc:Bounds x="569" y="160" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1mwmhsk_di" bpmnElement="Flow_1mwmhsk">
-        <di:waypoint x="535" y="320" />
-        <di:waypoint x="600" y="320" />
+        <di:waypoint x="545" y="320" />
+        <di:waypoint x="610" y="320" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="559" y="302" width="18" height="14" />
+          <dc:Bounds x="569" y="302" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_05qj5ys_di" bpmnElement="Flow_05qj5ys">
-        <di:waypoint x="535" y="470" />
-        <di:waypoint x="600" y="470" />
+        <di:waypoint x="545" y="470" />
+        <di:waypoint x="610" y="470" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="559" y="452" width="18" height="14" />
+          <dc:Bounds x="569" y="452" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0j8z4nd_di" bpmnElement="Flow_0j8z4nd">
-        <di:waypoint x="535" y="610" />
-        <di:waypoint x="600" y="610" />
+        <di:waypoint x="545" y="610" />
+        <di:waypoint x="610" y="610" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="559" y="592" width="18" height="14" />
+          <dc:Bounds x="569" y="592" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0t46gqu_di" bpmnElement="Flow_0t46gqu">
-        <di:waypoint x="510" y="203" />
-        <di:waypoint x="510" y="230" />
-        <di:waypoint x="760" y="230" />
-        <di:waypoint x="760" y="203" />
+        <di:waypoint x="520" y="203" />
+        <di:waypoint x="520" y="230" />
+        <di:waypoint x="770" y="230" />
+        <di:waypoint x="770" y="203" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="532" y="212" width="15" height="14" />
+          <dc:Bounds x="542" y="212" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1kte5yw_di" bpmnElement="Flow_1kte5yw">
-        <di:waypoint x="510" y="345" />
-        <di:waypoint x="510" y="380" />
-        <di:waypoint x="760" y="380" />
-        <di:waypoint x="760" y="345" />
+        <di:waypoint x="520" y="345" />
+        <di:waypoint x="520" y="380" />
+        <di:waypoint x="770" y="380" />
+        <di:waypoint x="770" y="345" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="532" y="362" width="15" height="14" />
+          <dc:Bounds x="542" y="362" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_09dbfmg_di" bpmnElement="Flow_09dbfmg">
-        <di:waypoint x="510" y="495" />
-        <di:waypoint x="510" y="530" />
-        <di:waypoint x="760" y="530" />
-        <di:waypoint x="760" y="495" />
+        <di:waypoint x="520" y="495" />
+        <di:waypoint x="520" y="530" />
+        <di:waypoint x="770" y="530" />
+        <di:waypoint x="770" y="495" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="532" y="512" width="15" height="14" />
+          <dc:Bounds x="542" y="512" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0x8oovv_di" bpmnElement="Flow_0x8oovv">
-        <di:waypoint x="510" y="635" />
-        <di:waypoint x="510" y="670" />
-        <di:waypoint x="760" y="670" />
-        <di:waypoint x="760" y="635" />
+        <di:waypoint x="520" y="635" />
+        <di:waypoint x="520" y="670" />
+        <di:waypoint x="770" y="670" />
+        <di:waypoint x="770" y="635" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="532" y="652" width="15" height="14" />
+          <dc:Bounds x="542" y="652" width="15" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0r20jc9_di" bpmnElement="Flow_0r20jc9">
-        <di:waypoint x="785" y="178" />
-        <di:waypoint x="835" y="178" />
+        <di:waypoint x="795" y="178" />
+        <di:waypoint x="845" y="178" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v6s6j7_di" bpmnElement="Flow_1v6s6j7">
-        <di:waypoint x="785" y="320" />
-        <di:waypoint x="860" y="320" />
-        <di:waypoint x="860" y="203" />
+        <di:waypoint x="795" y="320" />
+        <di:waypoint x="870" y="320" />
+        <di:waypoint x="870" y="203" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0shsjpx_di" bpmnElement="Flow_0shsjpx">
-        <di:waypoint x="785" y="470" />
-        <di:waypoint x="860" y="470" />
-        <di:waypoint x="860" y="203" />
+        <di:waypoint x="795" y="470" />
+        <di:waypoint x="870" y="470" />
+        <di:waypoint x="870" y="203" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hrfxgx_di" bpmnElement="Flow_0hrfxgx">
-        <di:waypoint x="785" y="610" />
-        <di:waypoint x="860" y="610" />
-        <di:waypoint x="860" y="203" />
+        <di:waypoint x="795" y="610" />
+        <di:waypoint x="870" y="610" />
+        <di:waypoint x="870" y="203" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
