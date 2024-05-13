@@ -12,6 +12,7 @@ import io.camunda.zeebe.spring.client.event.ZeebeClientCreatedEvent;
 import io.camunda.zeebe.spring.client.jobhandling.CommandExceptionHandlingStrategy;
 import io.camunda.zeebe.spring.client.jobhandling.JobHandlerInvokingSpringBeans;
 import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
+import io.camunda.zeebe.spring.client.jobhandling.parameter.ParameterResolverStrategy;
 import io.camunda.zeebe.spring.client.metrics.MetricsRecorder;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +45,7 @@ public class UserTaskService {
   private final CommandExceptionHandlingStrategy commandExceptionHandlingStrategy;
   private final JsonMapper jsonMapper;
   private final MetricsRecorder metricsRecorder;
+  private final ParameterResolverStrategy parameterResolverStrategy;
   private JobWorker userTaskWorker;
 
   public UserTaskService(
@@ -51,12 +53,14 @@ public class UserTaskService {
       JobWorkerManager jobWorkerManager,
       CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
       JsonMapper jsonMapper,
-      MetricsRecorder metricsRecorder) {
+      MetricsRecorder metricsRecorder,
+      ParameterResolverStrategy parameterResolverStrategy) {
     this.zeebeClient = zeebeClient;
     this.jobWorkerManager = jobWorkerManager;
     this.commandExceptionHandlingStrategy = commandExceptionHandlingStrategy;
     this.jsonMapper = jsonMapper;
     this.metricsRecorder = metricsRecorder;
+    this.parameterResolverStrategy = parameterResolverStrategy;
   }
 
   private void add(UserTask userTask, Duration timeToLive) {
@@ -98,7 +102,10 @@ public class UserTaskService {
           // create the invoker for this worker value
           JobHandlerInvokingSpringBeans jobHandlerInvokingSpringBeans =
               new JobHandlerInvokingSpringBeans(
-                  zeebeWorkerValue, commandExceptionHandlingStrategy, jsonMapper, metricsRecorder);
+                  zeebeWorkerValue,
+                  commandExceptionHandlingStrategy,
+                  metricsRecorder,
+                  parameterResolverStrategy);
           // wrap it to be able to react on the outcome
           RollbackJobHandler jobHandler =
               new RollbackJobHandler(
