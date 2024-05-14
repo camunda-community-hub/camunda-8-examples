@@ -1,0 +1,13 @@
+camunda:
+  tasklist:
+    url: http://localhost:8082
+    authentication:
+      client-id: my-app
+      client-secret: BuZfGQbnVK1nlLSXAy6Prcv5mqIrfCJ6
+      issuer: http://localhost:18080/auth/realms/camunda-platform
+      audience: tasklist-api
+  webhook:
+    url: http://localhost:8085/inbound
+    authorization:
+      username: demo
+      password: demo
