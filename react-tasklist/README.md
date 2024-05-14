@@ -14,6 +14,9 @@
   * Tasklist REST API
   * Connectors inbound endpoint
   * Keycloak REST API
+* deploy _example.bpmn_ upfront (the application does not actually rely on a zeebe client, so no deployment)
+
+>For this, you may have to generate your own "Application" in Identity
 
 ## How to use
 
