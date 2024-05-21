@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Deployment(resources = "classpath*:**/*.bpmn")
 public class ExampleApplication {
   private static final Logger LOG = LoggerFactory.getLogger(ExampleApplication.class);
+  public static String progressOverride;
 
   public static void main(String[] args) {
     SpringApplication.run(ExampleApplication.class, args);
@@ -27,7 +28,10 @@ public class ExampleApplication {
 
   @JobWorker
   public Map<String, Object> checkProgress(@Variable List<String> options) {
-    String progress = options.get(new Random().nextInt(options.size()));
+    String progress =
+        progressOverride != null
+            ? progressOverride
+            : options.get(new Random().nextInt(options.size()));
     return Map.of("progress", progress);
   }
 }

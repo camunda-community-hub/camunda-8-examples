@@ -91,7 +91,7 @@ public class TimerTest {
     ProcessInstanceEvent instance =
         zeebeClient
             .newCreateInstanceCommand()
-            .bpmnProcessId("GetUpProcess")
+            .bpmnProcessId(bpmnProcessId)
             .latestVersion()
             .send()
             .join();
