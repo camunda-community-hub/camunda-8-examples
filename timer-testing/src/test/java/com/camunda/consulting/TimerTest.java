@@ -14,13 +14,11 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ZeebeProcessTest
 @ExtendWith(ProcessEngineCoverageExtension.class)
-@Disabled
 public class TimerTest {
   private static final Duration DEFAULT = Duration.ofSeconds(30);
   ZeebeTestEngine zeebeTestEngine;
@@ -31,7 +29,7 @@ public class TimerTest {
     zeebeClient.newDeployResourceCommand().addResourceFromClasspath("get-up.bpmn").send().join();
   }
 
-  @Test
+  @RepeatedTest(10)
   void happyPath() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
     assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
@@ -47,7 +45,7 @@ public class TimerTest {
     assertThat(processInstance).isCompleted().hasPassedElement("KidsAreFedEndEvent");
   }
 
-  @Test
+  @RepeatedTest(10)
   void boundaryEvent() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
     assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
@@ -84,7 +82,6 @@ public class TimerTest {
   private void skipTimer(Duration timerDuration) throws InterruptedException, TimeoutException {
     zeebeTestEngine.waitForIdleState(DEFAULT);
     zeebeTestEngine.increaseTime(timerDuration);
-    zeebeTestEngine.waitForIdleState(DEFAULT);
     zeebeTestEngine.waitForBusyState(DEFAULT);
     zeebeTestEngine.waitForIdleState(DEFAULT);
   }
@@ -94,7 +91,7 @@ public class TimerTest {
     ProcessInstanceEvent instance =
         zeebeClient
             .newCreateInstanceCommand()
-            .bpmnProcessId("GetUpProcess")
+            .bpmnProcessId(bpmnProcessId)
             .latestVersion()
             .send()
             .join();
