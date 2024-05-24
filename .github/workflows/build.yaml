@@ -15,18 +15,6 @@ jobs:
       - name: Build with Maven
         run: mvn verify -PcheckFormat -B
         working-directory: twitter-review-java-springboot
-  build-dmn-java-springboot:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Build with Maven
-        run: mvn verify -PcheckFormat -B
-        working-directory: dmn-java-springboot
   build-large-multi-instance-example:
     runs-on: ubuntu-latest
     steps:
