@@ -1,0 +1,206 @@
+{
+  "$schema" : "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name" : "Car Connector",
+  "id" : "com.camunda.consulting:carConnector",
+  "description" : "A connector to get a car from a selection",
+  "documentationRef" : "https://github.com/camunda-community-hub/camunda-8-examples",
+  "version" : 1,
+  "category" : {
+    "id" : "connectors",
+    "name" : "Connectors"
+  },
+  "appliesTo" : [ "bpmn:Task" ],
+  "elementType" : {
+    "value" : "bpmn:ServiceTask"
+  },
+  "groups" : [ {
+    "id" : "default",
+    "label" : "Properties"
+  }, {
+    "id" : "output",
+    "label" : "Output mapping"
+  }, {
+    "id" : "error",
+    "label" : "Error handling"
+  }, {
+    "id" : "retries",
+    "label" : "Retries"
+  } ],
+  "properties" : [ {
+    "value" : "com.camunda.consulting:carConnector:1",
+    "binding" : {
+      "property" : "type",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "Hidden"
+  }, {
+    "id" : "make.make",
+    "label" : "Make",
+    "group" : "default",
+    "binding" : {
+      "name" : "make.make",
+      "type" : "zeebe:input"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Audi",
+      "value" : "Audi_make"
+    }, {
+      "name" : "VW",
+      "value" : "Volkswagen_make"
+    } ]
+  }, {
+    "id" : "make.audiModel",
+    "label" : "Audi model",
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "group" : "default",
+    "binding" : {
+      "name" : "make.audiModel",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "make.make",
+      "equals" : "Audi_make",
+      "type" : "simple"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "A1",
+      "value" : "A1"
+    }, {
+      "name" : "A3",
+      "value" : "A3"
+    }, {
+      "name" : "A4",
+      "value" : "A4"
+    }, {
+      "name" : "A5",
+      "value" : "A5"
+    }, {
+      "name" : "A6",
+      "value" : "A6"
+    }, {
+      "name" : "A7",
+      "value" : "A7"
+    }, {
+      "name" : "A8",
+      "value" : "A8"
+    } ]
+  }, {
+    "id" : "make.volkswagenModel",
+    "label" : "Volkswagen model",
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "group" : "default",
+    "binding" : {
+      "name" : "make.volkswagenModel",
+      "type" : "zeebe:input"
+    },
+    "condition" : {
+      "property" : "make.make",
+      "equals" : "Volkswagen_make",
+      "type" : "simple"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Golf",
+      "value" : "Golf"
+    }, {
+      "name" : "T7",
+      "value" : "T7"
+    }, {
+      "name" : "Polo",
+      "value" : "Polo"
+    }, {
+      "name" : "Jetta",
+      "value" : "Jetta"
+    }, {
+      "name" : "Passat",
+      "value" : "Passat"
+    }, {
+      "name" : "Arteon",
+      "value" : "Arteon"
+    }, {
+      "name" : "Golf_ variant",
+      "value" : "Golf_Variant"
+    } ]
+  }, {
+    "id" : "gearbox",
+    "label" : "Gearbox",
+    "constraints" : {
+      "notEmpty" : true
+    },
+    "group" : "default",
+    "binding" : {
+      "name" : "gearbox",
+      "type" : "zeebe:input"
+    },
+    "type" : "Dropdown",
+    "choices" : [ {
+      "name" : "Manual",
+      "value" : "Manual"
+    }, {
+      "name" : "Automatic",
+      "value" : "Automatic"
+    } ]
+  }, {
+    "id" : "resultVariable",
+    "label" : "Result variable",
+    "description" : "Name of variable to store the response in",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultVariable",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  }, {
+    "id" : "resultExpression",
+    "label" : "Result expression",
+    "description" : "Expression to map the response into process variables",
+    "feel" : "required",
+    "group" : "output",
+    "binding" : {
+      "key" : "resultExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "errorExpression",
+    "label" : "Error expression",
+    "description" : "Expression to handle errors. Details in the <a href=\"https://docs.camunda.io/docs/components/connectors/use-connectors/\" target=\"_blank\">documentation</a>.",
+    "feel" : "required",
+    "group" : "error",
+    "binding" : {
+      "key" : "errorExpression",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "Text"
+  }, {
+    "id" : "retryCount",
+    "label" : "Retries",
+    "description" : "Number of retries",
+    "value" : "3",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "property" : "retries",
+      "type" : "zeebe:taskDefinition"
+    },
+    "type" : "String"
+  }, {
+    "id" : "retryBackoff",
+    "label" : "Retry backoff",
+    "description" : "ISO-8601 duration to wait between retries",
+    "value" : "PT0S",
+    "feel" : "optional",
+    "group" : "retries",
+    "binding" : {
+      "key" : "retryBackoff",
+      "type" : "zeebe:taskHeader"
+    },
+    "type" : "String"
+  } ]
+}
