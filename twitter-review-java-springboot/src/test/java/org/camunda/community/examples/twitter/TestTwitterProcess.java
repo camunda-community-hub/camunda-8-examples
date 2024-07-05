@@ -21,7 +21,9 @@ import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
 import org.camunda.community.examples.twitter.process.TwitterProcessVariables;
 import org.camunda.community.examples.twitter.rest.ReviewTweetRestApi;
+import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 @ZeebeSpringTest
+@ExtendWith(ProcessEngineCoverageExtension.class)
 public class TestTwitterProcess {
 
   @Autowired private ZeebeClient zeebe;
@@ -85,11 +88,9 @@ public class TestTwitterProcess {
             .bpmnProcessId("TwitterDemoProcess")
             .latestVersion() //
             .variables(variables) //
+            .startBeforeElement("gateway_approved")
             .send()
             .join();
-
-    waitForUserTaskAndComplete(
-        "user_task_review_tweet", Collections.singletonMap("approved", false));
 
     waitForProcessInstanceCompleted(processInstance);
     waitForProcessInstanceHasPassedElement(processInstance, "end_event_tweet_rejected");
@@ -104,7 +105,11 @@ public class TestTwitterProcess {
         .tweet(anyString());
 
     TwitterProcessVariables variables =
-        new TwitterProcessVariables().setTweet("Hello world").setAuthor("bernd").setBoss("Zeebot");
+        new TwitterProcessVariables()
+            .setTweet("Hello world")
+            .setAuthor("bernd")
+            .setBoss("Zeebot")
+            .setApproved(false);
 
     ProcessInstanceEvent processInstance =
         zeebe
@@ -112,11 +117,10 @@ public class TestTwitterProcess {
             .bpmnProcessId("TwitterDemoProcess")
             .latestVersion() //
             .variables(variables) //
+            .startBeforeElement("service_task_publish_on_twitter")
             .send()
             .join();
 
-    waitForUserTaskAndComplete(
-        "user_task_review_tweet", Collections.singletonMap("approved", true));
     waitForProcessInstanceHasPassedElement(processInstance, "boundary_event_tweet_duplicated");
     waitForUserTaskAndComplete("user_task_handle_duplicate", new HashMap<>());
     // second try :-) --> TODO: Think about isolation of test cases when we can better cleanup the

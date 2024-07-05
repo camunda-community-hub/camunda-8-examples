@@ -12,6 +12,7 @@
     <spring-boot.version>3.3.0</spring-boot.version>
     <zeebe.version>8.5.5</zeebe.version>
     <spring-zeebe.version>8.5.7</spring-zeebe.version>
+    <camunda-process-test-coverage.version>2.6.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
@@ -58,6 +59,12 @@
       <version>${spring-zeebe.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.camunda.community.process_test_coverage</groupId>
+      <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId> 
+      <version>${camunda-process-test-coverage.version}</version>
+      <scope>test</scope>
+    </dependency>    
 
     <!-- Required to offer a REST API via Spring Webflux (of course you could use any other framework too) -->
     <dependency>
