@@ -99,7 +99,7 @@ Rules:
 We are interested in the `/identity` backend, which provides the URL `https://local.distro.ultrawombat.com/identity`. Keep in mind that accessing a service via the ingress corresponds to external access.
 </details>
 
-### Generating the Token via the Identity UI
+### Generating the Token and adding access to the Zeebe-API via the Identity UI
 
 0. Log on the **Identity** web page
 1. Click on "Add application".
@@ -108,7 +108,12 @@ We are interested in the `/identity` backend, which provides the URL `https://lo
    ![M2M App](doc-images/identity-add-m2m-app.png)
 3. Click on "Add".
 4. In the list of applications, click on the newly created "payment-app".
-5. Reveal or copy the "Client Secret".
+5. Select the tab "Access to APIs".
+6. Click on "Assign Permissions".
+7. In the drop-down, select "Zeebe API" and check the "write:*" permission box.
+8. Add the permission to access the Zeebe API.
+   ![Add permission to access the Zeebe API](doc-images/identity-add-permission.png)
+9. Reveal or copy the "Client Secret".
    ![Reveal Secret](doc-images/identity-reveal-secret.png)
 
 Save both the **Client ID** and the **Client secret** for later use.
