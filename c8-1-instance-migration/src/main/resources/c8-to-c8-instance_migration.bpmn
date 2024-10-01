@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_11awphv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.8.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.1.0">
+  <bpmn:process id="Process_Instance_Migration" name="Process Instance Migration" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:userTaskForm id="userTaskForm_1rmp0d2">{
+  "components": [
+    {
+      "text": "# Suspend Job Worker\nTo be migrated, all process instances must reach a waiting state, i.e., a user task or a service task whose job worker has been suspended. **If you do not want to wait for a user task, please suspend your jobworker now**.\n\nAfterwards, file the following form and complete the task.",
+      "type": "text",
+      "id": "Field_0zas7yp"
+    },
+    {
+      "label": "BPMN Process ID",
+      "type": "textfield",
+      "id": "Field_0tmv9vc",
+      "key": "bpmnProcessId",
+      "description": "Specify the ID of the process that should be migrated to the latest version"
+    },
+    {
+      "label": "Start before element",
+      "type": "textfield",
+      "id": "Field_0d9efd2",
+      "key": "startBeforeElement",
+      "description": "Element ID of the user task or suspended service task."
+    }
+  ],
+  "type": "default",
+  "id": "Form_0iz9juy",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}</zeebe:userTaskForm>
+      <zeebe:userTaskForm id="userTaskForm_0gnnt8q">{
+  "components": [
+    {
+      "text": "# Wait until waiting state\nPlease wait until all process instances have reached the desired waiting state. Afterward, complete the task to start the instance migration.",
+      "type": "text",
+      "id": "Field_0xdo7kr"
+    }
+  ],
+  "type": "default",
+  "id": "Form_064so1a",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}</zeebe:userTaskForm>
+      <zeebe:userTaskForm id="userTaskForm_0f233o3">{
+  "components": [
+    {
+      "text": "# Migration has been completed\nIf you suspended a job worker during the first step of the process, start it again.",
+      "type": "text",
+      "id": "Field_0vjvjyt"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0ux0b2i",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}</zeebe:userTaskForm>
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1" name="Routed Process Instance Migration">
+      <bpmn:outgoing>Flow_061o5iy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_061o5iy" sourceRef="StartEvent_1" targetRef="Activity_1dsp6xe" />
+    <bpmn:userTask id="Activity_1dsp6xe" name="suspend job worker">
+      <bpmn:documentation>Manually stop the job worker at which all instances should wait. If this can be done automatically, this task may be changed to a service task.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_1rmp0d2" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_061o5iy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ehdnyx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0ehdnyx" sourceRef="Activity_1dsp6xe" targetRef="Activity_0ii4cme" />
+    <bpmn:userTask id="Activity_1d9y79k" name="start job worker">
+      <bpmn:documentation>Restart the worker to continue the process execution</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_0f233o3" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11evvbe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m3h3k8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1pji4ee" name="migration completed">
+      <bpmn:incoming>Flow_0m3h3k8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0m3h3k8" sourceRef="Activity_1d9y79k" targetRef="Event_1pji4ee" />
+    <bpmn:sequenceFlow id="Flow_1hy8myh" sourceRef="Activity_0ii4cme" targetRef="Activity_05mbznf" />
+    <bpmn:userTask id="Activity_0ii4cme" name="wait until all processes reached waiting state">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formKey="camunda-forms:bpmn:userTaskForm_0gnnt8q" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ehdnyx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hy8myh</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_05mbznf" name="fetch instances of old version">
+      <bpmn:documentation>Use Operate API to fetch all process instances of a specific process model version: https://docs.camunda.io/docs/apis-clients/operate-api/#process-instance
+Use operate API to filter those instances that wait at the predefined task:
+https://docs.camunda.io/docs/apis-clients/operate-api/#flow-node-instance</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fetchInstances" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hy8myh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s4tfom</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:subProcess id="Activity_19d5tvf" name="migrate single instance">
+      <bpmn:incoming>Flow_0s4tfom</bpmn:incoming>
+      <bpmn:outgoing>Flow_11evvbe</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=processInstanceKeys" inputElement="processInstanceKey" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="Event_0xn7a8w" name="single instance migration started">
+        <bpmn:outgoing>Flow_0kzdm7p</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Activity_0hsf82n" name="start instance of new version">
+        <bpmn:documentation>Create a new process instance via Zeebe API:
+https://docs.camunda.io/docs/apis-clients/grpc/#createprocessinstancewithresult-rpc
+
+Use the operate API to get all variables and set the values appropriately.</bpmn:documentation>
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="startInstance" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0kzdm7p</bpmn:incoming>
+        <bpmn:outgoing>Flow_14ohcyf</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="Event_11e0nd3">
+        <bpmn:incoming>Flow_0zvy8vi</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:serviceTask id="Activity_0ubqmgv" name="delete old instance">
+        <bpmn:documentation>Delete the old process instance:
+https://docs.camunda.io/docs/apis-clients/operate-api/</bpmn:documentation>
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="deleteOldInstance" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_14ohcyf</bpmn:incoming>
+        <bpmn:outgoing>Flow_0zvy8vi</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_0kzdm7p" sourceRef="Event_0xn7a8w" targetRef="Activity_0hsf82n" />
+      <bpmn:sequenceFlow id="Flow_14ohcyf" sourceRef="Activity_0hsf82n" targetRef="Activity_0ubqmgv" />
+      <bpmn:sequenceFlow id="Flow_0zvy8vi" sourceRef="Activity_0ubqmgv" targetRef="Event_11e0nd3" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0s4tfom" sourceRef="Activity_05mbznf" targetRef="Activity_19d5tvf" />
+    <bpmn:sequenceFlow id="Flow_11evvbe" sourceRef="Activity_19d5tvf" targetRef="Activity_1d9y79k" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Instance_Migration">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="205" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0f58lfo_di" bpmnElement="Activity_1dsp6xe">
+        <dc:Bounds x="270" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0jot7dd_di" bpmnElement="Activity_1d9y79k">
+        <dc:Bounds x="1230" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1pji4ee_di" bpmnElement="Event_1pji4ee">
+        <dc:Bounds x="1382" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1375" y="205" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0496t63_di" bpmnElement="Activity_0ii4cme">
+        <dc:Bounds x="410" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_15fdi99" bpmnElement="Activity_05mbznf">
+        <dc:Bounds x="550" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1tvq8vi" bpmnElement="Activity_19d5tvf" isExpanded="true">
+        <dc:Bounds x="700" y="80" width="490" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y81rgx" bpmnElement="Event_0xn7a8w">
+        <dc:Bounds x="740" y="162" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="205" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_014bgcg" bpmnElement="Activity_0hsf82n">
+        <dc:Bounds x="830" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pu53l7" bpmnElement="Event_11e0nd3">
+        <dc:Bounds x="1112" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wfoh5y" bpmnElement="Activity_0ubqmgv">
+        <dc:Bounds x="980" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1mcv0ns" bpmnElement="Flow_0kzdm7p">
+        <di:waypoint x="776" y="180" />
+        <di:waypoint x="830" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0z8gc0u" bpmnElement="Flow_14ohcyf">
+        <di:waypoint x="930" y="180" />
+        <di:waypoint x="980" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1ji6xej" bpmnElement="Flow_0zvy8vi">
+        <di:waypoint x="1080" y="180" />
+        <di:waypoint x="1112" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_061o5iy_di" bpmnElement="Flow_061o5iy">
+        <di:waypoint x="218" y="180" />
+        <di:waypoint x="270" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ehdnyx_di" bpmnElement="Flow_0ehdnyx">
+        <di:waypoint x="370" y="180" />
+        <di:waypoint x="410" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m3h3k8_di" bpmnElement="Flow_0m3h3k8">
+        <di:waypoint x="1330" y="180" />
+        <di:waypoint x="1382" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hy8myh_di" bpmnElement="Flow_1hy8myh">
+        <di:waypoint x="510" y="180" />
+        <di:waypoint x="550" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0g36171" bpmnElement="Flow_0s4tfom">
+        <di:waypoint x="650" y="180" />
+        <di:waypoint x="700" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11evvbe_di" bpmnElement="Flow_11evvbe">
+        <di:waypoint x="1190" y="180" />
+        <di:waypoint x="1230" y="180" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
