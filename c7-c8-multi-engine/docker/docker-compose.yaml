@@ -1,0 +1,113 @@
+services:
+        camunda-run:
+                image: registry.camunda.cloud/cambpm-ee/camunda-bpm-platform-ee:run-7.19.6
+                container_name: camunda-run
+                ports:
+                        - 8080:8080
+                restart: unless-stopped
+                networks:
+                  - camunda-platform
+                volumes:
+                  - type: bind
+                    source: ./license.txt
+                    target: /camunda/.camunda/license.txt
+        zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+                image: camunda/zeebe:8.2.15
+                container_name: zeebe
+                ports:
+                  - "26500:26500"
+                  - "9600:9600"
+                environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+                  - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME=io.camunda.zeebe.exporter.ElasticsearchExporter
+                  - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL=http://elasticsearch:9200
+                  # default is 1000, see here: https://github.com/camunda/zeebe/blob/main/exporters/elasticsearch-exporter/src/main/java/io/camunda/zeebe/exporter/ElasticsearchExporterConfiguration.java#L259
+                  - ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_BULK_SIZE=1
+                  # allow running with low disk space
+                  - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+                  - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+                  - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+                restart: always
+                healthcheck:
+                  test: [ "CMD-SHELL", "timeout 10s bash -c ':> /dev/tcp/127.0.0.1/9600' || exit 1" ]
+                  interval: 30s
+                  timeout: 5s
+                  retries: 5
+                  start_period: 30s
+                volumes:
+                  - zeebe:/usr/local/zeebe/data
+                networks:
+                  - camunda-platform
+                depends_on:
+                  - elasticsearch
+
+        operate: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#operate
+                image: camunda/operate:8.2.15
+                container_name: operate
+                ports:
+                  - "8081:8080"
+                environment: # https://docs.camunda.io/docs/self-managed/operate-deployment/configuration/
+                  - CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS=zeebe:26500
+                  - CAMUNDA_OPERATE_ELASTICSEARCH_URL=http://elasticsearch:9200
+                  - CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL=http://elasticsearch:9200
+                  - management.endpoints.web.exposure.include=health
+                  - management.endpoint.health.probes.enabled=true
+                healthcheck:
+                  test: [ "CMD-SHELL", "curl -f http://localhost:8080/actuator/health/readiness" ]
+                  interval: 30s
+                  timeout: 1s
+                  retries: 5
+                  start_period: 30s
+                networks:
+                  - camunda-platform
+                depends_on:
+                  - zeebe
+                  - elasticsearch
+        optimize:
+                image: registry.camunda.cloud/optimize-ee/optimize:3.10.5
+                container_name: optimize
+                ports:
+                        - 8090:8090
+                        - 8091:8091
+                networks:
+                  - camunda-platform
+                depends_on:
+                  elasticsearch:
+                    condition: service_healthy
+                volumes:
+                 - type: bind
+                   source: ./environment-config.yaml
+                   target: /optimize/config/environment-config.yaml
+                 - type: bind
+                   source: ./license.txt
+                   target: /optimize/config/OptimizeLicense.txt
+
+        elasticsearch:
+                image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION:-7.17.5}
+                container_name: elasticsearch
+                ports:
+                      - 9200:9200
+                environment:
+                  - bootstrap.memory_lock=true
+                  - discovery.type=single-node
+                  - xpack.security.enabled=false
+                  - cluster.routing.allocation.disk.threshold_enabled=false
+                ulimits:
+                  memlock:
+                    soft: -1
+                    hard: -1
+                restart: always
+                healthcheck:
+                     test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cat/health | grep -q green" ]
+                     interval: 30s
+                     timeout: 5s
+                     retries: 3
+                networks:
+                  - camunda-platform
+                volumes:
+                  - elastic:/var/lib/docker/elasticsearch/data
+volumes:
+ zeebe:
+ elastic:
+
+networks:
+  camunda-platform:
