@@ -1,0 +1,18 @@
+{
+  "components": [
+    {
+      "text": "# Migration has been completed\nIf you suspended a job worker during the first step of the process, start it again.",
+      "type": "text",
+      "id": "Field_0vjvjyt"
+    }
+  ],
+  "type": "default",
+  "id": "Form_0ux0b2i",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}
