@@ -21,27 +21,22 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.5</version>
         <scope>import</scope>
         <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>io.camunda.spring</groupId>
-        <artifactId>java-common</artifactId>
-        <version>8.5.13</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda</artifactId>
-      <version>8.5.13</version>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+      <version>8.6.4</version>
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>camunda-tasklist-client-java</artifactId>
-      <version>8.5.3.6</version>
+      <artifactId>spring-boot-starter-camunda-tasklist</artifactId>
+      <version>8.6.6</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -54,7 +49,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.5</version>
         <configuration>
           <layout>ZIP</layout>
         </configuration>
