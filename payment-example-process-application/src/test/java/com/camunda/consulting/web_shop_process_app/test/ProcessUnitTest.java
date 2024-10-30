@@ -2,41 +2,65 @@ package com.camunda.consulting.web_shop_process_app.test;
 
 import static io.camunda.zeebe.process.test.assertions.BpmnAssert.*;
 import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
-import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.camunda.consulting.web_shop_process_app.service.CreditCardExpiredException;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardService;
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
+import com.camunda.consulting.web_shop_process_app.worker.CreditCardHandler;
+import com.camunda.consulting.web_shop_process_app.worker.CustomerCreditHandler;
 import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.response.ActivateJobsResponse;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
+import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@ZeebeSpringTest
-@ExtendWith(ProcessEngineCoverageExtension.class)
-public class ProcessIntegrationTest {
+@ZeebeProcessTest
+@ExtendWith({ProcessEngineCoverageExtension.class, MockitoExtension.class})
+public class ProcessUnitTest {
 
-  @Autowired ZeebeClient zeebeClient;
+  ZeebeClient zeebeClient;
+  ZeebeTestEngine engine;
 
-  @Autowired ZeebeTestEngine engine;
+  @Mock CustomerService mockedCustomerService;
 
-  @MockBean CustomerService mockedCustomerService;
+  @Mock CreditCardService mockedCreditCardService;
 
-  @MockBean CreditCardService mockedCreditCardService;
+  private void assertProcessInstanceCompleted(ProcessInstanceEvent processInstance)
+      throws InterruptedException, TimeoutException {
+    engine.waitForIdleState(Duration.ofSeconds(10));
+    assertThat(processInstance).isCompleted();
+  }
+
+  private void assertProcessInstanceHasPassedElement(
+      ProcessInstanceEvent processInstance, String elementId)
+      throws InterruptedException, TimeoutException {
+    engine.waitForIdleState(Duration.ofSeconds(10));
+    assertThat(processInstance).hasPassedElement(elementId, 1);
+  }
+
+  @BeforeEach
+  void init() {
+    zeebeClient
+        .newDeployResourceCommand()
+        .addResourceFromClasspath("check-payment.form")
+        .addResourceFromClasspath("payment_process.bpmn")
+        .send()
+        .join();
+  }
 
   @Test
   public void testPappyPath() throws InterruptedException, TimeoutException {
@@ -51,13 +75,49 @@ public class ProcessIntegrationTest {
                 Map.of("customerId", "testCustomer", "orderTotal", 190.0, "expiryDate", "10/24"))
             .send()
             .join();
-
-    waitForProcessInstanceCompleted(processInstance);
+    completeCustomerCreditHandling();
+    completeCreditCardCharging();
+    assertProcessInstanceCompleted(processInstance);
 
     assertThat(processInstance)
         .hasPassedElement("Activity_0nppgjk")
         .hasVariableWithValue("remainingAmount", 90.0);
     verify(mockedCustomerService).getCustomerCredit("testCustomer");
+  }
+
+  private void completeCreditCardCharging() throws InterruptedException, TimeoutException {
+    completeJob(
+        "creditCardCharging",
+        (activatedJob) ->
+            new CreditCardHandler(mockedCreditCardService).handle(zeebeClient, activatedJob));
+  }
+
+  private void completeCustomerCreditHandling() throws InterruptedException, TimeoutException {
+    completeJob(
+        "customerCreditHandling",
+        (activatedJob) -> {
+          try {
+            Map<String, Object> result =
+                new CustomerCreditHandler(mockedCustomerService).handle(activatedJob);
+            zeebeClient.newCompleteCommand(activatedJob).variables(result).send().join();
+          } catch (Exception e) {
+            zeebeClient.newFailCommand(activatedJob).retries(0).send().join();
+          }
+        });
+  }
+
+  private void completeJob(String jobType, Consumer<ActivatedJob> handler)
+      throws InterruptedException, TimeoutException {
+    // wait for idle state
+    engine.waitForIdleState(Duration.ofSeconds(10));
+    // find a job
+    ActivateJobsResponse jobsResponse =
+        zeebeClient.newActivateJobsCommand().jobType(jobType).maxJobsToActivate(1).send().join();
+    // expect exactly one
+    assertThat(jobsResponse).isNotNull();
+    assertThat(jobsResponse.getJobs()).hasSize(1);
+    // use the handler
+    handler.accept(jobsResponse.getJobs().get(0));
   }
 
   @Test
@@ -73,7 +133,8 @@ public class ProcessIntegrationTest {
             .variables(Map.of("customerId", "testCustomer", "orderTotal", 50.0))
             .send()
             .join();
-    waitForProcessInstanceCompleted(processInstance);
+    completeCustomerCreditHandling();
+    assertProcessInstanceCompleted(processInstance);
 
     assertThat(processInstance).hasNotPassedElement("Activity_0nppgjk");
   }
@@ -91,13 +152,13 @@ public class ProcessIntegrationTest {
             .send()
             .join();
 
-    engine.waitForIdleState(Duration.ofSeconds(20));
+    completeCustomerCreditHandling();
 
     assertThat(processInstance).isActive().hasAnyIncidents();
   }
 
   @Test
-  public void testInvalidExpiryDate() throws InterruptedException {
+  public void testInvalidExpiryDate() throws InterruptedException, TimeoutException {
     doThrow(new CreditCardExpiredException("expired"))
         .when(mockedCreditCardService)
         .chargeAmount("1234 5678", "123", "05/23", 100.0);
@@ -120,8 +181,8 @@ public class ProcessIntegrationTest {
             .startBeforeElement("Activity_0nppgjk")
             .send()
             .join();
-
-    waitForProcessInstanceHasPassedElement(processInstance, "Event_0u18e53");
+    completeCreditCardCharging();
+    assertProcessInstanceHasPassedElement(processInstance, "Event_0u18e53");
 
     assertThat(processInstance)
         .isActive()
@@ -142,7 +203,7 @@ public class ProcessIntegrationTest {
 
     completeUserTask(Map.of("errorResolved", false));
 
-    waitForProcessInstanceCompleted(processInstance);
+    assertProcessInstanceCompleted(processInstance);
 
     assertThat(processInstance).isCompleted().hasPassedElement("Event_1854135");
   }
@@ -158,10 +219,10 @@ public class ProcessIntegrationTest {
             .variables(Map.of("remainingAmount", 10.0))
             .send()
             .join();
-
     completeUserTask(Map.of("errorResolved", true));
+    completeCreditCardCharging();
 
-    waitForProcessInstanceHasPassedElement(processInstance, "Gateway_1ymklbs");
+    assertProcessInstanceHasPassedElement(processInstance, "Gateway_1ymklbs");
 
     assertThat(processInstance).hasPassedElement("Activity_0nppgjk");
   }

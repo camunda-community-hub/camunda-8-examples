@@ -7,20 +7,16 @@ import com.camunda.consulting.web_shop_process_app.service.CustomerService;
 import com.camunda.consulting.web_shop_process_app.worker.CustomerCreditHandler;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class WorkerTest {
 
   @Mock(stubOnly = true)
   ActivatedJob mockedJob;
-
-  @BeforeEach
-  public void init() {
-    MockitoAnnotations.openMocks(this);
-  }
 
   @Test
   public void testCustomerCreditWorker() {
