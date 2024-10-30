@@ -13,10 +13,9 @@ public class CustomerCreditHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(CustomerCreditHandler.class);
 
-  CustomerService customerService;
+  private final CustomerService customerService;
 
   public CustomerCreditHandler(CustomerService customerService) {
-    super();
     this.customerService = customerService;
   }
 

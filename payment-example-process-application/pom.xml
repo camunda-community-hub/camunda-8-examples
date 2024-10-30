@@ -10,9 +10,8 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <zeebe.version>8.5.10</zeebe.version>
-    <spring-zeebe.version>8.5.7</spring-zeebe.version>
-    <spring-boot.version>3.3.0</spring-boot.version>
+    <zeebe.version>8.6.4</zeebe.version>
+    <spring-boot.version>3.3.5</spring-boot.version>
   </properties>
   
   <dependencyManagement>
@@ -30,9 +29,19 @@
         <version>${zeebe.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.camunda.spring</groupId>
-        <artifactId>spring-boot-starter-camunda</artifactId>
-        <version>${spring-zeebe.version}</version>
+        <groupId>io.camunda</groupId>
+        <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+        <version>${zeebe.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>zeebe-process-test-extension-testcontainer</artifactId>
+        <version>${zeebe.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.community.process_test_coverage</groupId>
+        <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId>
+        <version>2.7.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -44,8 +53,8 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda</artifactId>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
     </dependency>
     
     <dependency>
@@ -54,16 +63,20 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
-      <version>${spring-zeebe.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>zeebe-process-test-extension-testcontainer</artifactId>
       <scope>test</scope>
     </dependency>
     
     <dependency>
       <groupId>org.camunda.community.process_test_coverage</groupId>
       <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId>
-      <version>2.7.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
