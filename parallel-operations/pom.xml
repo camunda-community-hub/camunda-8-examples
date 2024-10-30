@@ -45,7 +45,7 @@
       <dependency>
         <groupId>io.camunda.spring</groupId>
         <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
-        <version>8.5.13</version>
+        <version>8.5.14</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
