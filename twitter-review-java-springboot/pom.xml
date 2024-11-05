@@ -10,7 +10,7 @@
   <properties>
     <java.version>21</java.version>
     <spring-boot.version>3.3.0</spring-boot.version>
-    <zeebe.version>8.5.8</zeebe.version>
+    <zeebe.version>8.5.9</zeebe.version>
     <spring-zeebe.version>8.5.7</spring-zeebe.version>
     <camunda-process-test-coverage.version>2.7.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
