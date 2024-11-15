@@ -10,7 +10,7 @@
   <properties>
     <java.version>21</java.version>
     <spring-boot.version>3.3.0</spring-boot.version>
-    <zeebe.version>8.5.8</zeebe.version>
+    <zeebe.version>8.5.9</zeebe.version>
     <spring-zeebe.version>8.5.7</spring-zeebe.version>
     <camunda-process-test-coverage.version>2.7.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -117,7 +117,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <configuration>
           <mainClass>org.camunda.community.examples.twitter.TwitterExampleApplication</mainClass>
         </configuration>
@@ -130,7 +130,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.5.2</version>
       </plugin>
     </plugins>
   </build>

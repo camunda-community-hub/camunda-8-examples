@@ -26,7 +26,7 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
-        <version>8.6.3</version>
+        <version>8.6.5</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -45,7 +45,7 @@
       <dependency>
         <groupId>io.camunda.spring</groupId>
         <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
-        <version>8.5.13</version>
+        <version>8.5.14</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
