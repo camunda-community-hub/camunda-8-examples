@@ -15,7 +15,7 @@ public class CreditCardHandler {
 
   private static final Logger LOG = LoggerFactory.getLogger(CreditCardHandler.class);
 
-  private CreditCardService creditCardService;
+  private final CreditCardService creditCardService;
 
   public CreditCardHandler(CreditCardService creditCardService) {
     this.creditCardService = creditCardService;
