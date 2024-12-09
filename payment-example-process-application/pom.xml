@@ -12,7 +12,7 @@
 
     <zeebe.version>8.5.10</zeebe.version>
     <spring-zeebe.version>8.5.7</spring-zeebe.version>
-    <spring-boot.version>3.3.0</spring-boot.version>
+    <spring-boot.version>3.3.6</spring-boot.version>
   </properties>
   
   <dependencyManagement>
