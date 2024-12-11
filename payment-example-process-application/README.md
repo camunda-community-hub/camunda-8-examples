@@ -50,8 +50,9 @@ The application.yaml, that is included in the image, contains values for local
 development.
 
 ```
-zeebe.client.broker.gateway-address=localhost:26500
-zeebe.client.security.plaintext=true
+camunda:
+  client:
+    mode: selfmanaged
 ```
 
 Maybe you have to override the values in your cluster.
@@ -62,7 +63,7 @@ If you want to connect the container to a Camunda 8 cloud cluster, the docker
 command looks like this:
 
 ```
-docker run -e ZEEBE_CLIENT_CLOUD_CLUSTERID -e ZEEBE_CLIENT_CLOUD_CLIENTID -e ZEEBE_CLIENT_CLOUD_CLIENTSECRET -e ZEEBE_CLIENT_CLOUD_REGION -e ZEEBE_CLIENT_SECURITY_PLAINTEXT -p 8080:8080 --name payment-example-process-application payment-example-process-application:0.0.1-SNAPSHOT
+docker run -e CAMUNDA_CLIENT_MODE=saas -e CAMUNDA_CLIENT_AUTH_CLIENTID -e CAMUNDA_CLIENT_AUTH_CLIENTSECRET -e CAMUNDA_CLIENT_REGION -e CAMUNDA_CLIENT_CLUSTERID -p 8080:8080 --name payment-example-process-application payment-example-process-application:0.0.1-SNAPSHOT
 ```
 
 The environment variables were set in the shell before.
