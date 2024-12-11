@@ -10,7 +10,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <zeebe.version>8.6.4</zeebe.version>
+    <camunda.version>8.6.4</camunda.version>
     <spring-boot.version>3.3.5</spring-boot.version>
   </properties>
   
@@ -26,22 +26,17 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
-        <version>${zeebe.version}</version>
+        <version>${camunda.version}</version>
       </dependency>
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>spring-boot-starter-camunda-sdk</artifactId>
-        <version>${zeebe.version}</version>
+        <version>${camunda.version}</version>
       </dependency>
       <dependency>
         <groupId>io.camunda</groupId>
-        <artifactId>zeebe-process-test-extension-testcontainer</artifactId>
-        <version>${zeebe.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.camunda.community.process_test_coverage</groupId>
-        <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId>
-        <version>2.7.0</version>
+        <artifactId>camunda-process-test-spring</artifactId>
+        <version>${camunda.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -70,15 +65,10 @@
 
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>zeebe-process-test-extension-testcontainer</artifactId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-    
-    <dependency>
-      <groupId>org.camunda.community.process_test_coverage</groupId>
-      <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId>
-      <scope>test</scope>
-    </dependency>
+
   </dependencies>
   
   <build>

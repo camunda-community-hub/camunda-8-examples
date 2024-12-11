@@ -1,6 +1,5 @@
 package com.camunda.consulting.web_shop_process_app.test;
 
-import static io.camunda.zeebe.process.test.assertions.BpmnAssert.*;
 import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -8,49 +7,30 @@ import static org.mockito.BDDMockito.*;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardExpiredException;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardService;
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
-import com.camunda.consulting.web_shop_process_app.worker.CreditCardHandler;
-import com.camunda.consulting.web_shop_process_app.worker.CustomerCreditHandler;
+import io.camunda.process.test.api.CamundaAssert;
+import io.camunda.process.test.api.CamundaProcessTestContext;
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivateJobsResponse;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
-import io.camunda.zeebe.process.test.extension.testcontainer.ZeebeProcessTest;
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
-import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-@ZeebeProcessTest
-@ExtendWith({ProcessEngineCoverageExtension.class, MockitoExtension.class})
+@CamundaSpringProcessTest
+@SpringBootTest
 public class ProcessUnitTest {
 
-  ZeebeClient zeebeClient;
-  ZeebeTestEngine engine;
-
-  @Mock CustomerService mockedCustomerService;
-
-  @Mock CreditCardService mockedCreditCardService;
-
-  private void assertProcessInstanceCompleted(ProcessInstanceEvent processInstance)
-      throws InterruptedException, TimeoutException {
-    engine.waitForIdleState(Duration.ofSeconds(10));
-    assertThat(processInstance).isCompleted();
-  }
-
-  private void assertProcessInstanceHasPassedElement(
-      ProcessInstanceEvent processInstance, String elementId)
-      throws InterruptedException, TimeoutException {
-    engine.waitForIdleState(Duration.ofSeconds(10));
-    assertThat(processInstance).hasPassedElement(elementId, 1);
-  }
+  @Autowired ZeebeClient zeebeClient;
+  @MockBean CustomerService mockedCustomerService;
+  @MockBean CreditCardService mockedCreditCardService;
+  @Autowired private CamundaProcessTestContext processTestContext;
 
   @BeforeEach
   void init() {
@@ -75,49 +55,12 @@ public class ProcessUnitTest {
                 Map.of("customerId", "testCustomer", "orderTotal", 190.0, "expiryDate", "10/24"))
             .send()
             .join();
-    completeCustomerCreditHandling();
-    completeCreditCardCharging();
-    assertProcessInstanceCompleted(processInstance);
 
-    assertThat(processInstance)
-        .hasPassedElement("Activity_0nppgjk")
-        .hasVariableWithValue("remainingAmount", 90.0);
+    CamundaAssert.assertThat(processInstance)
+        .isCompleted()
+        .hasCompletedElements("Charge credit card")
+        .hasVariable("remainingAmount", 90.0);
     verify(mockedCustomerService).getCustomerCredit("testCustomer");
-  }
-
-  private void completeCreditCardCharging() throws InterruptedException, TimeoutException {
-    completeJob(
-        "creditCardCharging",
-        (activatedJob) ->
-            new CreditCardHandler(mockedCreditCardService).handle(zeebeClient, activatedJob));
-  }
-
-  private void completeCustomerCreditHandling() throws InterruptedException, TimeoutException {
-    completeJob(
-        "customerCreditHandling",
-        (activatedJob) -> {
-          try {
-            Map<String, Object> result =
-                new CustomerCreditHandler(mockedCustomerService).handle(activatedJob);
-            zeebeClient.newCompleteCommand(activatedJob).variables(result).send().join();
-          } catch (Exception e) {
-            zeebeClient.newFailCommand(activatedJob).retries(0).send().join();
-          }
-        });
-  }
-
-  private void completeJob(String jobType, Consumer<ActivatedJob> handler)
-      throws InterruptedException, TimeoutException {
-    // wait for idle state
-    engine.waitForIdleState(Duration.ofSeconds(10));
-    // find a job
-    ActivateJobsResponse jobsResponse =
-        zeebeClient.newActivateJobsCommand().jobType(jobType).maxJobsToActivate(1).send().join();
-    // expect exactly one
-    assertThat(jobsResponse).isNotNull();
-    assertThat(jobsResponse.getJobs()).hasSize(1);
-    // use the handler
-    handler.accept(jobsResponse.getJobs().get(0));
   }
 
   @Test
@@ -133,10 +76,11 @@ public class ProcessUnitTest {
             .variables(Map.of("customerId", "testCustomer", "orderTotal", 50.0))
             .send()
             .join();
-    completeCustomerCreditHandling();
-    assertProcessInstanceCompleted(processInstance);
 
-    assertThat(processInstance).hasNotPassedElement("Activity_0nppgjk");
+    CamundaAssert.assertThat(processInstance)
+        .isCompleted()
+        .hasCompletedElements("no credit card payment required");
+    // missing: assert on not completed elements
   }
 
   @Test
@@ -152,9 +96,10 @@ public class ProcessUnitTest {
             .send()
             .join();
 
-    completeCustomerCreditHandling();
-
-    assertThat(processInstance).isActive().hasAnyIncidents();
+    CamundaAssert.assertThat(processInstance)
+        .isActive()
+        .hasActiveElements("Charge customer credit");
+    // missing: assert on incident state
   }
 
   @Test
@@ -181,13 +126,11 @@ public class ProcessUnitTest {
             .startBeforeElement("Activity_0nppgjk")
             .send()
             .join();
-    completeCreditCardCharging();
-    assertProcessInstanceHasPassedElement(processInstance, "Event_0u18e53");
 
-    assertThat(processInstance)
+    CamundaAssert.assertThat(processInstance)
         .isActive()
-        .isWaitingAtElements("Activity_0tug4lk")
-        .hasPassedElement("Event_0u18e53");
+        .hasActiveElements("Check payment data")
+        .hasCompletedElements("Invalid expiry\n" + "date");
   }
 
   @Test
@@ -201,11 +144,9 @@ public class ProcessUnitTest {
             .send()
             .join();
 
-    completeUserTask(Map.of("errorResolved", false));
+    completeUserTask(processInstance.getProcessInstanceKey(), Map.of("errorResolved", false));
 
-    assertProcessInstanceCompleted(processInstance);
-
-    assertThat(processInstance).isCompleted().hasPassedElement("Event_1854135");
+    CamundaAssert.assertThat(processInstance).isCompleted().hasCompletedElements("Payment failed");
   }
 
   @Test
@@ -219,25 +160,28 @@ public class ProcessUnitTest {
             .variables(Map.of("remainingAmount", 10.0))
             .send()
             .join();
-    completeUserTask(Map.of("errorResolved", true));
-    completeCreditCardCharging();
+    completeUserTask(processInstance.getProcessInstanceKey(), Map.of("errorResolved", true));
 
-    assertProcessInstanceHasPassedElement(processInstance, "Gateway_1ymklbs");
-
-    assertThat(processInstance).hasPassedElement("Activity_0nppgjk");
+    CamundaAssert.assertThat(processInstance).hasCompletedElements("Charge credit card");
   }
 
-  protected void completeUserTask(Map<String, Object> variables)
+  protected void completeUserTask(long processInstanceKey, Map<String, Object> variables)
       throws InterruptedException, TimeoutException {
-    engine.waitForIdleState(Duration.ofSeconds(2));
     List<ActivatedJob> userTaskJobs =
-        zeebeClient
-            .newActivateJobsCommand()
-            .jobType(USER_TASK_JOB_TYPE)
-            .maxJobsToActivate(1)
-            .send()
-            .join()
-            .getJobs();
+        Awaitility.await()
+            .until(
+                () ->
+                    zeebeClient
+                        .newActivateJobsCommand()
+                        .jobType(USER_TASK_JOB_TYPE)
+                        .maxJobsToActivate(1000)
+                        .send()
+                        .join()
+                        .getJobs()
+                        .stream()
+                        .filter(j -> j.getProcessInstanceKey() == processInstanceKey)
+                        .toList(),
+                list -> list.size() == 1);
     assertThat(userTaskJobs).hasSize(1);
     ActivatedJob activatedJob = userTaskJobs.get(0);
     zeebeClient.newCompleteCommand(activatedJob).variables(variables).send().join();
