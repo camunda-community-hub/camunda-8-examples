@@ -36,7 +36,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>spring-boot-starter-camunda-tasklist</artifactId>
-      <version>8.6.7</version>
+      <version>8.6.8</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
