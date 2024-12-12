@@ -86,3 +86,17 @@ GET /events/{event-id}
   }
 }
 ```
+
+### Setup
+
+Prerequisities:
+
+Only a running zeebe engine is required. By default, the zeebe client points to the gateway running on port 26500, so you use either [C8Run](https://docs.camunda.io/docs/self-managed/setup/deploy/local/c8run/) or the [docker-compose](https://docs.camunda.io/docs/self-managed/setup/deploy/local/docker-compose/) setup.
+
+To run the example, just execute:
+
+```shell
+mvn spring-boot:run
+```
+
+To connect against another cluster (saas for example), you can adjust the application.yaml according to [this guide](https://docs.camunda.io/docs/apis-tools/spring-zeebe-sdk/getting-started/).
