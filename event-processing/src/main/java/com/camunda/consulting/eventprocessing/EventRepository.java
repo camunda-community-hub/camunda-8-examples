@@ -3,26 +3,22 @@ package com.camunda.consulting.eventprocessing;
 import com.camunda.consulting.eventprocessing.EventRepository.EventEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import java.time.OffsetDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
 
 @Repository
 public interface EventRepository extends JpaRepository<EventEntity, String> {
 
-
-
   @Entity(name = "EVENT")
   class EventEntity {
-    @Id
-    private String id;
+    @Id private String id;
     private String name;
     private String content;
     private State state;
-    private LocalDateTime createdAt;
-    private LocalDateTime publishingAt;
-    private LocalDateTime publishedAt;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime publishingAt;
+    private OffsetDateTime publishedAt;
 
     public String getId() {
       return id;
@@ -56,31 +52,34 @@ public interface EventRepository extends JpaRepository<EventEntity, String> {
       this.state = state;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
       return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
       this.createdAt = createdAt;
     }
 
-    public LocalDateTime getPublishingAt() {
+    public OffsetDateTime getPublishingAt() {
       return publishingAt;
     }
 
-    public void setPublishingAt(LocalDateTime publishingAt) {
+    public void setPublishingAt(OffsetDateTime publishingAt) {
       this.publishingAt = publishingAt;
     }
 
-    public LocalDateTime getPublishedAt() {
+    public OffsetDateTime getPublishedAt() {
       return publishedAt;
     }
 
-    public void setPublishedAt(LocalDateTime publishedAt) {
+    public void setPublishedAt(OffsetDateTime publishedAt) {
       this.publishedAt = publishedAt;
     }
 
-    public enum State {CREATED,PUBLISHING,PUBLISHED}
+    public enum State {
+      CREATED,
+      PUBLISHING,
+      PUBLISHED
+    }
   }
-
 }

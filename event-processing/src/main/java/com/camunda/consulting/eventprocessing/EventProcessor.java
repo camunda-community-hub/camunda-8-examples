@@ -7,18 +7,15 @@ import io.camunda.zeebe.client.api.command.ClientStatusException;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import io.camunda.zeebe.spring.client.annotation.Variable;
 import io.grpc.Status.Code;
-import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Map;
-
 
 @Component
 @EnableScheduling
@@ -43,14 +40,12 @@ public class EventProcessor {
   public void processPublishingEvents() {
     eventService
         .getEventsWithState(Pageable.ofSize(100), StateName.PUBLISHING)
-        .filter(e -> e
-            .state()
-            .publishingAt() == null || e
-            .state()
-            .publishingAt()
-            .isBefore(LocalDateTime
-                .now()
-                .minus(Duration.ofMinutes(10))))
+        .filter(
+            e ->
+                e.state().publishingAt() == null
+                    || e.state()
+                        .publishingAt()
+                        .isBefore(OffsetDateTime.now().minus(Duration.ofMinutes(10))))
         .forEach(this::processEvent);
   }
 
@@ -64,11 +59,11 @@ public class EventProcessor {
           .correlationKey(event.id())
           .messageId(event.id())
           .variables(Map.of("eventId", event.id(), "content", event.content()))
-          .timeToLive(Duration.ofMinutes(10))
+          .timeToLive(Duration.ofMinutes(8))
           .send()
           .join();
-    } catch (ClientStatusException exception){
-      if(!exception.getStatusCode().equals(Code.ALREADY_EXISTS)){
+    } catch (ClientStatusException exception) {
+      if (!exception.getStatusCode().equals(Code.ALREADY_EXISTS)) {
         throw exception;
       } else {
         LOG.warn("Event {} already published", event.name());
@@ -76,10 +71,8 @@ public class EventProcessor {
     }
   }
 
-
-
   @JobWorker(type = "correlated")
-  public void handleCorrelatedEvent(@Variable String eventId){
+  public void handleCorrelatedEvent(@Variable String eventId) {
     Event event = eventService.updateEventStateToPublished(eventId);
     LOG.info("Event is published: {}", event);
   }
