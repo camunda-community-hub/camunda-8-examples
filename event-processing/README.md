@@ -64,7 +64,7 @@ A message event that should be able to work with the event processor should:
 
 * define a message name that matches the events' name
 * if not a start event, define a correlation key that matches the events' id
-* have an end listener with the job type `correlated`
+* have an end listener or a following service task with the job type `correlated`
 
 Now, an event can be published and its state can be tracked with the rest api:
 
@@ -100,3 +100,9 @@ mvn spring-boot:run
 ```
 
 To connect against another cluster (saas for example), you can adjust the application.yaml according to [this guide](https://docs.camunda.io/docs/apis-tools/spring-zeebe-sdk/getting-started/).
+
+There is an example [process](./src/test/resources/eventHandler.bpmn) and [request](./src/test/resources/createEventRequest.json) available in the tests.
+
+Just deploy the process and send a request to publish an event as documented above.
+
+![img.png](docs/img4.png)

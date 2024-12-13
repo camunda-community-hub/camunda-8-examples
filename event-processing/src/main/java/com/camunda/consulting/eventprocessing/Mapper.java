@@ -23,10 +23,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * Please ignore this class for the example.
+ *
+ * <p>This is just a generic mapper to map dto - pojo - entity as they are separated
+ */
 public class Mapper {
   private static final Map<Class<?>, Map<Class<?>, Function<?, ?>>> MAPPER_REGISTRY =
       new HashMap<>();
-  private static ObjectMapper objectMapper = new ObjectMapper();
+  private static final ObjectMapper objectMapper = new ObjectMapper();
 
   static {
     Arrays.stream(Mapper.class.getDeclaredMethods())
