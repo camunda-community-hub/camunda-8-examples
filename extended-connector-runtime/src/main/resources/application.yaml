@@ -1,0 +1,8 @@
+camunda:
+  connector:
+    polling:
+      enabled: false
+    webhook:
+      enabled: false
+  client:
+    mode: simple
