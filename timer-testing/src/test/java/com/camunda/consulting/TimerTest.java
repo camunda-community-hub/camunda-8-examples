@@ -1,27 +1,24 @@
 package com.camunda.consulting;
 
-import static io.camunda.zeebe.process.test.assertions.BpmnAssert.*;
+import static io.camunda.process.test.api.CamundaAssert.*;
 import static org.assertj.core.api.Assertions.*;
 
+import io.camunda.process.test.api.CamundaProcessTest;
+import io.camunda.process.test.api.CamundaProcessTestContext;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
-import io.camunda.zeebe.process.test.extension.ZeebeProcessTest;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 
-@ZeebeProcessTest
-@ExtendWith(ProcessEngineCoverageExtension.class)
+@CamundaProcessTest
 public class TimerTest {
   private static final Duration DEFAULT = Duration.ofSeconds(30);
-  ZeebeTestEngine zeebeTestEngine;
+  CamundaProcessTestContext camundaProcessTestContext;
   ZeebeClient zeebeClient;
 
   @BeforeEach
@@ -29,61 +26,56 @@ public class TimerTest {
     zeebeClient.newDeployResourceCommand().addResourceFromClasspath("get-up.bpmn").send().join();
   }
 
-  @RepeatedTest(10)
+  @Test
   void happyPath() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
-    assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
+    assertThat(processInstance).hasActiveElements("Tell kids to get up");
     completeJob("callKids");
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent");
+    assertThat(processInstance).hasActiveElements("Wait 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("CheckCurrentProgressTask");
+    assertThat(processInstance).hasActiveElements("Check current progress");
     completeJob("checkProgress", Map.of("progress", "ready"));
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent1");
+    assertThat(processInstance).hasActiveElements("Wait another 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("Wait5MinutesEvent1");
+    assertThat(processInstance).hasActiveElements("Wait another 5 minutes");
     skipTimer(Duration.ofMinutes(5));
-    assertThat(processInstance).isCompleted().hasPassedElement("KidsAreFedEndEvent");
+    assertThat(processInstance).isCompleted().hasCompletedElements("Kids are fed");
   }
 
-  @RepeatedTest(10)
+  @Test
   void boundaryEvent() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
-    assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
+    assertThat(processInstance).hasActiveElements("Tell kids to get up");
     completeJob("callKids");
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent");
+    assertThat(processInstance).hasActiveElements("Wait 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("CheckCurrentProgressTask");
+    assertThat(processInstance).hasActiveElements("Check current progress");
     completeJob("checkProgress", Map.of("progress", "in bed"));
-    assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
+    assertThat(processInstance).hasActiveElements("Tell kids to get up");
     completeJob("callKids");
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent");
+    assertThat(processInstance).hasActiveElements("Wait 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("CheckCurrentProgressTask");
+    assertThat(processInstance).hasActiveElements("Check current progress");
     completeJob("checkProgress", Map.of("progress", "in bed"));
-    assertThat(processInstance).isWaitingAtElements("TellKidsToGetUpTask");
+    assertThat(processInstance).hasActiveElements("Tell kids to get up");
     completeJob("callKids");
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent");
+    assertThat(processInstance).hasActiveElements("Wait 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("CheckCurrentProgressTask");
+    assertThat(processInstance).hasActiveElements("Check current progress");
     completeJob("checkProgress", Map.of("progress", "dressing"));
     skipTimer(Duration.ofMinutes(5));
-    assertThat(processInstance).isWaitingAtElements("CheckCurrentProgressTask");
+    assertThat(processInstance).hasActiveElements("Check current progress");
     completeJob("checkProgress", Map.of("progress", "ready"));
-    assertThat(processInstance).isWaitingAtElements("Wait15MinutesEvent1");
+    assertThat(processInstance).hasActiveElements("Wait another 15 minutes");
     skipTimer(Duration.ofMinutes(15));
-    assertThat(processInstance).isWaitingAtElements("Wait5MinutesEvent1");
+    assertThat(processInstance).hasActiveElements("Wait another 5 minutes");
     skipTimer(Duration.ofMinutes(5));
-    assertThat(processInstance)
-        .isCompleted()
-        .hasPassedElement("MakeThemReadyTask")
-        .hasNotPassedElement("KidsAreFedEndEvent");
+    assertThat(processInstance).isCompleted().hasCompletedElements("Make them ready");
+    // missing: hasNotCompletedElements()
   }
 
-  private void skipTimer(Duration timerDuration) throws InterruptedException, TimeoutException {
-    zeebeTestEngine.waitForIdleState(DEFAULT);
-    zeebeTestEngine.increaseTime(timerDuration);
-    zeebeTestEngine.waitForBusyState(DEFAULT);
-    zeebeTestEngine.waitForIdleState(DEFAULT);
+  private void skipTimer(Duration timerDuration) {
+    camundaProcessTestContext.increaseTime(timerDuration);
   }
 
   private ProcessInstanceEvent createInstance(String bpmnProcessId)
@@ -95,7 +87,6 @@ public class TimerTest {
             .latestVersion()
             .send()
             .join();
-    zeebeTestEngine.waitForIdleState(DEFAULT);
     return instance;
   }
 
@@ -103,11 +94,9 @@ public class TimerTest {
     completeJob(jobType, Map.of());
   }
 
-  private void completeJob(String jobType, Map<String, Object> variables)
-      throws InterruptedException, TimeoutException {
+  private void completeJob(String jobType, Map<String, Object> variables) {
     ActivatedJob activatedJob = job(jobType);
     complete(activatedJob.getKey(), variables);
-    zeebeTestEngine.waitForIdleState(DEFAULT);
   }
 
   private void complete(long jobKey, Map<String, Object> variables) {

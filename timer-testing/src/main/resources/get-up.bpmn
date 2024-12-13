@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0nlacrn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0nlacrn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
   <bpmn:process id="GetUpProcess" name="Get Up" isExecutable="true">
     <bpmn:startEvent id="KidsNeedToGetUpForSchoolStartEvent" name="Kids need to get up for school">
       <bpmn:outgoing>Flow_0lin8i4</bpmn:outgoing>
@@ -21,7 +21,7 @@
       <bpmn:outgoing>Flow_0j8vm25</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:sequenceFlow id="Flow_1m7we6c" sourceRef="Gateway_09a2iuf" targetRef="Wait5MinutesEvent1" />
-    <bpmn:intermediateCatchEvent id="Wait5MinutesEvent1" name="Wait 5 minutes">
+    <bpmn:intermediateCatchEvent id="Wait5MinutesEvent1" name="Wait another 5 minutes">
       <bpmn:incoming>Flow_1m7we6c</bpmn:incoming>
       <bpmn:outgoing>Flow_0nxql0b</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_0xnag2v">
@@ -105,7 +105,7 @@
         <bpmn:outgoing>Flow_14nugz7</bpmn:outgoing>
         <bpmn:outgoing>Flow_0ih5vlk</bpmn:outgoing>
       </bpmn:parallelGateway>
-      <bpmn:intermediateCatchEvent id="Wait15MinutesEvent1" name="Wait 15 minutes">
+      <bpmn:intermediateCatchEvent id="Wait15MinutesEvent1" name="Wait another 15 minutes">
         <bpmn:incoming>Flow_0ih5vlk</bpmn:incoming>
         <bpmn:outgoing>Flow_0j2xfnn</bpmn:outgoing>
         <bpmn:timerEventDefinition id="TimerEventDefinition_0kkywwd">
@@ -208,7 +208,7 @@
       <bpmndi:BPMNShape id="Event_0tcsm17_di" bpmnElement="Wait5MinutesEvent1">
         <dc:Bounds x="1812" y="200" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1794" y="243" width="73" height="14" />
+          <dc:Bounds x="1795" y="243" width="72" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1c60h93_di" bpmnElement="DriveKidsToSchoolTask">
@@ -272,7 +272,7 @@
       <bpmndi:BPMNShape id="Event_1fhcsph_di" bpmnElement="Wait15MinutesEvent1">
         <dc:Bounds x="1252" y="172" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1231" y="215" width="79" height="14" />
+          <dc:Bounds x="1232" y="215" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0rp37iu_di" bpmnElement="Gateway_1po0o0g">
