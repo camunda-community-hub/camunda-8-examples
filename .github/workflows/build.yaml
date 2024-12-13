@@ -147,3 +147,15 @@ jobs:
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: element-template-generation
+  build-event-processing:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+    - name: Build with Maven
+      run: mvn verify -PcheckFormat -B
+      working-directory: event-processing

@@ -7,3 +7,4 @@ target
 **/.project
 **/.settings
 **/.factorypath
+.DS_Store
