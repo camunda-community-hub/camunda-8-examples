@@ -1,8 +1,7 @@
 package com.camunda.consulting.example;
 
-import org.springframework.stereotype.Service;
-
 import java.time.ZonedDateTime;
+import org.springframework.stereotype.Service;
 
 @Service
 public class SchedulingService {

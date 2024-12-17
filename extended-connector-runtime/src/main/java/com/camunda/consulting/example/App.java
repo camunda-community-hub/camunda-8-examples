@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class App {
   public static ApplicationContext applicationContext;
+
   public static void main(String[] args) {
     applicationContext = SpringApplication.run(App.class, args);
   }
