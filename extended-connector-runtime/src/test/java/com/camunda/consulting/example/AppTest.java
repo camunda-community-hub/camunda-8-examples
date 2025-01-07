@@ -6,19 +6,16 @@ import static org.mockito.Mockito.*;
 import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
-import java.time.ZonedDateTime;
+import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 @CamundaSpringProcessTest
 public class AppTest {
   @Autowired ZeebeClient zeebeClient;
-
-  @MockitoBean SchedulingService schedulingService;
 
   @BeforeEach
   public void setup() {
@@ -27,8 +24,7 @@ public class AppTest {
 
   @Test
   void shouldExecute() {
-    ZonedDateTime now = ZonedDateTime.now();
-    when(schedulingService.schedule(any())).thenReturn(now);
+    Duration nextExecutionBackoff = Duration.ofMinutes(20);
     ProcessInstanceResult result =
         zeebeClient
             .newCreateInstanceCommand()
@@ -37,9 +33,8 @@ public class AppTest {
             .withResult()
             .send()
             .join();
-    verify(schedulingService, times(1)).schedule(any());
     assertThat(result).isNotNull();
-    assertThat(ZonedDateTime.parse((CharSequence) result.getVariable("nextExecutionTimeslot")))
-        .isEqualTo(now);
+    assertThat(Duration.parse((CharSequence) result.getVariable("nextExecutionBackoff")))
+        .isEqualTo(nextExecutionBackoff);
   }
 }

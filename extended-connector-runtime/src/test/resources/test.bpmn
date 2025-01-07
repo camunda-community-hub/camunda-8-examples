@@ -16,7 +16,7 @@
           <zeebe:input source="20" target="readTimeoutInSeconds" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
-          <zeebe:header key="resultExpression" value="={&#10;  nextExecutionTimeslot: nextExecutionTimeslot(now() + @&#34;PT10M&#34;)&#10;}" />
+          <zeebe:header key="resultExpression" value="={&#10;  nextExecutionBackoff: nextExecutionBackoff(@&#34;PT10M&#34;)&#10;}" />
           <zeebe:header key="retryBackoff" value="PT0S" />
         </zeebe:taskHeaders>
       </bpmn:extensionElements>

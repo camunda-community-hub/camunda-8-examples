@@ -21,7 +21,7 @@ The function itself is instantiated and gets a static reference to a spring bean
 This example adds a function:
 
 ```
-nextExecutionTimeslot(scheduledExecution: date and time): date and time
+nextExecutionBackoff(backoff: days-time-duration): days-time-duration
 ```
 
 This function then uses the `schedulingService` bean to determine the next timestamp where the execution could happen according to a defined schedule.
