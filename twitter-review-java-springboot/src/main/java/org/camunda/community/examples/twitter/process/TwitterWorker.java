@@ -2,7 +2,8 @@ package org.camunda.community.examples.twitter.process;
 
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import io.camunda.zeebe.spring.client.annotation.VariablesAsType;
-import io.camunda.zeebe.spring.client.exception.ZeebeBpmnError;
+import io.camunda.zeebe.spring.common.exception.ZeebeBpmnError;
+import java.util.Map;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class TwitterWorker {
     try {
       twitterService.tweet(variables.getTweet());
     } catch (DuplicateTweetException ex) {
-      throw new ZeebeBpmnError("duplicateMessage", "Could not post tweet, it is a duplicate.");
+      throw new ZeebeBpmnError(
+          "duplicateMessage", "Could not post tweet, it is a duplicate.", Map.of());
     }
   }
 

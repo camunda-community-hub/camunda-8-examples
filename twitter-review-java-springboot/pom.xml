@@ -9,9 +9,8 @@
 
   <properties>
     <java.version>21</java.version>
-    <spring-boot.version>3.3.0</spring-boot.version>
-    <zeebe.version>8.5.10</zeebe.version>
-    <spring-zeebe.version>8.5.7</spring-zeebe.version>
+    <spring-boot.version>3.3.7</spring-boot.version>
+    <camunda.version>8.6.7</camunda.version>
     <camunda-process-test-coverage.version>2.7.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -29,7 +28,7 @@
      <dependency>
        <groupId>io.camunda</groupId>
        <artifactId>zeebe-bom</artifactId>
-       <version>${zeebe.version}</version>
+       <version>${camunda.version}</version>
        <type>pom</type>
        <scope>import</scope>
      </dependency>
@@ -43,9 +42,9 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda</artifactId>
-      <version>${spring-zeebe.version}</version>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+      <version>${camunda.version}</version>
     </dependency>
 
     <dependency>
@@ -54,9 +53,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.camunda.spring</groupId>
+      <groupId>io.camunda</groupId>
       <artifactId>spring-boot-starter-camunda-test</artifactId>
-      <version>${spring-zeebe.version}</version>
+      <version>${camunda.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
