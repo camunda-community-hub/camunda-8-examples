@@ -4,4 +4,4 @@ camunda:
       id: demo
       password: demo
   client:
-    mode: simple
+    mode: selfmanaged
