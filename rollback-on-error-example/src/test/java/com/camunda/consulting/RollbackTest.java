@@ -33,7 +33,7 @@ public class RollbackTest {
             .latestVersion()
             .send()
             .join();
-    userTaskService.complete(awaitUserTask().getKey(), JsonNodeFactory.instance.objectNode());
+    userTaskService.complete(awaitUserTask().getKey(), createVariables(false, false));
     waitForProcessInstanceCompleted(process, Duration.ofSeconds(30));
     BpmnAssert.assertThat(process)
         .hasPassedElement("EnterDataTask", 1)

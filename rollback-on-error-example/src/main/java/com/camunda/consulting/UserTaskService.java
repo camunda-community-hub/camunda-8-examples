@@ -13,6 +13,7 @@ import io.camunda.zeebe.spring.client.jobhandling.CommandExceptionHandlingStrate
 import io.camunda.zeebe.spring.client.jobhandling.JobHandlerInvokingSpringBeans;
 import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
 import io.camunda.zeebe.spring.client.jobhandling.parameter.ParameterResolverStrategy;
+import io.camunda.zeebe.spring.client.jobhandling.result.ResultProcessorStrategy;
 import io.camunda.zeebe.spring.client.metrics.MetricsRecorder;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,21 +47,23 @@ public class UserTaskService {
   private final JsonMapper jsonMapper;
   private final MetricsRecorder metricsRecorder;
   private final ParameterResolverStrategy parameterResolverStrategy;
+  private final ResultProcessorStrategy resultProcessorStrategy;
   private JobWorker userTaskWorker;
 
   public UserTaskService(
-      ZeebeClient zeebeClient,
-      JobWorkerManager jobWorkerManager,
-      CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
-      JsonMapper jsonMapper,
-      MetricsRecorder metricsRecorder,
-      ParameterResolverStrategy parameterResolverStrategy) {
+          ZeebeClient zeebeClient,
+          JobWorkerManager jobWorkerManager,
+          CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
+          JsonMapper jsonMapper,
+          MetricsRecorder metricsRecorder,
+          ParameterResolverStrategy parameterResolverStrategy, ResultProcessorStrategy resultProcessorStrategy) {
     this.zeebeClient = zeebeClient;
     this.jobWorkerManager = jobWorkerManager;
     this.commandExceptionHandlingStrategy = commandExceptionHandlingStrategy;
     this.jsonMapper = jsonMapper;
     this.metricsRecorder = metricsRecorder;
     this.parameterResolverStrategy = parameterResolverStrategy;
+    this.resultProcessorStrategy = resultProcessorStrategy;
   }
 
   private void add(UserTask userTask, Duration timeToLive) {
@@ -105,7 +108,8 @@ public class UserTaskService {
                   zeebeWorkerValue,
                   commandExceptionHandlingStrategy,
                   metricsRecorder,
-                  parameterResolverStrategy);
+                  parameterResolverStrategy,
+                  resultProcessorStrategy);
           // wrap it to be able to react on the outcome
           RollbackJobHandler jobHandler =
               new RollbackJobHandler(
