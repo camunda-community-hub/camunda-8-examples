@@ -3,5 +3,3 @@ camunda:
     admin-user:
       id: demo
       password: demo
-  client:
-    mode: selfmanaged
