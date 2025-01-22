@@ -51,12 +51,13 @@ public class UserTaskService {
   private JobWorker userTaskWorker;
 
   public UserTaskService(
-          ZeebeClient zeebeClient,
-          JobWorkerManager jobWorkerManager,
-          CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
-          JsonMapper jsonMapper,
-          MetricsRecorder metricsRecorder,
-          ParameterResolverStrategy parameterResolverStrategy, ResultProcessorStrategy resultProcessorStrategy) {
+      ZeebeClient zeebeClient,
+      JobWorkerManager jobWorkerManager,
+      CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
+      JsonMapper jsonMapper,
+      MetricsRecorder metricsRecorder,
+      ParameterResolverStrategy parameterResolverStrategy,
+      ResultProcessorStrategy resultProcessorStrategy) {
     this.zeebeClient = zeebeClient;
     this.jobWorkerManager = jobWorkerManager;
     this.commandExceptionHandlingStrategy = commandExceptionHandlingStrategy;
