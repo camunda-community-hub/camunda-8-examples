@@ -11,6 +11,8 @@
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
+    <spring-boot.version>3.3.7</spring-boot.version>
+    <camunda.version>8.6.7</camunda.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -26,34 +28,42 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
-        <version>8.6.6</version>
+        <version>${camunda.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.3.0</version>
+        <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>io.camunda.spring</groupId>
-        <artifactId>spring-boot-starter-camunda</artifactId>
-        <version>8.5.16</version>
+        <groupId>io.camunda</groupId>
+        <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+        <version>${camunda.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.camunda.spring</groupId>
+        <groupId>io.camunda</groupId>
         <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
-        <version>8.5.16</version>
+        <version>${camunda.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda</artifactId>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+      <exclusions>
+        <!-- this needs to be excluded to avoid a conflict with the transitive shaded jar dependency used by
+             camunda-bpm-spring-boot-starter-webapp -->
+        <exclusion>
+          <groupId>org.camunda.feel</groupId>
+          <artifactId>feel-engine</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
@@ -73,7 +83,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.camunda.spring</groupId>
+      <groupId>io.camunda</groupId>
       <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
       <scope>test</scope>
     </dependency>
