@@ -187,5 +187,15 @@ public class RollbackJobHandler implements JobHandler {
           .thenRun(future::onCompleted);
       return future;
     }
+
+    @Override
+    public FailJobCommandStep1 useRest() {
+      return this;
+    }
+
+    @Override
+    public FailJobCommandStep1 useGrpc() {
+      return this;
+    }
   }
 }
