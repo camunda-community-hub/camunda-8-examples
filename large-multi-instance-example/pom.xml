@@ -13,7 +13,7 @@
     <java.version>17</java.version>
     <spring-boot.version>3.4.2</spring-boot.version>
     <camunda-process-test-coverage.version>2.7.0</camunda-process-test-coverage.version>
-    <spring-zeebe.version>8.5.16</spring-zeebe.version>
+    <spring-zeebe.version>8.5.17</spring-zeebe.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
   </properties>
