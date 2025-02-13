@@ -22,7 +22,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>8.6.7</version>
+      <version>8.6.9</version>
     </dependency>
 
     <dependency>
