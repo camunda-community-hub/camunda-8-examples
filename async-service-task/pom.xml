@@ -10,7 +10,7 @@
 
   <properties>
     <java.version>17</java.version>
-    <spring-boot.version>3.4.2</spring-boot.version>
+    <spring-boot.version>3.4.3</spring-boot.version>
     <camunda-process-test-coverage.version>2.1.0</camunda-process-test-coverage.version>
     <camunda.version>8.6.9</camunda.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
