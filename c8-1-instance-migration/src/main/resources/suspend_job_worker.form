@@ -1,0 +1,32 @@
+{
+  "components": [
+    {
+      "text": "# Suspend Job Worker\nTo be migrated, all process instances must reach a waiting state, i.e., a user task or a service task whose job worker has been suspended. **If you do not want to wait for a user task, please suspend your jobworker now**.\n\nAfterwards, file the following form and complete the task.",
+      "type": "text",
+      "id": "Field_0zas7yp"
+    },
+    {
+      "label": "BPMN Process ID",
+      "type": "textfield",
+      "id": "Field_0tmv9vc",
+      "key": "bpmnProcessId",
+      "description": "Specify the ID of the process that should be migrated to the latest version"
+    },
+    {
+      "label": "Start before element",
+      "type": "textfield",
+      "id": "Field_0d9efd2",
+      "key": "startBeforeElement",
+      "description": "Element ID of the user task or suspended service task."
+    }
+  ],
+  "type": "default",
+  "id": "Form_0iz9juy",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.1.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.8.0"
+  },
+  "schemaVersion": 7
+}
