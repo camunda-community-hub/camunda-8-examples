@@ -1,0 +1,10 @@
+operate:
+  client:
+    enabled: true
+
+camunda:
+  operate:
+    client:
+      url: http://localhost:8081
+      username: demo
+      password: demo
