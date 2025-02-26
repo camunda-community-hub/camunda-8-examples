@@ -1,0 +1,6 @@
+camunda:
+  client:
+    mode: self-managed
+operate:
+  client:
+    profile: simple
