@@ -31,7 +31,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>spring-boot-starter-camunda-sdk</artifactId>
-      <version>8.6.11</version>
+      <version>8.6.12</version>
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
