@@ -13,7 +13,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.connectors>8.6.7</version.connectors>
-    <version.camunda>8.6.12</version.camunda>
+    <camunda.version>8.6.12</camunda.version>
     <version.spring-boot>3.4.4</version.spring-boot>
   </properties>
 
@@ -29,7 +29,7 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
-        <version>${version.camunda}</version>
+        <version>${camunda.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>${version.camunda}</version>
+      <version>${camunda.version}</version>
     </dependency>
     <dependency>
       <groupId>io.camunda.connector</groupId>
