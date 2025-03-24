@@ -98,6 +98,7 @@ public class ProcessUnitTest {
             .join();
     CamundaAssert.assertThat(processInstance)
         .isActive()
+        .hasCompletedElements("Payment requested")
         .hasActiveElements("Charge customer credit");
     // missing: assert on incident state
   }
