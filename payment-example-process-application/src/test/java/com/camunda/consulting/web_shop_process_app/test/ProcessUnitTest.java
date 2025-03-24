@@ -12,6 +12,7 @@ import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
@@ -33,6 +34,7 @@ public class ProcessUnitTest {
 
   @BeforeEach
   void init() {
+    CamundaAssert.setAssertionTimeout(Duration.ofMinutes(1));
     zeebeClient
         .newDeployResourceCommand()
         .addResourceFromClasspath("check-payment.form")
@@ -94,7 +96,6 @@ public class ProcessUnitTest {
             .variables(Map.of("customerId", "testCustomer", "orderTotal", 190.0))
             .send()
             .join();
-
     CamundaAssert.assertThat(processInstance)
         .isActive()
         .hasActiveElements("Charge customer credit");
