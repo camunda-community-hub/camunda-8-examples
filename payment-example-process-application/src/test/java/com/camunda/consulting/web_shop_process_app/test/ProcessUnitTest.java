@@ -96,8 +96,9 @@ public class ProcessUnitTest {
             .variables(Map.of("customerId", "testCustomer", "orderTotal", 190.0))
             .send()
             .join();
-
-    CamundaAssert.assertThat(processInstance).hasActiveElements("Charge customer credit");
+    CamundaAssert.assertThat(processInstance)
+        .isActive()
+        .hasActiveElements("Charge customer credit");
     // missing: assert on incident state
   }
 
