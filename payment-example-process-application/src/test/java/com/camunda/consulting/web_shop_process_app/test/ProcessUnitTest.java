@@ -1,6 +1,5 @@
 package com.camunda.consulting.web_shop_process_app.test;
 
-import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -21,15 +20,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @CamundaSpringProcessTest
 @SpringBootTest
 public class ProcessUnitTest {
 
   @Autowired ZeebeClient zeebeClient;
-  @MockBean CustomerService mockedCustomerService;
-  @MockBean CreditCardService mockedCreditCardService;
+  @MockitoBean CustomerService mockedCustomerService;
+  @MockitoBean CreditCardService mockedCreditCardService;
   @Autowired private CamundaProcessTestContext processTestContext;
 
   @BeforeEach
@@ -173,7 +172,7 @@ public class ProcessUnitTest {
                 () ->
                     zeebeClient
                         .newActivateJobsCommand()
-                        .jobType(USER_TASK_JOB_TYPE)
+                        .jobType("io.camunda.zeebe:userTask")
                         .maxJobsToActivate(1000)
                         .send()
                         .join()
