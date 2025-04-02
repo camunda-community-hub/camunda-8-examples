@@ -44,7 +44,7 @@ public class ProcessUnitTest {
   }
 
   @Test
-  public void testPappyPath() throws InterruptedException, TimeoutException {
+  public void testHappyPath() throws InterruptedException, TimeoutException {
     given(mockedCustomerService.deductCredit(anyString(), anyDouble(), anyDouble()))
         .willReturn(90.0);
     ProcessInstanceEvent processInstance =
