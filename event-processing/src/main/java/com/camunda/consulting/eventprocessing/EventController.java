@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +46,7 @@ public class EventController {
     return ResponseEntity.notFound().build();
   }
 
-  public record CreateEventRequest(@NotNull String id, String name, ObjectNode content) {}
+  public record CreateEventRequest(String id, String name, ObjectNode content) {}
 
   public record CreateEventResponse(String id) {}
 
