@@ -1,0 +1,12 @@
+@startuml
+Client -> RestController : GET state
+RestController -> StateService : getState
+
+StateService --> ZeebeClient : publish RequestStateMessage
+ZeebeClient --> Zeebe : publish RequestStateMessage
+StateService -> StateConversationRepository : create&save ProcessVarsCompletableFuture
+StateConversationRepository -> StateService : CompletableFuture[ProcessVars]
+
+StateService -> RestController : CompletableFuture[ProcessVars]
+RestController -> Client : CompletableFuture[ProcessVars]
+@enduml

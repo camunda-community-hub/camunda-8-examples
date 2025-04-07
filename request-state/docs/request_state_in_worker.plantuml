@@ -1,0 +1,12 @@
+@startuml
+StateWorker -> Zeebe : activate 'request-state-task' Jobs
+Zeebe -> StateWorker : 'request-state-task' Jobs
+StateWorker -> StateWorker : get ProcessVars
+
+StateWorker -> StateConversationRepository : get CompletableFuture[ProcessVars]
+StateConversationRepository -> StateWorker : CompletableFuture[ProcessVars]
+
+StateWorker -> StateWorker : completableFuture[ProcessVars].complete(processVars)
+
+StateWorker -> Zeebe : complete 'request-state-task' Job
+@enduml
