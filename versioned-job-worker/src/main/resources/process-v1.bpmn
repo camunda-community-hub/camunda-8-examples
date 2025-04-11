@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1bmzj6v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.32.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+  <bpmn:process id="ExampleV1Process" name="ExampleV1" isExecutable="true">
+    <bpmn:extensionElements>
+      <zeebe:versionTag value="V1" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="ProcessStartedStartEvent" name="Process started">
+      <bpmn:outgoing>Flow_0zgdaxs</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0zgdaxs" sourceRef="ProcessStartedStartEvent" targetRef="DoStuffTask" />
+    <bpmn:serviceTask id="DoStuffTask" name="Do stuff">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="doStuff" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zgdaxs</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g0cey5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="ProcessCompleteEndEvent" name="Process complete">
+      <bpmn:incoming>Flow_0g0cey5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0g0cey5" sourceRef="DoStuffTask" targetRef="ProcessCompleteEndEvent" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ExampleV1Process">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="ProcessStartedStartEvent">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="145" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y7frld_di" bpmnElement="DoStuffTask">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cwqlwp_di" bpmnElement="ProcessCompleteEndEvent">
+        <dc:Bounds x="422" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396" y="145" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0zgdaxs_di" bpmnElement="Flow_0zgdaxs">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g0cey5_di" bpmnElement="Flow_0g0cey5">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="422" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
