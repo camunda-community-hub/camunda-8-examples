@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-example-worker
+  namespace: c8-payment-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-example-worker
+  template:
+    metadata:
+      labels:
+        app: payment-example-worker
+    spec:
+      containers:
+        - name: risk-calculation-worker
+          image: DOCKER_IMAGE
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: ZEEBE_ADDRESS
+              value: ''
+            - name: ZEEBE_CLIENT_ID
+              value: ''
+            - name: ZEEBE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: payment-example-process-application-secrets
+                  key: ZEEBE_CLIENT_SECRET
+            - name: ZEEBE_AUTHORIZATION_SERVER_URL
+              value: 'https://login.cloud.camunda.io/oauth/token'
+            - name: ZEEBE_REST_ADDRESS
+              value: ''
+            - name: ZEEBE_GRPC_ADDRESS
+              value: ''
+            - name: ZEEBE_TOKEN_AUDIENCE
+              value: 'zeebe.camunda.io'
+            - name: CAMUNDA_CLUSTER_ID
+              value: ''
+            - name: CAMUNDA_CLIENT_ID
+              value: ''
+            - name: CAMUNDA_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: payment-example-process-application-secrets
+                  key: ZEEBE_CLIENT_SECRET
+            - name: CAMUNDA_CLUSTER_REGION
+              value: ''
+            - name: CAMUNDA_CREDENTIALS_SCOPES
+              value: 'Zeebe'
+            - name: CAMUNDA_OAUTH_URL
+              value: 'https://login.cloud.camunda.io/oauth/token'
+            - name: CAMUNDA_CLIENT_MODE
+              value: 'saas'
+            - name: CAMUNDA_CLIENT_AUTH_CLIENTID
+              value: ''
+            - name: CAMUNDA_CLIENT_AUTH_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: payment-example-process-application-secrets
+                  key: ZEEBE_CLIENT_SECRET
+            - name: CAMUNDA_CLIENT_CLOUD_CLUSTERID
+              value: ''
+            - name: CAMUNDA_CLIENT_CLOUD_REGION
+              value: ''
+          resources:
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+            requests:
+              memory: "768Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
