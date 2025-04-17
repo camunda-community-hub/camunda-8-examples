@@ -67,8 +67,10 @@
       </dependency>
       <dependency>
         <groupId>io.camunda</groupId>
-        <artifactId>zeebe-bpmn-model</artifactId>
+        <artifactId>zeebe-bom</artifactId>
         <version>${version.camunda}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.google.j2objc</groupId>
@@ -106,9 +108,19 @@
         <version>${version.camunda}</version>
       </dependency>
       <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>camunda-process-test-java</artifactId>
+        <version>${version.camunda}</version>
+      </dependency>
+      <dependency>
         <groupId>org.wiremock.integrations</groupId>
         <artifactId>wiremock-spring-boot</artifactId>
         <version>3.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.wiremock</groupId>
+        <artifactId>wiremock</artifactId>
+        <version>3.10.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -123,17 +135,56 @@
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>zeebe-client-java</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-http-json</artifactId>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>camunda-process-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-process-test-java</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -144,6 +195,11 @@
     <dependency>
       <groupId>org.wiremock.integrations</groupId>
       <artifactId>wiremock-spring-boot</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.wiremock</groupId>
+      <artifactId>wiremock</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -191,6 +247,13 @@
               </goals>
               <configuration>
                 <failOnWarning>true</failOnWarning>
+                <ignoredUnusedDeclaredDependencies>
+                  <dependency>io.camunda.connector:spring-boot-starter-camunda-connectors</dependency>
+                  <dependency>io.camunda.connector:connector-http-json</dependency>
+                </ignoredUnusedDeclaredDependencies>
+                <ignoredNonTestScopedDependencies>
+                  <dependency>org.springframework:spring-beans</dependency>
+                </ignoredNonTestScopedDependencies>
               </configuration>
             </execution>
           </executions>
