@@ -2,19 +2,20 @@ package com.camunda.consulting;
 
 import static org.assertj.core.api.Assertions.*;
 
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@ZeebeSpringTest
+@CamundaSpringProcessTest
 @SpringBootTest(
     properties = {
       "camunda.connector.webhook.enabled=false",
-      "camunda.connector.polling.enabled=false"
+      "camunda.connector.polling.enabled=false",
+      "operate.client.enabled=false"
     })
 public class CarConnectorTest {
   @Autowired ZeebeClient zeebeClient;

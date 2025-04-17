@@ -13,8 +13,8 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <version.camunda-connectors>8.6.7</version.camunda-connectors>
-    <version.spring-boot-starter-camunda>8.5.18</version.spring-boot-starter-camunda>
+    <version.camunda-connectors>8.7.0</version.camunda-connectors>
+    <version.camunda>8.7.1</version.camunda>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -29,9 +29,9 @@
         <version>${version.camunda-connectors}</version>
       </dependency>
       <dependency>
-        <groupId>io.camunda.spring</groupId>
-        <artifactId>spring-boot-starter-camunda-test</artifactId>
-        <version>${version.spring-boot-starter-camunda}</version>
+        <groupId>io.camunda</groupId>
+        <artifactId>camunda-process-test-spring</artifactId>
+        <version>${version.camunda}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -47,8 +47,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
