@@ -1,0 +1,92 @@
+{
+  "components": [
+    {
+      "text": "### Start a new payment process",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_1as2tgk",
+        "columns": null
+      },
+      "id": "Field_1piit3t"
+    },
+    {
+      "label": "Customer ID",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0ynhlko",
+        "columns": null
+      },
+      "id": "Field_0h7xpgp",
+      "key": "customerId",
+      "description": "the last digits are taken as customer credit (e.g. \"customer30\" has a credit of 30)",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Order total",
+      "type": "number",
+      "layout": {
+        "row": "Row_0tdvqtj",
+        "columns": null
+      },
+      "id": "Field_0b8uf9s",
+      "key": "orderTotal",
+      "description": "Decimal number",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Credit card",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0v7a42m",
+        "columns": null
+      },
+      "id": "Field_00pxbba",
+      "key": "cardNumber"
+    },
+    {
+      "label": "CVC",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0pkraxb",
+        "columns": 8
+      },
+      "id": "Field_1g6ncvn",
+      "key": "cvc"
+    },
+    {
+      "label": "Expiry date",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0pkraxb",
+        "columns": 8
+      },
+      "id": "Field_1g2j73h",
+      "key": "expiryDate",
+      "description": "MM/YY (invalid payment if larger than 5 characters)"
+    },
+    {
+      "action": "submit",
+      "label": "Start payment",
+      "type": "button",
+      "layout": {
+        "row": "Row_0aq6f9y",
+        "columns": null
+      },
+      "id": "Field_1s5e8kx"
+    }
+  ],
+  "type": "default",
+  "id": "Form_1km08al",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.3.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.17.0"
+  },
+  "schemaVersion": 12
+}
