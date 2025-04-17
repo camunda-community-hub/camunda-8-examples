@@ -5,4 +5,7 @@ camunda:
     webhook:
       enabled: false
   client:
-    mode: simple
+    mode: self-managed
+operate:
+  client:
+    enabled: false

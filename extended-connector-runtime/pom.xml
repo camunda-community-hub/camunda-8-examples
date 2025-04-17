@@ -12,8 +12,8 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.connectors>8.6.10</version.connectors>
-    <version.camunda>8.7.0</version.camunda>
+    <version.camunda-connectors>8.7.0</version.camunda-connectors>
+    <version.camunda>8.7.1</version.camunda>
     <version.spring-boot>3.4.4</version.spring-boot>
   </properties>
 
@@ -30,6 +30,23 @@
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
         <version>${version.camunda}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>camunda-process-test-spring</artifactId>
+        <version>${version.camunda}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda.connector</groupId>
+        <artifactId>connector-http-json</artifactId>
+        <version>${version.camunda-connectors}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.camunda.connector</groupId>
+        <artifactId>spring-boot-starter-camunda-connectors</artifactId>
+        <version>${version.camunda-connectors}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -38,17 +55,14 @@
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>spring-boot-starter-camunda-connectors</artifactId>
-      <version>${version.connectors}</version>
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>${version.camunda}</version>
     </dependency>
     <dependency>
       <groupId>io.camunda.connector</groupId>
       <artifactId>connector-http-json</artifactId>
-      <version>${version.connectors}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -58,7 +72,6 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>camunda-process-test-spring</artifactId>
-      <version>8.7.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
