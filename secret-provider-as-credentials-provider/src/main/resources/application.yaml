@@ -1,0 +1,14 @@
+camunda:
+  client:
+    mode: self-managed
+    auth:
+      client-id: zeebe
+      client-secret: zecret
+  connector:
+    webhook:
+      enabled: false
+    polling:
+      enabled: false
+operate:
+  client:
+    enabled: false
