@@ -27,18 +27,6 @@ jobs:
     - name: Build with Maven
       run: mvn verify -PcheckFormat -B
       working-directory: large-multi-instance-example
-  build-start-form-springboot:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: start-form-springboot
   build-synchronous-response-springboot:
     runs-on: ubuntu-latest
     steps:
