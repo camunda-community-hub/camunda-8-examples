@@ -11,7 +11,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <version.camunda>8.6.15</version.camunda>
-    <spring-boot.version>3.4.5</spring-boot.version>
+    <version.spring-boot>3.4.5</version.spring-boot>
   </properties>
   
   <dependencyManagement>
@@ -19,7 +19,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot.version}</version>
+        <version>${version.spring-boot}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -120,7 +120,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>${spring-boot.version}</version>
+        <version>${version.spring-boot}</version>
         <executions>
           <execution>
             <goals>
