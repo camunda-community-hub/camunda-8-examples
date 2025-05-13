@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0glhf3f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0glhf3f" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.34.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.6.0">
   <bpmn:process id="test" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=if is defined(host) then host else &#34;https://httpbin.org&#34;" target="host" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1mof3ja</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_1mof3ja" sourceRef="StartEvent_1" targetRef="Activity_0jfeono" />
@@ -11,7 +16,7 @@
         <zeebe:ioMapping>
           <zeebe:input source="noAuth" target="authentication.type" />
           <zeebe:input source="GET" target="method" />
-          <zeebe:input source="https://httpbin.org/status/200" target="url" />
+          <zeebe:input source="=host + &#34;/status/200&#34;" target="url" />
           <zeebe:input source="20" target="connectionTimeoutInSeconds" />
           <zeebe:input source="20" target="readTimeoutInSeconds" />
         </zeebe:ioMapping>

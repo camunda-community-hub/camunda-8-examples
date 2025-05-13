@@ -9,3 +9,6 @@ camunda:
 operate:
   client:
     enabled: false
+logging:
+  level:
+    io.camunda.connector: DEBUG
