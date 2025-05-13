@@ -1,22 +1,17 @@
 package com.camunda.consulting;
 
-import static io.camunda.zeebe.process.test.assertions.BpmnAssert.*;
-import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
+import static io.camunda.process.test.api.CamundaAssert.*;
 
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
-import java.time.Duration;
 import java.util.Map;
-import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@ZeebeSpringTest
-@ExtendWith(ProcessEngineCoverageExtension.class)
+@CamundaSpringProcessTest
 public class MultiInstanceTest {
 
   @Autowired ZeebeClient client;
@@ -45,9 +40,6 @@ public class MultiInstanceTest {
             .variables(Map.of("campaignId", campaignId))
             .send()
             .join();
-
-    waitForProcessInstanceCompleted(processInstance, Duration.ofMinutes(1));
-
     assertThat(processInstance).isCompleted();
   }
 }
