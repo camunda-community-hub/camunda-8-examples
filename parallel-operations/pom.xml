@@ -12,7 +12,7 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <spring-boot.version>3.4.5</spring-boot.version>
-    <camunda.version>8.6.15</camunda.version>
+    <version.camunda>8.6.15</version.camunda>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -28,7 +28,7 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>zeebe-bom</artifactId>
-        <version>${camunda.version}</version>
+        <version>${version.camunda}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -42,12 +42,12 @@
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>spring-boot-starter-camunda-sdk</artifactId>
-        <version>${camunda.version}</version>
+        <version>${version.camunda}</version>
       </dependency>
       <dependency>
         <groupId>io.camunda</groupId>
         <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
-        <version>${camunda.version}</version>
+        <version>${version.camunda}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
