@@ -1,5 +1,6 @@
 package com.camunda.consulting.web_shop_process_app.test;
 
+import static io.camunda.process.test.api.assertions.ElementSelectors.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -59,7 +60,7 @@ public class ProcessUnitTest {
 
     CamundaAssert.assertThat(processInstance)
         .isCompleted()
-        .hasCompletedElements("Charge credit card")
+        .hasCompletedElements(byName("Charge credit card"))
         .hasVariable("remainingAmount", 90.0);
     verify(mockedCustomerService).getCustomerCredit("testCustomer");
   }
@@ -73,14 +74,14 @@ public class ProcessUnitTest {
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
-            .startBeforeElement("Activity_192ju2a")
+            .startBeforeElement("ChargeCustomerCreditTask")
             .variables(Map.of("customerId", "testCustomer", "orderTotal", 50.0))
             .send()
             .join();
 
     CamundaAssert.assertThat(processInstance)
         .isCompleted()
-        .hasCompletedElements("no credit card payment required");
+        .hasCompletedElements(byName("no credit card payment required"));
     // missing: assert on not completed elements
   }
 
@@ -98,8 +99,8 @@ public class ProcessUnitTest {
             .join();
     CamundaAssert.assertThat(processInstance)
         .isActive()
-        .hasCompletedElements("Payment requested")
-        .hasActiveElements("Charge customer credit");
+        .hasCompletedElements(byName("Payment requested"))
+        .hasActiveElements(byName("Charge customer credit"));
     // missing: assert on incident state
   }
 
@@ -124,14 +125,14 @@ public class ProcessUnitTest {
                     "05/23",
                     "remainingAmount",
                     100.0))
-            .startBeforeElement("Activity_0nppgjk")
+            .startBeforeElement("ChargeCreditCardTask")
             .send()
             .join();
 
     CamundaAssert.assertThat(processInstance)
         .isActive()
-        .hasActiveElements("Check payment data")
-        .hasCompletedElements("Invalid expiry\n" + "date");
+        .hasActiveElements(byName("Check payment data"))
+        .hasCompletedElements(byName("Invalid expiry\n" + "date"));
   }
 
   @Test
@@ -141,13 +142,15 @@ public class ProcessUnitTest {
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
-            .startBeforeElement("Activity_0tug4lk")
+            .startBeforeElement("CheckPaymentDataTask")
             .send()
             .join();
 
     completeUserTask(processInstance.getProcessInstanceKey(), Map.of("errorResolved", false));
 
-    CamundaAssert.assertThat(processInstance).isCompleted().hasCompletedElements("Payment failed");
+    CamundaAssert.assertThat(processInstance)
+        .isCompleted()
+        .hasCompletedElements(byName("Payment failed"));
   }
 
   @Test
@@ -157,13 +160,13 @@ public class ProcessUnitTest {
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
-            .startBeforeElement("Activity_0tug4lk")
+            .startBeforeElement("CheckPaymentDataTask")
             .variables(Map.of("remainingAmount", 10.0))
             .send()
             .join();
     completeUserTask(processInstance.getProcessInstanceKey(), Map.of("errorResolved", true));
 
-    CamundaAssert.assertThat(processInstance).hasCompletedElements("Charge credit card");
+    CamundaAssert.assertThat(processInstance).hasCompletedElements(byName("Charge credit card"));
   }
 
   protected void completeUserTask(long processInstanceKey, Map<String, Object> variables)
