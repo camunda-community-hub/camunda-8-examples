@@ -22,9 +22,8 @@ public class AppTest {
   @Autowired ZeebeClient zeebeClient;
 
   @Container
-  private final GenericContainer<?> httpbin = new GenericContainer<>("kennethreitz/httpbin")
-      .withExposedPorts(80);
-
+  private final GenericContainer<?> httpbin =
+      new GenericContainer<>("kennethreitz/httpbin").withExposedPorts(80);
 
   @BeforeEach
   public void setup() {
