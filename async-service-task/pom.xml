@@ -11,8 +11,7 @@
   <properties>
     <java.version>17</java.version>
     <version.spring-boot>3.4.5</version.spring-boot>
-    <camunda-process-test-coverage.version>2.1.0</camunda-process-test-coverage.version>
-    <version.camunda>8.6.15</version.camunda>
+    <version.camunda>8.7.2</version.camunda>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +46,7 @@
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
     </dependency>
@@ -109,6 +108,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
         <configuration>
           <compilerArgs>
             <arg>-parameters</arg>

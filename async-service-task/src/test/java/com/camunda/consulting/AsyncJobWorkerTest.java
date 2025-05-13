@@ -1,16 +1,16 @@
 package com.camunda.consulting;
 
-import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
+import static io.camunda.process.test.api.CamundaAssert.*;
 
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@ZeebeSpringTest
+@CamundaSpringProcessTest
 @SpringBootTest
 public class AsyncJobWorkerTest {
 
@@ -18,6 +18,7 @@ public class AsyncJobWorkerTest {
 
   @Test
   void shouldRun() {
+    setAssertionTimeout(Duration.ofMinutes(2));
     ProcessInstanceEvent process =
         zeebeClient
             .newCreateInstanceCommand()
@@ -25,6 +26,6 @@ public class AsyncJobWorkerTest {
             .latestVersion()
             .send()
             .join();
-    waitForProcessInstanceCompleted(process, Duration.ofMinutes(2));
+    assertThat(process).isCompleted();
   }
 }
