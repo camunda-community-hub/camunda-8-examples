@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: payment-example-process-application
-        image: registry.camunda.cloud/library/payment-example-process-application:0.0.1-SNAPSHOT
+        image: ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:latest
         ports:
         - containerPort: 8080
           name: http

@@ -1,19 +1,23 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.camunda.consulting</groupId>
   <artifactId>payment-example-process-application</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
+
   <properties>
     <java.version>21</java.version>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <version.camunda>8.6.15</version.camunda>
+    <version.camunda>8.7.2</version.camunda>
     <version.spring-boot>3.4.5</version.spring-boot>
+
+    <timestamp>${maven.build.timestamp}</timestamp>
+    <maven.build.timestamp.format>yyyyMMdd-HHmmssSSS</maven.build.timestamp.format>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -40,7 +44,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -51,7 +55,7 @@
       <groupId>io.camunda</groupId>
       <artifactId>spring-boot-starter-camunda-sdk</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -70,7 +74,7 @@
     </dependency>
 
   </dependencies>
-  
+
   <build>
     <pluginManagement>
       <plugins>
@@ -124,11 +128,41 @@
         <executions>
           <execution>
             <goals>
+              <goal>build-info</goal>
               <goal>repackage</goal>
             </goals>
           </execution>
+          <execution>
+            <id>ghcr-image-version</id>
+            <goals>
+              <goal>build-image-no-fork</goal>
+            </goals>
+            <phase>install</phase>
+            <configuration>
+              <image>
+                <tags>
+                  <!-- Building all tags here, and only pushing the right one via the Github Action -->
+                  <tag>
+                    ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:${project.version}-${timestamp}
+                  </tag>
+                  <tag>
+                    ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:${project.version}
+                  </tag>
+                  <tag>ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:latest</tag>
+                  <tag>ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:SNAPSHOT
+                  </tag>
+                  <tag>
+                    camundacommunityhub/payment-example-process-application:${project.version}-${timestamp}
+                  </tag>
+                  <tag>camundacommunityhub/payment-example-process-application:${project.version}</tag>
+                  <tag>camundacommunityhub/payment-example-process-application:latest</tag>
+                  <tag>camundacommunityhub/payment-example-process-application:SNAPSHOT</tag>
+                </tags>
+              </image>
+            </configuration>
+          </execution>
         </executions>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
   <profiles>

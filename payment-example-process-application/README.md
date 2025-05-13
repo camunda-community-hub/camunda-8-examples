@@ -16,13 +16,12 @@ first running example in your Self-managed installation of a Camunda 8 cluster.
 ## Use the application
 
 The application is provided as a container image here:
-https://registry.camunda.cloud/harbor/projects/1/repositories/payment-example-process-application/artifacts-tab.
+https://github.com/camunda-community-hub/camunda-8-examples/pkgs/container/camunda-8-examples%2Fpayment-example-process-application
 
-You can pull it from `library` in `registry.camunda.cloud` as
-`payment-example-process-application:0.0.1-SNAPSHOT`
+You can pull it from here:
 
 ```
-docker pull registry.camunda.cloud/library/payment-example-process-application:0.0.1-SNAPSHOT
+docker pull ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:latest
 ```
 
 ### Kubernetes Deployment Tutorial
@@ -32,7 +31,7 @@ To deploy this Payment Example Process Application on Kubernetes, follow the det
 ## Build the image
 
 ```
-mvn clean spring-boot:build-image
+mvn clean install
 ```
 
 Requirements: Docker daemon on the build computer
