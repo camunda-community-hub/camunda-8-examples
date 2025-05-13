@@ -13,11 +13,18 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <version.camunda-connectors>8.7.0</version.camunda-connectors>
-    <version.camunda>8.7.1</version.camunda>
+    <version.camunda-connectors>8.7.2</version.camunda-connectors>
+    <version.camunda>8.7.2</version.camunda>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>3.4.5</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>io.camunda.connector</groupId>
         <artifactId>element-template-generator-core</artifactId>
