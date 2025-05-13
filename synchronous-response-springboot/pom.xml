@@ -18,7 +18,7 @@
 
   <properties>
     <java.version>21</java.version>
-    <version.camunda>8.5.18</version.camunda>
+    <version.camunda>8.7.2</version.camunda>
   </properties>
 
   <dependencies>
@@ -34,8 +34,8 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda</artifactId>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
       <version>${version.camunda}</version>
     </dependency>
 
@@ -46,8 +46,8 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda.spring</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
     </dependency>
