@@ -91,7 +91,7 @@ GET /events/{event-id}
 
 Prerequisities:
 
-Only a running zeebe engine is required. By default, the zeebe client points to the gateway running on port 26500, so you use either [C8Run](https://docs.camunda.io/docs/self-managed/setup/deploy/local/c8run/) or the [docker-compose](https://docs.camunda.io/docs/self-managed/setup/deploy/local/docker-compose/) setup.
+Only a running Camunda instance is required. By default, the Camunda client points to a local Camunda instance, so you use either [C8Run](https://docs.camunda.io/docs/self-managed/setup/deploy/local/c8run/) or the [docker-compose](https://docs.camunda.io/docs/self-managed/setup/deploy/local/docker-compose/) setup.
 
 To run the example, just execute:
 
