@@ -229,23 +229,20 @@ Once the route is created, you can access your application using the provided ho
 ```yaml
         env:
         # set it to the client id retrieved in the identity M2M step
-        - name: ZEEBE_CLIENT_ID
+        - name: CAMUNDA_CLIENT_AUTH_CLIENTID
           value: "yourClientID"
 
         #### The following values are not intended to be modified, but here's an explanation of their uses
 
         # depending on your Keycloak location, you may need to edit the authorization server URL
-        - name: ZEEBE_AUTHORIZATION_SERVER_URL
+        - name: CAMUNDA_CLIENT_AUTH_TOKENURL
           value: http://camunda-platform-keycloak.camunda-platform.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token
 
         # This is the address of the Zeebe broker service, you should not have to change it
-        - name: ZEEBE_CLIENT_BROKER_GATEWAY_ADDRESS
-          value: "camunda-platform-zeebe-gateway.camunda-platform.svc.cluster.local:26500"
-        # For demonstration purposes, we disable encryption. Do not do this in production
-        - name: ZEEBE_CLIENT_SECURITY_PLAINTEXT
-          value: "true"
+        - name: CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS
+          value: "http://camunda-platform-zeebe-gateway.camunda-platform.svc.cluster.local:26500"
         # What will the token be used for?
-        - name: ZEEBE_TOKEN_AUDIENCE
+        - name: CAMUNDA_CLIENT_ZEEBE_AUDIENCE
           value: zeebe-api
 ``` 
 Note: In Kubernetes, services are accessible through the following composition (ref: [Kubernetes Services](https://kubernetes.io/docs/concepts/services-networking/service/)):

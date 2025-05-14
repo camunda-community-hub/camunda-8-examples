@@ -39,7 +39,7 @@ The result of the whole "transaction" is then returned from the method call `com
 
 ## How can I try it out?
 
-Configure the zeebe connection in the `application.yaml`. By default, it points to a plaintext local zeebe gateway.
+Configure the Camunda connection in the `application.yaml`. By default, it points to a plaintext local Camunda instance.
 
 Then, start the app by running
 
