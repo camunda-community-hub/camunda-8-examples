@@ -36,7 +36,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: payment-example-process-application-secrets
-              key: ZEEBE_CLIENT_CLOUD_CLIENTSECRET
+              key: CAMUNDA_CLIENT_AUTH_CLIENTSECRET
         resources:
           limits:
             memory: "768Mi"
