@@ -14,7 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.camunda-connectors>8.7.2</version.camunda-connectors>
     <version.camunda>8.7.3</version.camunda>
-    <version.spring-boot>3.4.5</version.spring-boot>
+    <version.spring-boot>3.4.6</version.spring-boot>
   </properties>
 
   <dependencyManagement>
