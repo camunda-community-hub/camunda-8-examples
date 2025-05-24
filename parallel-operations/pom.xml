@@ -103,7 +103,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.4.6</version>
+        <version>3.5.0</version>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
