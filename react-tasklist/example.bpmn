@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0qzx3lp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.18.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.3.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0qzx3lp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
   <bpmn:process id="Process_1002dwb" isExecutable="true">
     <bpmn:extensionElements>
       <zeebe:userTaskForm id="UserTaskForm_0qkdl8c">{
@@ -65,6 +65,7 @@
     <bpmn:userTask id="Activity_0v7f68e" name="I am done with Camunda forms">
       <bpmn:extensionElements>
         <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_0qkdl8c" />
+        <zeebe:assignmentDefinition assignee="demo" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0k3jewo</bpmn:incoming>
       <bpmn:outgoing>Flow_0yhs7lv</bpmn:outgoing>
@@ -92,6 +93,7 @@
     <bpmn:userTask id="Activity_0kdcks8" name="I am done with react">
       <bpmn:extensionElements>
         <zeebe:formDefinition formKey="react:myForm" />
+        <zeebe:assignmentDefinition assignee="demo" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1y8beb3</bpmn:incoming>
       <bpmn:outgoing>Flow_1ht8cs5</bpmn:outgoing>
@@ -114,6 +116,7 @@
     <bpmn:userTask id="Activity_13q3aye" name="I am done with Camunda forms">
       <bpmn:extensionElements>
         <zeebe:formDefinition formKey="camunda-forms:bpmn:UserTaskForm_0n7ih7s" />
+        <zeebe:assignmentDefinition assignee="demo" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1qju7ub</bpmn:incoming>
       <bpmn:outgoing>Flow_1gr6iif</bpmn:outgoing>
@@ -123,21 +126,21 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1002dwb">
-      <bpmndi:BPMNShape id="Event_0c9bcge_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="309" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1expllw_di" bpmnElement="Event_1expllw">
-        <dc:Bounds x="602" y="309" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0dt8xqj_di" bpmnElement="Activity_0v7f68e">
         <dc:Bounds x="350" y="210" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0ra5ded_di" bpmnElement="Gateway_0g89tgi">
-        <dc:Bounds x="258" y="302" width="50" height="50" />
+      <bpmndi:BPMNShape id="Event_1expllw_di" bpmnElement="Event_1expllw">
+        <dc:Bounds x="602" y="309" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c9bcge_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="309" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1i14aba_di" bpmnElement="Activity_0kdcks8">
         <dc:Bounds x="350" y="394" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ra5ded_di" bpmnElement="Gateway_0g89tgi">
+        <dc:Bounds x="258" y="302" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1jamlpd_di" bpmnElement="Gateway_1tqkey0">
         <dc:Bounds x="491" y="302" width="50" height="50" />
@@ -150,20 +153,6 @@
         <di:waypoint x="215" y="327" />
         <di:waypoint x="258" y="327" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1o38c8t_di" bpmnElement="Flow_1o38c8t">
-        <di:waypoint x="541" y="327" />
-        <di:waypoint x="602" y="327" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0k3jewo_di" bpmnElement="Flow_0k3jewo">
-        <di:waypoint x="283" y="302" />
-        <di:waypoint x="283" y="250" />
-        <di:waypoint x="350" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0yhs7lv_di" bpmnElement="Flow_0yhs7lv">
-        <di:waypoint x="450" y="250" />
-        <di:waypoint x="516" y="250" />
-        <di:waypoint x="516" y="302" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1y8beb3_di" bpmnElement="Flow_1y8beb3">
         <di:waypoint x="283" y="352" />
         <di:waypoint x="283" y="434" />
@@ -173,6 +162,20 @@
         <di:waypoint x="450" y="434" />
         <di:waypoint x="516" y="434" />
         <di:waypoint x="516" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k3jewo_di" bpmnElement="Flow_0k3jewo">
+        <di:waypoint x="283" y="302" />
+        <di:waypoint x="283" y="250" />
+        <di:waypoint x="350" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o38c8t_di" bpmnElement="Flow_1o38c8t">
+        <di:waypoint x="541" y="327" />
+        <di:waypoint x="602" y="327" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yhs7lv_di" bpmnElement="Flow_0yhs7lv">
+        <di:waypoint x="450" y="250" />
+        <di:waypoint x="516" y="250" />
+        <di:waypoint x="516" y="302" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1qju7ub_di" bpmnElement="Flow_1qju7ub">
         <di:waypoint x="283" y="302" />

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@bpmn-io/form-js-viewer": "^1.6.0",
+    "@tailwindcss/postcss": "^4.1.8",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
