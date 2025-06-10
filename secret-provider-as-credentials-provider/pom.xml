@@ -12,16 +12,16 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.camunda>8.7.3</version.camunda>
-    <version.camunda-connectors>8.7.2</version.camunda-connectors>
-    <version.spring-boot>3.4.5</version.spring-boot>
+    <version.camunda>8.7.5</version.camunda>
+    <version.camunda-connectors>8.7.3</version.camunda-connectors>
+    <version.spring-boot>3.5.0</version.spring-boot>
     <version.jackson>2.19.0</version.jackson>
 
     <plugin.version.maven-enforcer-plugin>3.5.0</plugin.version.maven-enforcer-plugin>
     <plugin.version.maven-install-plugin>3.1.4</plugin.version.maven-install-plugin>
     <plugin.version.maven-resources-plugin>3.3.1</plugin.version.maven-resources-plugin>
     <plugin.version.maven-surefire-plugin>3.5.3</plugin.version.maven-surefire-plugin>
-    <plugin.version.spotless-maven-plugin>2.44.4</plugin.version.spotless-maven-plugin>
+    <plugin.version.spotless-maven-plugin>2.44.5</plugin.version.spotless-maven-plugin>
     <plugin.version.maven-compiler-plugin>3.14.0</plugin.version.maven-compiler-plugin>
     <plugin.version.maven-depdendency-plugin>3.8.1</plugin.version.maven-depdendency-plugin>
     <plugin.version.maven-site-plugin>3.21.0</plugin.version.maven-site-plugin>
@@ -47,14 +47,14 @@
       <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-bom</artifactId>
-        <version>1.72.0</version>
+        <version>1.73.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.google.protobuf</groupId>
         <artifactId>protobuf-bom</artifactId>
-        <version>4.31.0</version>
+        <version>4.31.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -382,7 +382,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.4.1</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

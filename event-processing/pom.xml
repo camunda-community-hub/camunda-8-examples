@@ -12,8 +12,8 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.camunda>8.7.3</version.camunda>
-    <version.spring-boot>3.4.5</version.spring-boot>
+    <version.camunda>8.7.5</version.camunda>
+    <version.spring-boot>3.5.0</version.spring-boot>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -93,7 +93,7 @@
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
-          <version>2.44.4</version>
+          <version>2.44.5</version>
           <configuration>
             <formats>
               <format>

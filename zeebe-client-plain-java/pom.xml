@@ -22,7 +22,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>zeebe-client-java</artifactId>
-      <version>8.7.3</version>
+      <version>8.7.5</version>
     </dependency>
 
     <dependency>
@@ -52,7 +52,7 @@
         <plugin>
           <groupId>com.diffplug.spotless</groupId>
           <artifactId>spotless-maven-plugin</artifactId>
-          <version>2.44.4</version>
+          <version>2.44.5</version>
           <configuration>
             <formats>
               <format>
