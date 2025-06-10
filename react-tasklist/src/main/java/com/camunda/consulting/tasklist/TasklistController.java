@@ -44,7 +44,7 @@ public class TasklistController {
   }
 
   @GetMapping("/tasks")
-  public ResponseEntity<List<TaskOverviewDto>> getTasks(@RequestParam(value = "assignedOnly",required = false,defaultValue = "false")boolean assignedOnly) {
+  public ResponseEntity<List<TaskOverviewDto>> getTasks(@RequestParam(value = "assignedOnly",required = false,defaultValue = "true")boolean assignedOnly) {
 
     return ResponseEntity.ok(taskService.getTasks(assignedOnly));
   }
