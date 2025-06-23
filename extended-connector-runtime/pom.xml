@@ -13,7 +13,7 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.camunda-connectors>8.7.4</version.camunda-connectors>
-    <version.camunda>8.7.5</version.camunda>
+    <version.camunda>8.7.6</version.camunda>
     <version.spring-boot>3.5.3</version.spring-boot>
   </properties>
 
