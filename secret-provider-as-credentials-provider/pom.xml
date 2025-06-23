@@ -122,6 +122,11 @@
         <artifactId>wiremock</artifactId>
         <version>3.13.1</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client</artifactId>
+        <version>1.47.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
