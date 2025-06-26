@@ -6,7 +6,7 @@
   <groupId>org.camunda.community.examples</groupId>
   <artifactId>camunda-8-twitter-review</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-
+  <name>Camunda 8 Twitter Review Example</name>
   <properties>
     <java.version>21</java.version>
     <version.spring-boot>3.5.3</version.spring-boot>

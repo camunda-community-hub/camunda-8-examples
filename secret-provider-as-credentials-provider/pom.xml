@@ -7,7 +7,7 @@
   <groupId>com.camunda.consulting</groupId>
   <artifactId>secret-provider-as-credentials-provider</artifactId>
   <version>1.0-SNAPSHOT</version>
-
+  <name>Secret Provider as Credentials Provider Example</name>
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>

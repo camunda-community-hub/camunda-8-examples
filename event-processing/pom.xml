@@ -7,7 +7,7 @@
   <groupId>io.camunda</groupId>
   <artifactId>event-processing</artifactId>
   <version>1.0-SNAPSHOT</version>
-
+  <name>Event Processing Example</name>
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>

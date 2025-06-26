@@ -7,7 +7,7 @@
   <groupId>com.camunda.consulting</groupId>
   <artifactId>parallel-operations</artifactId>
   <version>1.0-SNAPSHOT</version>
-
+  <name>Parallel Operations Example</name>
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
