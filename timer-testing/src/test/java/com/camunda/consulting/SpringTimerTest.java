@@ -6,15 +6,14 @@ import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
 import static org.assertj.core.api.Assertions.*;
 
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
+import io.camunda.zeebe.process.test.filters.RecordStream;
 import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeoutException;
+import org.awaitility.Awaitility;
 import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,11 +103,16 @@ public class SpringTimerTest {
       Duration timerDuration,
       int times)
       throws InterruptedException, TimeoutException {
-    zeebeTestEngine.waitForIdleState(DEFAULT);
-    assertThat(processInstance).isWaitingAtElements(timerElementId);
+    Awaitility.await()
+        .atMost(DEFAULT)
+        .pollInterval(Duration.ofSeconds(1))
+        .untilAsserted(
+            () -> {
+              initRecordStream(RecordStream.of(zeebeTestEngine.getRecordStreamSource()));
+              assertThat(processInstance).isWaitingAtElements(timerElementId);
+            });
     zeebeTestEngine.increaseTime(timerDuration);
     waitForProcessInstanceHasPassedElement(processInstance, timerElementId, DEFAULT, times);
-    zeebeTestEngine.waitForIdleState(DEFAULT);
   }
 
   private ProcessInstanceEvent createInstance(String bpmnProcessId)
@@ -120,36 +124,6 @@ public class SpringTimerTest {
             .latestVersion()
             .send()
             .join();
-    zeebeTestEngine.waitForIdleState(DEFAULT);
     return instance;
-  }
-
-  private void completeJob(String jobType) throws InterruptedException, TimeoutException {
-    completeJob(jobType, Map.of());
-  }
-
-  private void completeJob(String jobType, Map<String, Object> variables)
-      throws InterruptedException, TimeoutException {
-    ActivatedJob activatedJob = job(jobType);
-    complete(activatedJob.getKey(), variables);
-    zeebeTestEngine.waitForIdleState(DEFAULT);
-  }
-
-  private void complete(long jobKey, Map<String, Object> variables) {
-    zeebeClient.newCompleteCommand(jobKey).variables(variables).send().join();
-  }
-
-  private ActivatedJob job(String jobType) {
-    List<ActivatedJob> jobs =
-        zeebeClient
-            .newActivateJobsCommand()
-            .jobType(jobType)
-            .maxJobsToActivate(1)
-            .timeout(Duration.ofMillis(1))
-            .send()
-            .join()
-            .getJobs();
-    assertThat(jobs).hasSize(1);
-    return jobs.get(0);
   }
 }

@@ -1,9 +1,36 @@
 name: Build examples
 
-on: [push]
-
+on: [pull_request]
 jobs:
-  build-twitter-review-java-springboot:
+  determine-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      all_changed_files: ${{ steps.changed.outputs.all_changed_files }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run changed-files with dir_names
+        id: changed
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
+        with:
+          dir_names: "true"
+          dir_names_max_depth: '1'
+          matrix: true
+          files_ignore: '.github/**'
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+  build-changed-examples:
+    name: Build ${{ matrix.baseDir }}
+    needs: determine-changes
+    if: needs.determine-changes.outputs.all_changed_files != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        baseDir: ${{ fromJson(needs.determine-changes.outputs.all_changed_files) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,80 +41,11 @@ jobs:
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn verify -PcheckFormat -B
-        working-directory: twitter-review-java-springboot
-  build-large-multi-instance-example:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: large-multi-instance-example
-  build-synchronous-response-springboot:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: synchronous-response-springboot
-  build-zeebe-client-plain-java:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: zeebe-client-plain-java
-  build-rollback-on-error-example:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn package -B
-      working-directory: rollback-on-error-example
-  build-timer-testing:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: timer-testing
-  build-async-service-task:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: async-service-task
+        working-directory: ${{ matrix.baseDir }}
+
   build-payment-example-process-application:
+    needs: [determine-changes,build-changed-examples]
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'payment-example-process-application')
     runs-on: ubuntu-latest
     steps: 
     - uses: actions/checkout@v4
@@ -116,75 +74,3 @@ jobs:
 #    - name: Push images to dockerhub
 #      run: |
 #        docker push -a -q camundacommunityhub/payment-example-process-application
-  build-parallel-operations:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: parallel-operations
-  build-react-tasklist:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: react-tasklist
-  build-element-template-generation:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: element-template-generation
-  build-event-processing:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: event-processing
-  build-extended-connector-runtime:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: extended-connector-runtime
-  build-secret-provider-as-credentials-provider:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-    - name: Build with Maven
-      run: mvn verify -PcheckFormat -B
-      working-directory: secret-provider-as-credentials-provider
