@@ -1,7 +1,6 @@
 name: Build examples
 
 on: [pull_request]
-
 jobs:
   determine-changes:
     runs-on: ubuntu-latest
@@ -22,6 +21,25 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             echo "$file was changed"
           done
+  build-changed-examples:
+    name: Build ${{ matrix.baseDir }}
+    needs: determine-changes
+    if: needs.determine-changes.outputs.all_changed_files != ''
+    strategy:
+      fail-fast: false
+      matrix:
+        baseDir: ${{ needs.determine-changes.outputs.all_changed_files }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Build with Maven
+        run: mvn verify -PcheckFormat -B
+        working-directory: ${{ matrix.baseDir }}
   build-twitter-review-java-springboot:
     needs: determine-changes
     if: contains(needs.determine-changes.outputs.all_changed_files, 'twitter-review-java-springboot')
@@ -51,6 +69,8 @@ jobs:
       run: mvn verify -PcheckFormat -B
       working-directory: large-multi-instance-example
   build-synchronous-response-springboot:
+    needs: determine-changes
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'synchronous-response-springboot')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -63,6 +83,8 @@ jobs:
       run: mvn verify -PcheckFormat -B
       working-directory: synchronous-response-springboot
   build-zeebe-client-plain-java:
+    needs: determine-changes
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'zeebe-client-plain-java')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -75,6 +97,8 @@ jobs:
       run: mvn verify -PcheckFormat -B
       working-directory: zeebe-client-plain-java
   build-rollback-on-error-example:
+    needs: determine-changes
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'rollback-on-error-example')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -101,6 +125,8 @@ jobs:
       run: mvn verify -PcheckFormat -B
       working-directory: timer-testing
   build-async-service-task:
+    needs: determine-changes
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'async-service-task')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
