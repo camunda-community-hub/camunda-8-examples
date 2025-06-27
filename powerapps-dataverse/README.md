@@ -15,6 +15,7 @@ Browse to your PowerApps Environment URL, which will look something like this. (
 
 Click `Settings` -> `Developer Resources` in the upper right corner as shown here: 
 
+
 ![](screenshots/prerequisite.png)
 
 The Developer Resources screen should show you your Organization Id and your Web App API Endpoint. My Web App API Endpoint looks like this: 
