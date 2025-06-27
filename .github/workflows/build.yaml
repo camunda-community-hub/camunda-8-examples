@@ -14,7 +14,7 @@ jobs:
         with:
           dir_names: "true"
           dir_names_max_depth: '1'
-          files_ignore: .github/*
+          matrix: true
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
