@@ -9,10 +9,18 @@ jobs:
       changed: ${{ steps.changed.outputs.changed }}
     steps:
       - uses: actions/checkout@v4
-      - name: Determine changed directories
+      - name: Run changed-files with dir_names
         id: changed
+        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
+        with:
+          dir_names: "true"
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
         run: |
-          echo "changed=$(git diff --name-only HEAD^ HEAD | grep -Eo '^[^/]+/' | sort -u | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
   build-twitter-review-java-springboot:
     runs-on: ubuntu-latest
     steps:
