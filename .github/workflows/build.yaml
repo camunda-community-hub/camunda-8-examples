@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.changed.outputs.changed }}
+      all_changed_files: ${{ steps.changed.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
       - name: Run changed-files with dir_names
@@ -14,7 +15,7 @@ jobs:
         uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
         with:
           dir_names: "true"
-          base_sha: ${{ github.event.pull_request.base.sha }}
+          dir_names_max_depth: '1'
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
@@ -23,6 +24,7 @@ jobs:
             echo "$file was changed"
           done
   build-twitter-review-java-springboot:
+    if:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
