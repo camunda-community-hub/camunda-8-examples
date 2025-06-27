@@ -12,6 +12,7 @@ import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
+import org.awaitility.Awaitility;
 import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,8 +102,9 @@ public class SpringTimerTest {
       Duration timerDuration,
       int times)
       throws InterruptedException, TimeoutException {
-    zeebeTestEngine.waitForIdleState(DEFAULT);
-    assertThat(processInstance).isWaitingAtElements(timerElementId);
+    Awaitility.await()
+        .atMost(DEFAULT)
+        .untilAsserted(() -> assertThat(processInstance).isWaitingAtElements(timerElementId));
     zeebeTestEngine.increaseTime(timerDuration);
     waitForProcessInstanceHasPassedElement(processInstance, timerElementId, DEFAULT, times);
   }
