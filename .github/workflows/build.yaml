@@ -14,6 +14,7 @@ jobs:
         uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c # v46
         with:
           dir_names: "true"
+          base_sha: ${{ github.event.pull_request.base.sha }}
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed.outputs.all_changed_files }}
