@@ -6,7 +6,6 @@ jobs:
   determine-changes:
     runs-on: ubuntu-latest
     outputs:
-      changed: ${{ steps.changed.outputs.changed }}
       all_changed_files: ${{ steps.changed.outputs.all_changed_files }}
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +24,7 @@ jobs:
           done
   build-twitter-review-java-springboot:
     needs: determine-changes
-    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'twitter-review-java-springboot')
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'twitter-review-java-springboot')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +38,7 @@ jobs:
         working-directory: twitter-review-java-springboot
   build-large-multi-instance-example:
     needs: determine-changes
-    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'large-multi-instance-example')
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'large-multi-instance-example')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -89,7 +88,7 @@ jobs:
       working-directory: rollback-on-error-example
   build-timer-testing:
     needs: determine-changes
-    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'timer-testing')
+    if: contains(needs.determine-changes.outputs.all_changed_files, 'timer-testing')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
