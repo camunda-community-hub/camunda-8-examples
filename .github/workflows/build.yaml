@@ -3,6 +3,16 @@ name: Build examples
 on: [push]
 
 jobs:
+  determine-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changed.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine changed directories
+        id: changed
+        run: |
+          echo "changed=$(git diff --name-only HEAD^ HEAD | grep -Eo '^[^/]+/' | sort -u | tr '\n' ' ')" >> $GITHUB_OUTPUT
   build-twitter-review-java-springboot:
     runs-on: ubuntu-latest
     steps:
