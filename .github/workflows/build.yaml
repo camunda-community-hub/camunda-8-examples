@@ -1,6 +1,6 @@
 name: Build examples
 
-on: [push]
+on: [pull_request]
 
 jobs:
   determine-changes:
