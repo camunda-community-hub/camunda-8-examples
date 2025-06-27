@@ -38,6 +38,8 @@ jobs:
         run: mvn verify -PcheckFormat -B
         working-directory: twitter-review-java-springboot
   build-large-multi-instance-example:
+    needs: determine-changes
+    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'large-multi-instance-example')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -86,6 +88,8 @@ jobs:
       run: mvn package -B
       working-directory: rollback-on-error-example
   build-timer-testing:
+    needs: determine-changes
+    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'timer-testing')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
