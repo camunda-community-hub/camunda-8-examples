@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.*;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
+import io.camunda.zeebe.process.test.filters.RecordStream;
 import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
 import io.camunda.zeebe.spring.test.ZeebeSpringTest;
 import java.time.Duration;
@@ -104,7 +105,12 @@ public class SpringTimerTest {
       throws InterruptedException, TimeoutException {
     Awaitility.await()
         .atMost(DEFAULT)
-        .untilAsserted(() -> assertThat(processInstance).isWaitingAtElements(timerElementId));
+        .pollInterval(Duration.ofSeconds(1))
+        .untilAsserted(
+            () -> {
+              initRecordStream(RecordStream.of(zeebeTestEngine.getRecordStreamSource()));
+              assertThat(processInstance).isWaitingAtElements(timerElementId);
+            });
     zeebeTestEngine.increaseTime(timerDuration);
     waitForProcessInstanceHasPassedElement(processInstance, timerElementId, DEFAULT, times);
   }
