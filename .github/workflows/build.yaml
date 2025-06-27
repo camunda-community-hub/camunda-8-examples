@@ -24,7 +24,8 @@ jobs:
             echo "$file was changed"
           done
   build-twitter-review-java-springboot:
-    if:
+    needs: determine-changes
+    if: needs.determine-changes.outputs.changed == 'true' && contains(needs.determine-changes.outputs.all_changed_files, 'twitter-review-java-springboot')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
