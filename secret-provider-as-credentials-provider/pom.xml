@@ -17,7 +17,7 @@
     <version.spring-boot>3.5.3</version.spring-boot>
     <version.jackson>2.19.1</version.jackson>
 
-    <plugin.version.maven-enforcer-plugin>3.5.0</plugin.version.maven-enforcer-plugin>
+    <plugin.version.maven-enforcer-plugin>3.6.0</plugin.version.maven-enforcer-plugin>
     <plugin.version.maven-install-plugin>3.1.4</plugin.version.maven-install-plugin>
     <plugin.version.maven-resources-plugin>3.3.1</plugin.version.maven-resources-plugin>
     <plugin.version.maven-surefire-plugin>3.5.3</plugin.version.maven-surefire-plugin>
