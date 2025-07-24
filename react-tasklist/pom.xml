@@ -20,7 +20,7 @@
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -48,7 +48,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.4</version>
         <configuration>
           <layout>ZIP</layout>
         </configuration>
