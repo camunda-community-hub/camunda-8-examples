@@ -1,10 +1,3 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.1. You may not use this file
- * except in compliance with the Zeebe Community License 1.1.
- */
 package io.camunda.example.process;
 
 import io.camunda.client.CamundaClient;
@@ -27,12 +20,7 @@ public final class ProcessInstanceCreator {
       System.out.println("Creating process instance");
 
       final ProcessInstanceEvent processInstanceEvent =
-          client
-              .newCreateInstanceCommand()
-              .bpmnProcessId(bpmnProcessId)
-              .latestVersion()
-              .send()
-              .join();
+          client.newCreateInstanceCommand().bpmnProcessId(bpmnProcessId).latestVersion().execute();
 
       System.out.println(
           "Process instance created with key: " + processInstanceEvent.getProcessInstanceKey());

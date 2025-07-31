@@ -1,10 +1,3 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.1. You may not use this file
- * except in compliance with the Zeebe Community License 1.1.
- */
 package io.camunda.example.job;
 
 import io.camunda.client.CamundaClient;
@@ -61,7 +54,7 @@ public final class JobWorkerCreator {
     public void handle(final JobClient client, final ActivatedJob job) {
       // here: business logic that is executed with every job
       System.out.println(job);
-      client.newCompleteCommand(job.getKey()).send().join();
+      client.newCompleteCommand(job.getKey()).execute();
     }
   }
 }

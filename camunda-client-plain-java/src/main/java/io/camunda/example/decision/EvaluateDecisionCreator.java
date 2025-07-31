@@ -1,10 +1,3 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.1. You may not use this file
- * except in compliance with the Zeebe Community License 1.1.
- */
 package io.camunda.example.decision;
 
 import io.camunda.client.CamundaClient;
@@ -31,8 +24,7 @@ public final class EvaluateDecisionCreator {
               .newEvaluateDecisionCommand()
               .decisionId(decisionId)
               .variables("{\"lightsaberColor\": \"blue\"}")
-              .send()
-              .join();
+              .execute();
 
       System.out.println("Decision evaluation result: " + decisionEvaluation.getDecisionOutput());
     }

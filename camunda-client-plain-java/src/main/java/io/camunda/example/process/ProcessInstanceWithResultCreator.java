@@ -1,10 +1,3 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.1. You may not use this file
- * except in compliance with the Zeebe Community License 1.1.
- */
 package io.camunda.example.process;
 
 import io.camunda.client.CamundaClient;
@@ -34,8 +27,7 @@ public class ProcessInstanceWithResultCreator {
               .bpmnProcessId(bpmnProcessId)
               .latestVersion()
               .withResult() // to await the completion of process execution and return result
-              .send()
-              .join();
+              .execute();
 
       System.out.println(
           "Process instance created with key: "
