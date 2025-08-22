@@ -6,7 +6,6 @@ import io.camunda.client.CamundaClient;
 import io.camunda.client.CredentialsProvider;
 import io.camunda.client.impl.NoopCredentialsProvider;
 import io.camunda.client.impl.basicauth.BasicAuthCredentialsProviderBuilder;
-
 import java.net.URI;
 import java.util.function.Function;
 
@@ -32,16 +31,16 @@ public class ClientProvider {
    *   <li>{@code CAMUNDA_CLIENT_AUTH_TOKENURL}
    * </ul>
    *
-   * <p>If {@link AuthMethod}{@code .basic} is selected, the following environment
-   * variables are also looked up:
+   * <p>If {@link AuthMethod}{@code .basic} is selected, the following environment variables are
+   * also looked up:
    *
    * <ul>
    *   <li>{@code CAMUNDA_CLIENT_USERNAME}
    *   <li>{@code CAMUNDA_CLIENT_PASSWORD}
    * </ul>
    *
-   * <p>If {@link AuthMethod}{@code .saas} is selected, the following environment
-   * variables are also looked up:
+   * <p>If {@link AuthMethod}{@code .saas} is selected, the following environment variables are also
+   * looked up:
    *
    * <ul>
    *   <li>{@code CAMUNDA_CLUSTER_ID}
@@ -73,14 +72,11 @@ public class ClientProvider {
         envOrDefault(
             "CAMUNDA_CLIENT_AUTH_TOKENURL",
             "http://localhost:18080/auth/realms/camunda-platform/protocol/openid-connect/token");
-    final String CAMUNDA_CLIENT_USERNAME =
-        envOrDefault("CAMUNDA_CLIENT_USERNAME", "demo");
-    final String CAMUNDA_CLIENT_PASSWORD =
-        envOrDefault("CAMUNDA_CLIENT_PASSWORD", "demo");
+    final String CAMUNDA_CLIENT_USERNAME = envOrDefault("CAMUNDA_CLIENT_USERNAME", "demo");
+    final String CAMUNDA_CLIENT_PASSWORD = envOrDefault("CAMUNDA_CLIENT_PASSWORD", "demo");
     final String CAMUNDA_CLUSTER_ID =
         envOrDefault("CAMUNDA_CLUSTER_ID", "[Cluster ID from Console]");
-    final String CAMUNDA_CLIENT_ID =
-        envOrDefault("CAMUNDA_CLIENT_ID", "[Client ID from Console]");
+    final String CAMUNDA_CLIENT_ID = envOrDefault("CAMUNDA_CLIENT_ID", "[Client ID from Console]");
     final String CAMUNDA_CLIENT_SECRET =
         envOrDefault("CAMUNDA_CLIENT_SECRET", "[Client Secret from Console]");
     final String CAMUNDA_CLUSTER_REGION =
@@ -105,24 +101,28 @@ public class ClientProvider {
 
     final CamundaClient client;
     if (authMethod == AuthMethod.saas) {
-      client = CamundaClient.newCloudClientBuilder()
-          .withClusterId(CAMUNDA_CLUSTER_ID)
-          .withClientId(CAMUNDA_CLIENT_ID)
-          .withClientSecret(CAMUNDA_CLIENT_SECRET)
-          .withRegion(CAMUNDA_CLUSTER_REGION)
-          .build();
+      client =
+          CamundaClient.newCloudClientBuilder()
+              .withClusterId(CAMUNDA_CLUSTER_ID)
+              .withClientId(CAMUNDA_CLIENT_ID)
+              .withClientSecret(CAMUNDA_CLIENT_SECRET)
+              .withRegion(CAMUNDA_CLUSTER_REGION)
+              .build();
     } else if (authMethod == AuthMethod.none) {
-      client = CamundaClient.newClientBuilder()
-          .grpcAddress(CAMUNDA_CLIENT_GRPCADDRESS).usePlaintext()
-          .restAddress(CAMUNDA_CLIENT_RESTADDRESS)
-          .credentialsProvider(provider)
-          .build();
+      client =
+          CamundaClient.newClientBuilder()
+              .grpcAddress(CAMUNDA_CLIENT_GRPCADDRESS)
+              .usePlaintext()
+              .restAddress(CAMUNDA_CLIENT_RESTADDRESS)
+              .credentialsProvider(provider)
+              .build();
     } else {
-      client = CamundaClient.newClientBuilder()
-          .grpcAddress(CAMUNDA_CLIENT_GRPCADDRESS)
-          .restAddress(CAMUNDA_CLIENT_RESTADDRESS)
-          .credentialsProvider(provider)
-          .build();
+      client =
+          CamundaClient.newClientBuilder()
+              .grpcAddress(CAMUNDA_CLIENT_GRPCADDRESS)
+              .restAddress(CAMUNDA_CLIENT_RESTADDRESS)
+              .credentialsProvider(provider)
+              .build();
     }
 
     return client;
