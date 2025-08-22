@@ -10,7 +10,7 @@ import io.camunda.client.api.worker.JobWorker;
 import io.camunda.example.ClientProvider;
 
 import java.time.Duration;
-
+import java.util.Map;
 
 /**
  * Example application that connects to a cluster on Camunda Cloud, or a locally deployed cluster.
