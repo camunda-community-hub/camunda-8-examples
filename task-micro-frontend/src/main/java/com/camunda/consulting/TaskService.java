@@ -30,7 +30,8 @@ public class TaskService {
           task.getVariables().stream()
               .map(v -> Map.entry(v.getName(), v.getValue()))
               .collect(Collectors.toMap(Entry::getKey, Entry::getValue)),
-          objectMapper.readValue(form.getSchema(), new TypeReference<Map<String, Object>>() {}), task.getTaskState().getRawValue());
+          objectMapper.readValue(form.getSchema(), new TypeReference<>() {}),
+          task.getTaskState().getRawValue());
     } catch (TaskListException | JsonProcessingException e) {
       throw new RuntimeException("Error while fetching task", e);
     }
