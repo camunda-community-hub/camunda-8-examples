@@ -1,0 +1,10 @@
+tasklist:
+  client:
+    profile: simple
+    defaults:
+      load-truncated-variables: true
+      return-variables: true
+      use-zeebe-user-tasks: true
+camunda:
+  client:
+    mode: self-managed
