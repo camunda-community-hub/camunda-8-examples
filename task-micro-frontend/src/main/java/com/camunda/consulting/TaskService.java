@@ -1,6 +1,7 @@
 package com.camunda.consulting;
 
-import com.camunda.consulting.UpdateTaskDto.CompleteTaskDto;
+import com.camunda.consulting.UpdateTaskDto.Data.AssignTaskDto;
+import com.camunda.consulting.UpdateTaskDto.Data.CompleteTaskDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,9 +39,18 @@ public class TaskService {
   }
 
   public void handleUpdate(String id, UpdateTaskDto content) {
-    switch (content) {
-      case CompleteTaskDto complete:
-        completeTask(id, complete);
+    switch (content.data()) {
+      case CompleteTaskDto complete -> completeTask(id, complete);
+
+      case AssignTaskDto assignTaskDto -> assignTask(id, assignTaskDto);
+    }
+  }
+
+  private void assignTask(String id, AssignTaskDto assignTaskDto) {
+    try {
+      camundaTaskListClient.claim(id, assignTaskDto.assignee());
+    } catch (TaskListException e) {
+      throw new RuntimeException("Error while assigning task", e);
     }
   }
 

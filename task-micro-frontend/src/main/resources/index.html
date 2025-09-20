@@ -13,12 +13,14 @@
 </head>
 <body>
 <div class="fjs-container">
+    <button class="fjs-button" id="assign">Assign</button>
     <div id="form"></div>
     <button type="submit" class="fjs-button" id="submit">Complete</button>
 </div>
 
 <script src="https://unpkg.com/@bpmn-io/form-js@1.17.0/dist/form-viewer.umd.js"></script>
 <script>
+  const assignButton = document.getElementById("assign")
   const submitButton = document.getElementById("submit");
   const displayForm = async () => {
     const taskUrl = window.location.href;
@@ -51,12 +53,25 @@
         method: "PATCH",
         headers: {"Content-Type": "application/json"}, body: JSON.stringify({
           "changeType": "complete",
-          "result": event.data
+          "data": {
+            "result": event.data
+          }
         })
       })
     });
     submitButton.addEventListener("click", () => {
       form.submit();
+    });
+    assignButton.addEventListener("click", () => {
+      fetch(taskUrl, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}, body: JSON.stringify({
+          "changeType": "assign",
+          "data": {
+            "assignee": "demo"
+          }
+        })
+      })
     });
   };
   displayForm();
