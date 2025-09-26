@@ -112,7 +112,6 @@ public class ClientProvider {
       client =
           CamundaClient.newClientBuilder()
               .grpcAddress(CAMUNDA_CLIENT_GRPCADDRESS)
-              .usePlaintext()
               .restAddress(CAMUNDA_CLIENT_RESTADDRESS)
               .credentialsProvider(provider)
               .build();
