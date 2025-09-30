@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: complete-usertasks
+spec:
+  schedule: "25 10 * * *"
+  successfulJobsHistoryLimit: 14
+  failedJobsHistoryLimit: 14
+  jobTemplate:
+    metadata:
+      labels: 
+        app: complete-user-tasks-daily
+    spec:    
+      template:
+        spec:
+          containers:
+          - name: complete-usertasks
+            image: curlimages/curl:8.13.0
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - |
+              ## install jq
+              apk add --no-cache jq
+
+              I=0
+              while [ $I -lt 22 ]; do
+                echo $I
+                I=$((I + 1))
+                echo 'Get the token'
+                TOKEN=$(curl -s --location --request POST 'http://camunda-keycloak.camunda.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token' \
+              --header 'Content-Type: application/x-www-form-urlencoded' \
+              --data-urlencode 'client_id=payment-app' \
+              --data-urlencode 'client_secret=KeXSNheo2hlPIjyaoLw7WxY7tO2nJSjT' \
+              --data-urlencode 'grant_type=client_credentials' | jq -r .access_token)
+
+                echo 'Get the task list'
+                IDLIST=$(curl -X POST \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $TOKEN" \
+              -d "{\"state\":\"CREATED\",\"sort\":[{\"field\": \"creationTime\", \"order\": \"ASC\"}], \"pageSize\":200}" \
+              "http://camunda-tasklist.camunda.svc.cluster.local/v1/tasks/search" | jq -r '.[].id')
+
+                echo "Complete the tasks"
+                for item in $IDLIST; do 
+                  URL="http://camunda-tasklist.camunda.svc.cluster.local/v1/tasks/${item}/complete"
+                  ## echo $URL
+                  curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "{\"variables\": [{\"name\": \"errorResolved\", \"value\": \"false\"}]}" \
+                  "${URL}" -s; 
+                done
+
+              done 
+            securityContext:
+              runAsUser: 0        
+          restartPolicy: OnFailure
