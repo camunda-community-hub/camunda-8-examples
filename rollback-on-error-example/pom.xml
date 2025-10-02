@@ -10,7 +10,7 @@
   <name>Rollback on Error Example</name>
   <properties>
     <java.version>21</java.version>
-    <version.camunda>8.7.13</version.camunda>
+    <version.camunda>8.7.14</version.camunda>
     <version.spring-boot>3.5.6</version.spring-boot>
     <camunda-process-test-coverage.version>2.1.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
