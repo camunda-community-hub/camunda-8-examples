@@ -22,7 +22,7 @@
     <dependency>
       <groupId>io.camunda</groupId>
       <artifactId>camunda-client-java</artifactId>
-      <version>8.8.0-rc3</version>
+      <version>8.8.0-rc4</version>
     </dependency>
 
     <dependency>
