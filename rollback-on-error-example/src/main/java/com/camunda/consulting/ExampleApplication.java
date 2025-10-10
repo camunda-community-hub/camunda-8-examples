@@ -1,8 +1,8 @@
 package com.camunda.consulting;
 
-import io.camunda.zeebe.spring.client.annotation.Deployment;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
-import io.camunda.zeebe.spring.client.annotation.Variable;
+import io.camunda.client.annotation.Deployment;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.annotation.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
