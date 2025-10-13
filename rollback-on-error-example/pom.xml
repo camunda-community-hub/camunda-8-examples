@@ -40,7 +40,7 @@
   <dependencies>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+      <artifactId>camunda-spring-boot-starter</artifactId>
       <version>${version.camunda}</version>
     </dependency>
     <dependency>
