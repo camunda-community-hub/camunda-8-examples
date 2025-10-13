@@ -1,9 +1,9 @@
 package org.example.camunda.process.solution.facade;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.worker.JobWorker;
-import io.camunda.zeebe.spring.client.annotation.value.ZeebeWorkerValue;
-import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.annotation.value.JobWorkerValue;
+import io.camunda.client.api.worker.JobWorker;
+import io.camunda.client.jobhandling.JobWorkerManager;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class ProcessController {
   private static final Logger LOG = LoggerFactory.getLogger(ProcessController.class);
   public static final String BPMN_PROCESS_ID = "responseProcess";
 
-  @Autowired private ZeebeClient zeebe;
+  @Autowired private CamundaClient zeebe;
 
   @Autowired private JobWorkerManager jobWorkerManager;
 
@@ -47,7 +47,7 @@ public class ProcessController {
           // define a unique job type just for this conversation
           String jobType = "responseFor_" + requestId;
           // And start a worker for it
-          ZeebeWorkerValue jobWorkerConfig = new ZeebeWorkerValue();
+          JobWorkerValue jobWorkerConfig = new JobWorkerValue();
 
           jobWorkerConfig.setType(jobType);
           jobWorkerConfig.setAutoComplete(true);

@@ -1,20 +1,24 @@
 package com.camunda.consulting;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.JsonMapper;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobWorker;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.annotation.value.JobWorkerValue;
+import io.camunda.client.api.JsonMapper;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobWorker;
+import io.camunda.client.event.CamundaClientClosingEvent;
+import io.camunda.client.event.CamundaClientCreatedEvent;
+import io.camunda.client.jobhandling.CommandExceptionHandlingStrategy;
+import io.camunda.client.jobhandling.JobExceptionHandlingStrategy;
+import io.camunda.client.jobhandling.JobHandlerInvokingBeans;
+import io.camunda.client.jobhandling.JobHandlingUtil;
+import io.camunda.client.jobhandling.JobWorkerManager;
+import io.camunda.client.jobhandling.parameter.ParameterResolver;
+import io.camunda.client.jobhandling.parameter.ParameterResolverStrategy;
+import io.camunda.client.jobhandling.result.ResultProcessor;
+import io.camunda.client.jobhandling.result.ResultProcessorStrategy;
+import io.camunda.client.metrics.MetricsRecorder;
 import io.camunda.zeebe.model.bpmn.Bpmn;
-import io.camunda.zeebe.spring.client.annotation.value.ZeebeWorkerValue;
-import io.camunda.zeebe.spring.client.event.ZeebeClientClosingEvent;
-import io.camunda.zeebe.spring.client.event.ZeebeClientCreatedEvent;
-import io.camunda.zeebe.spring.client.jobhandling.CommandExceptionHandlingStrategy;
-import io.camunda.zeebe.spring.client.jobhandling.JobHandlerInvokingSpringBeans;
-import io.camunda.zeebe.spring.client.jobhandling.JobWorkerManager;
-import io.camunda.zeebe.spring.client.jobhandling.parameter.ParameterResolverStrategy;
-import io.camunda.zeebe.spring.client.jobhandling.result.ResultProcessorStrategy;
-import io.camunda.zeebe.spring.client.metrics.MetricsRecorder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -41,23 +45,25 @@ public class UserTaskService {
   private static final Duration REFRESH_DURATION = Duration.ofSeconds(15);
   private final Map<Long, UserTask> userTasks = new ConcurrentHashMap<>();
   private final Map<LocalDateTime, List<Long>> timeouts = new ConcurrentHashMap<>();
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
   private final JobWorkerManager jobWorkerManager;
   private final CommandExceptionHandlingStrategy commandExceptionHandlingStrategy;
   private final JsonMapper jsonMapper;
   private final MetricsRecorder metricsRecorder;
   private final ParameterResolverStrategy parameterResolverStrategy;
   private final ResultProcessorStrategy resultProcessorStrategy;
+  private final JobExceptionHandlingStrategy jobExceptionHandlingStrategy;
   private JobWorker userTaskWorker;
 
   public UserTaskService(
-      ZeebeClient zeebeClient,
+      CamundaClient zeebeClient,
       JobWorkerManager jobWorkerManager,
       CommandExceptionHandlingStrategy commandExceptionHandlingStrategy,
       JsonMapper jsonMapper,
       MetricsRecorder metricsRecorder,
       ParameterResolverStrategy parameterResolverStrategy,
-      ResultProcessorStrategy resultProcessorStrategy) {
+      ResultProcessorStrategy resultProcessorStrategy,
+      JobExceptionHandlingStrategy jobExceptionHandlingStrategy) {
     this.zeebeClient = zeebeClient;
     this.jobWorkerManager = jobWorkerManager;
     this.commandExceptionHandlingStrategy = commandExceptionHandlingStrategy;
@@ -65,6 +71,7 @@ public class UserTaskService {
     this.metricsRecorder = metricsRecorder;
     this.parameterResolverStrategy = parameterResolverStrategy;
     this.resultProcessorStrategy = resultProcessorStrategy;
+    this.jobExceptionHandlingStrategy = jobExceptionHandlingStrategy;
   }
 
   private void add(UserTask userTask, Duration timeToLive) {
@@ -101,16 +108,21 @@ public class UserTaskService {
     taskTypes.forEach(
         (jobTypeName, jobType) -> {
           // find the worker value by the jobTypeName (as the actual job type is dynamic)
-          ZeebeWorkerValue zeebeWorkerValue =
+          JobWorkerValue zeebeWorkerValue =
               jobWorkerManager.findJobWorkerConfigByType(jobTypeName).orElseThrow();
           // create the invoker for this worker value
-          JobHandlerInvokingSpringBeans jobHandlerInvokingSpringBeans =
-              new JobHandlerInvokingSpringBeans(
+          final List<ParameterResolver> parameterResolvers =
+              JobHandlingUtil.createParameterResolvers(parameterResolverStrategy, zeebeWorkerValue);
+          final ResultProcessor resultProcessor =
+              JobHandlingUtil.createResultProcessor(resultProcessorStrategy, zeebeWorkerValue);
+          JobHandlerInvokingBeans jobHandlerInvokingSpringBeans =
+              new JobHandlerInvokingBeans(
                   zeebeWorkerValue,
                   commandExceptionHandlingStrategy,
                   metricsRecorder,
-                  parameterResolverStrategy,
-                  resultProcessorStrategy);
+                  parameterResolvers,
+                  resultProcessor,
+                  jobExceptionHandlingStrategy);
           // wrap it to be able to react on the outcome
           RollbackJobHandler jobHandler =
               new RollbackJobHandler(
@@ -171,7 +183,7 @@ public class UserTaskService {
         .forEach(this::remove);
   }
 
-  @EventListener(ZeebeClientCreatedEvent.class)
+  @EventListener(CamundaClientCreatedEvent.class)
   public void start() {
     userTaskWorker =
         zeebeClient
@@ -215,7 +227,7 @@ public class UserTaskService {
     }
   }
 
-  @EventListener(ZeebeClientClosingEvent.class)
+  @EventListener(CamundaClientClosingEvent.class)
   public void stop() {
     if (userTaskWorker != null) {
       userTaskWorker.close();

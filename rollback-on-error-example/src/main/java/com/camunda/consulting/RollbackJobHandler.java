@@ -1,21 +1,21 @@
 package com.camunda.consulting;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.JsonMapper;
-import io.camunda.zeebe.client.api.ZeebeFuture;
-import io.camunda.zeebe.client.api.command.ActivateJobsCommandStep1;
-import io.camunda.zeebe.client.api.command.CompleteJobCommandStep1;
-import io.camunda.zeebe.client.api.command.FailJobCommandStep1;
-import io.camunda.zeebe.client.api.command.FailJobCommandStep1.FailJobCommandStep2;
-import io.camunda.zeebe.client.api.command.FinalCommandStep;
-import io.camunda.zeebe.client.api.command.StreamJobsCommandStep1;
-import io.camunda.zeebe.client.api.command.ThrowErrorCommandStep1;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.FailJobResponse;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.client.api.worker.JobHandler;
-import io.camunda.zeebe.client.impl.ZeebeClientFutureImpl;
-import io.camunda.zeebe.client.impl.command.CommandWithVariables;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.CamundaFuture;
+import io.camunda.client.api.JsonMapper;
+import io.camunda.client.api.command.ActivateJobsCommandStep1;
+import io.camunda.client.api.command.CompleteJobCommandStep1;
+import io.camunda.client.api.command.FailJobCommandStep1;
+import io.camunda.client.api.command.FailJobCommandStep1.FailJobCommandStep2;
+import io.camunda.client.api.command.FinalCommandStep;
+import io.camunda.client.api.command.StreamJobsCommandStep1;
+import io.camunda.client.api.command.ThrowErrorCommandStep1;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.response.FailJobResponse;
+import io.camunda.client.api.worker.JobClient;
+import io.camunda.client.api.worker.JobHandler;
+import io.camunda.client.impl.CamundaClientFutureImpl;
+import io.camunda.client.impl.command.CommandWithVariables;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.FailJobRequest;
 import io.camunda.zeebe.gateway.protocol.GatewayOuterClass.FailJobRequest.Builder;
 import java.time.Duration;
@@ -31,7 +31,7 @@ public class RollbackJobHandler implements JobHandler {
   private final String rollbackElementId;
   private final String originalKeyVariableName;
   private final long originalKey;
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
   private final JsonMapper jsonMapper;
   Consumer<Exception> exceptionHandler;
   private Runnable closer;
@@ -42,7 +42,7 @@ public class RollbackJobHandler implements JobHandler {
       String originalKeyVariableName,
       long originalKey,
       Consumer<Exception> exceptionHandler,
-      ZeebeClient zeebeClient,
+      CamundaClient zeebeClient,
       JsonMapper jsonMapper) {
     this.jobHandler = jobHandler;
     this.rollbackElementId = rollbackElementId;
@@ -179,9 +179,9 @@ public class RollbackJobHandler implements JobHandler {
     }
 
     @Override
-    public ZeebeFuture<FailJobResponse> send() {
-      final ZeebeClientFutureImpl<FailJobResponse, FailJobResponse> future =
-          new ZeebeClientFutureImpl<>(r -> r);
+    public CamundaFuture<FailJobResponse> send() {
+      final CamundaClientFutureImpl<FailJobResponse, FailJobResponse> future =
+          new CamundaClientFutureImpl<>(r -> r);
       future.onNext(new FailJobResponse() {});
       CompletableFuture.runAsync(() -> rollback.accept(new FailJobException(builder)))
           .thenRun(future::onCompleted);
