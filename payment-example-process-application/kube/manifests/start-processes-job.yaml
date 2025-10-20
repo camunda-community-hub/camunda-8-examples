@@ -30,7 +30,7 @@ spec:
               $CARD_NUMBER $CVC $EXPIRY_DATE
 
             ## start payment process
-            curl -s -L "payment-example-process-application.payment-app.svc.cluster.local:8080/start" \
+            curl -s -L "payment-example-process-application.c8-payment-demo.svc.cluster.local:8080/start" \
               -X "POST" -H "Content-Type: application/json" \
               -d "{\"customerId\": \"cust$CUSTOMER_NUMBER\", \
               \"orderTotal\": $ORDER_TOTAL, \
