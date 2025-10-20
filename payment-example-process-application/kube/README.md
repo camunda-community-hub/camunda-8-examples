@@ -323,3 +323,73 @@ It is possible that due to isolation policies, the "c8-payment-demo" namespace m
 
 - Adjust the policy to allow it.
 - Modify the configuration of the demo application to use the ingress instead of the service.
+
+### 5. Start Multiple Process Instances
+
+#### 1. Via Bash Script
+
+The folder `start-processes` contains a bash script `start.sh` which listens to the parameters `url_of_process_application run_for_seconds [endless | once]`. 
+
+It generates a random customer number, order total, credit card number, CVC and expiry date and starts a process instance with these data. Then it waits a random time between 0 and 2 seconds before it restarts the loop. The loop will run for a number of seconds.
+
+The example call `./start.sh http://localhost:8090/start 20 once` will call the API (port-forwarded) for 20 seconds. `endless` will run until you press Ctrl-C.
+
+#### 2. Via Kubernetes Job
+
+The folder `kube/manifest` contains a Kubernetes Job to start new process instances with random data and a random wait time. It runs forever and creates a new process instance at every 0 to 10 seconds. At peak hours, from 9-10 and 16-17, the wait is between 0 and 2 seconds.
+
+Apply and start it with `kubectl -n c8-payment-demo apply -f start-processes-job.yaml`.
+
+Stop creating new process instances by terminating the pod with `kubectl -n c8-payment-demo delete job start-processes`.
+
+### 6. Complete User Tasks
+
+Once you have multiple process instances started, some of them will wait in the user task `Check payment data`. You can inspect them in the Tasklist and either resolve the payment, by setting the expiry date to a date in the future, mark the checkbox `Error resolved?` and complete the task. Then the process instance will try the payment service again and (hopefully) finish the process instance. In case, the issue could **not** be resolved, leave the checkbox `Error resolved?` blank and complete the task.
+
+#### 1. Complete Multiple User Tasks by script
+
+Run the bash script `complete-usertasks/complete-user-tasks.sh` to complete up to 200 user tasks at once without resolving the error. 
+
+The script executes a Tasklist query, so it requires to grant the payment-app client `read:*` access to the Tasklist API.
+
+The secret for the payment-app client will be read from the environment variable `CLIENT_SECRET`, that [is already set above](#2-deploying-the-application).
+
+#### 2. Complete Multiple User Tasks by Kubernetes Job
+
+The folder `kube/manifest` contains a job to complete up to 200 User Tasks setting the `Error resolved?` variable to false and end the process instances.
+
+The script executes a Tasklist query, so it requires to grant the payment-app client `read:*` access to the Tasklist API.
+
+The secret for the payment-app will be read from the existing Kubernetes secret.
+
+After starting the job with `kubectl -n c8-payment-demo apply -f complete-usertasks-job.yaml`, it must be deleted with `kc -n c8-payment-demo delete jobs.batch complete-usertasks` to start it again later.
+
+#### 3. Complete User Tasks Every Day
+
+The Cronjob `kube/manifest/complete-usertask-cronjobs.yaml` starts every day at 10:25 to complete 4400 User tasks. The job runs about 1 hour. The logs will be saved for the last 14 days. Set it up with `kubectl -n c8-payment-demo apply -f complete-usertasks-cronjob.yaml`.
+
+#### 4. Run the Complete User Tasks Process
+
+The BPMN Diagram `complete-usertasks/complete-user-tasks.bpmn` reads open user tasks from the Tasklist API and completes all tasks in a multi-instance service task. Both tasks use the REST connector and require secrets configured in the connectors deployment. 
+
+The secrets can be set with these values:
+```
+connectors:
+  env:
+    - name: KEYCLOAK_TOKEN_URL
+      value: 'http://camunda-keycloak:80/auth/realms/camunda-platform/protocol/openid-connect/token'
+    - name: PAYMENT_CLIENT_ID
+      value: 'payment-app'
+    - name: PAYMENT_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: client-secrets
+          key: payment-app
+    - name: TASKLIST_BASE_URL
+      value: 'http://camunda-tasklist:80'
+    - name: GATEWAY_REST_URL
+      value: 'http://camunda-zeebe-gateway:8080'
+```
+Create a new Kubernetes secrets with the client secret of the payment-app.
+
+Deploy the BPMN diagram to your cluster and start process instances from the Tasklist.

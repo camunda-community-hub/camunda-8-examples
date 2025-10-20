@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0zcau9c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.35.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0zcau9c" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.40.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.7.0">
   <bpmn:process id="CompleteTasksProcess" name="Complete Tasks Process" isExecutable="true">
     <bpmn:endEvent id="Event_0gh9k10" name="User tasks completed">
       <bpmn:incoming>Flow_04lrd5v</bpmn:incoming>
@@ -42,13 +42,13 @@
           <zeebe:input source="{{secrets.PAYMENT_CLIENT_ID}}" target="authentication.clientId" />
           <zeebe:input source="{{secrets.PAYMENT_CLIENT_SECRET}}" target="authentication.clientSecret" />
           <zeebe:input source="basicAuthHeader" target="authentication.clientAuthentication" />
-          <zeebe:input source="PATCH" target="method" />
-          <zeebe:input source="=&#34;{{secrets.TASKLIST_BASE_URL}}/v1/tasks/&#34; + taskId + &#34;/complete&#34;" target="url" />
+          <zeebe:input source="POST" target="method" />
+          <zeebe:input source="=&#34;{{secrets.GATEWAY_REST_URL}}/v2/user-tasks/&#34; + taskId + &#34;/completion&#34;" target="url" />
           <zeebe:input source="={&#34;Content-Type&#34;: &#34;application/json&#34;}" target="headers" />
           <zeebe:input source="=false" target="storeResponse" />
           <zeebe:input source="20" target="connectionTimeoutInSeconds" />
           <zeebe:input source="20" target="readTimeoutInSeconds" />
-          <zeebe:input source="{&#34;variables&#34;: [{&#34;name&#34;: &#34;errorResolved&#34;, &#34;value&#34;: &#34;false&#34;}]}" target="body" />
+          <zeebe:input source="{&#34;variables&#34;: {&#34;errorResolved&#34;: false}}" target="body" />
         </zeebe:ioMapping>
         <zeebe:taskHeaders>
           <zeebe:header key="resultVariable" value="taskState" />
@@ -70,45 +70,46 @@
 KEYCLOAK_TOKEN_URL
 PAYMENT_CLIENT_ID
 PAYMENT_CLIENT_SECRET
-TASKLIST_BASE_URL</bpmn:text>
+TASKLIST_BASE_URL
+GATEWAY_REST_URL</bpmn:text>
     </bpmn:textAnnotation>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CompleteTasksProcess">
-      <bpmndi:BPMNShape id="Event_005bikl_di" bpmnElement="StartEvent_1">
-        <dc:Bounds x="182" y="212" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0gh9k10_di" bpmnElement="Event_0gh9k10">
+        <dc:Bounds x="602" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="173" y="255" width="54" height="14" />
+          <dc:Bounds x="594" y="145" width="52" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1v4ygym_di" bpmnElement="Activity_1eup5j9">
-        <dc:Bounds x="270" y="190" width="100" height="80" />
+        <dc:Bounds x="270" y="80" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0gh9k10_di" bpmnElement="Event_0gh9k10">
-        <dc:Bounds x="602" y="212" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_005bikl_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="102" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="594" y="255" width="52" height="27" />
+          <dc:Bounds x="173" y="145" width="54" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0iuudwf_di" bpmnElement="Activity_1ayojby">
-        <dc:Bounds x="440" y="190" width="100" height="80" />
+        <dc:Bounds x="440" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_1xj83is_di" bpmnElement="TextAnnotation_1xj83is">
-        <dc:Bounds x="180" y="80" width="197" height="88" />
+        <dc:Bounds x="180" y="-30" width="197" height="98" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_08ms7mc_di" bpmnElement="Flow_08ms7mc">
-        <di:waypoint x="218" y="230" />
-        <di:waypoint x="270" y="230" />
+      <bpmndi:BPMNEdge id="Flow_04lrd5v_di" bpmnElement="Flow_04lrd5v">
+        <di:waypoint x="540" y="120" />
+        <di:waypoint x="602" y="120" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1okoraj_di" bpmnElement="Flow_1okoraj">
-        <di:waypoint x="370" y="230" />
-        <di:waypoint x="440" y="230" />
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="440" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_04lrd5v_di" bpmnElement="Flow_04lrd5v">
-        <di:waypoint x="540" y="230" />
-        <di:waypoint x="602" y="230" />
+      <bpmndi:BPMNEdge id="Flow_08ms7mc_di" bpmnElement="Flow_08ms7mc">
+        <di:waypoint x="218" y="120" />
+        <di:waypoint x="270" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
