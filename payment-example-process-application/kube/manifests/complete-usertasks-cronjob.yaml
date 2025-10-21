@@ -31,7 +31,8 @@ spec:
               apk add --no-cache jq
 
               I=0
-              while [ $I -lt 22 ]; do
+              ROUNDS=22
+              while [ $I -lt $ROUNDS ]; do
                 echo $I
                 I=$((I + 1))
                 echo 'Get the token'
@@ -42,11 +43,14 @@ spec:
               --data-urlencode 'grant_type=client_credentials' | jq -r .access_token)
 
                 echo 'Get the task list'
-                IDLIST=$(curl -X POST \
+                IDLIST=$(curl -s -X POST \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $TOKEN" \
               -d "{\"state\":\"CREATED\",\"sort\":[{\"field\": \"creationTime\", \"order\": \"ASC\"}], \"pageSize\":200}" \
               "http://camunda-tasklist.camunda.svc.cluster.local/v1/tasks/search" | jq -r '.[].id')
+              
+                echo -n "Number of tasks to complete: "
+                printf '%s' "$IDLIST" | jq -Rsc 'split("\n") | map(select(length>0)) | length'
 
                 echo "Complete the tasks"
                 for item in $IDLIST; do 
@@ -55,6 +59,11 @@ spec:
                   curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d "{\"variables\": {\"errorResolved\": false}}" \
                   "${URL}" -s; 
                 done
+                
+                if [ $I -lt $ROUNDS ]; then
+                  echo "Waiting 30 s for the next round"
+                  sleep 30
+                fi
 
               done 
             securityContext:
