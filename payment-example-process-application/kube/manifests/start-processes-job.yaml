@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: start-processes
+spec:
+  template:
+    spec:
+      containers:
+      - name: start-processes
+        image: curlimages/curl:8.13.0
+        imagePullPolicy: IfNotPresent
+        command:
+        - /bin/sh
+        - -c
+        - |
+          COUNTER=1
+          # while [ $COUNTER -le 5 ]; do
+          while [ 1 ]; do          
+            CUSTOMER_NUMBER=$(($RANDOM%1000))
+            ORDER_TOTAL=$(($RANDOM%1000))
+            CARD_NUMBER=$(awk -v paket1=$(($RANDOM%10000)) -v paket2=$(($RANDOM%10000)) \
+              -v paket3=$(($RANDOM%10000)) -v paket4=$(($RANDOM%10000)) \
+            'BEGIN {printf "%04d %04d %04d %04d", paket1, paket2, paket3, paket4}')
+            CVC=$(awk -v cvc=$(($RANDOM%1000)) 'BEGIN {printf "%03d", cvc}')
+            MONTH=$(($RANDOM%12+1))
+            YEAR=$(($RANDOM%4+$(date +%y)-1))
+            EXPIRY_DATE=$(awk -v month="$MONTH" -v year="$YEAR" 'BEGIN {printf "%02d/%02d", month, year}')
+
+            echo 'starting with customer' $CUSTOMER_NUMBER ' of order total ' $ORDER_TOTAL ' and payment data' \
+              $CARD_NUMBER $CVC $EXPIRY_DATE
+
+            ## start payment process
+            curl -s -L "payment-example-process-application.c8-payment-demo.svc.cluster.local:8080/start" \
+              -X "POST" -H "Content-Type: application/json" \
+              -d "{\"customerId\": \"cust$CUSTOMER_NUMBER\", \
+              \"orderTotal\": $ORDER_TOTAL, \
+              \"cardNumber\": \"$CARD_NUMBER\", \
+              \"cvc\": \"$CVC\", \
+              \"expiryDate\": \"$EXPIRY_DATE\"}"
+            
+            CURRENT_TIME_HOUR=$(date +%H)
+
+            if [ $CURRENT_TIME_HOUR -eq 16  -o $CURRENT_TIME_HOUR -eq 9 ]
+            then 
+              WAIT_TIME=$(awk -v wait_time="$(($RANDOM%20))" 'BEGIN {print wait_time/10}')
+              echo 'Prime time! sleeping for' $WAIT_TIME 'seconds'
+            else 
+              WAIT_TIME=$(awk -v wait_time="$(($RANDOM%100))" 'BEGIN {print wait_time/10}')
+              echo 'sleeping for' $WAIT_TIME ' seconds'
+            fi
+
+            sleep $WAIT_TIME
+            :
+            echo $COUNTER '. process instance started'
+            COUNTER=$(($COUNTER+1))
+          done
+      restartPolicy: OnFailure

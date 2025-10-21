@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@Deployment(resources = "payment_process.bpmn")
+@Deployment(resources = {"payment_process.bpmn", "check-payment.form"})
 public class PaymentProcessApplication {
 
   public static void main(String[] args) {

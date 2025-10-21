@@ -27,6 +27,7 @@ public class StartFormRestController {
         .bpmnProcessId("paymentProcess")
         .latestVersion()
         .variables(variables)
-        .send();
+        .send()
+        .join();
   }
 }
