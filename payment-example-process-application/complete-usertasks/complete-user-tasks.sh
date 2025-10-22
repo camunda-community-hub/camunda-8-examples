@@ -8,11 +8,14 @@ TOKEN=$(curl -s --location --request POST 'http://localhost:18080/auth/realms/ca
 --data-urlencode 'grant_type=client_credentials' | jq -r .access_token)
 
 echo "Get the task list"
-IDLIST=$(curl -X POST \
+IDLIST=$(curl -s -X POST \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer $TOKEN" \
 -d '{"state":"CREATED","sort":[{"field": "creationTime", "order": "ASC"}], "pageSize":200}' \
 'http://localhost:8082/v1/tasks/search' | jq -r '.[].id')
+
+echo -n "Number of tasks to complete: "
+printf '%s' "$IDLIST" | jq -Rsc 'split("\n") | map(select(length>0)) | length'
 
 echo "Complete the tasks"
 while ID= read -r item; do 

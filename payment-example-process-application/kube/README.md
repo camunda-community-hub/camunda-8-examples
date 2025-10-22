@@ -354,21 +354,21 @@ The script executes a Tasklist query, so it requires to grant the payment-app cl
 
 The secret for the payment-app client will be read from the environment variable `CLIENT_SECRET`, that [is already set above](#2-deploying-the-application).
 
-#### 2. Complete Multiple User Tasks by Kubernetes Job
+#### 2. Complete User Tasks Every Day with a Kubernetes Cronjob
 
-The folder `kube/manifest` contains a job to complete up to 200 User Tasks setting the `Error resolved?` variable to false and end the process instances.
+The Cronjob `kube/manifest/complete-usertask-cronjob.yaml` starts every day at 10:25 to complete 4400 User tasks. 
 
 The script executes a Tasklist query, so it requires to grant the payment-app client `read:*` access to the Tasklist API.
 
 The secret for the payment-app will be read from the existing Kubernetes secret.
 
-After starting the job with `kubectl -n c8-payment-demo apply -f complete-usertasks-job.yaml`, it must be deleted with `kc -n c8-payment-demo delete jobs.batch complete-usertasks` to start it again later.
+It gets the oldest 200 tasks from with a Tasklist query and completes them with setting the `Error resolved?` variable to false and end the process instances. 
 
-#### 3. Complete User Tasks Every Day
+The logs will be saved for the last 14 days. Set it up with `kubectl -n c8-payment-demo apply -f complete-usertasks-cronjob.yaml`.
 
-The Cronjob `kube/manifest/complete-usertask-cronjobs.yaml` starts every day at 10:25 to complete 4400 User tasks. The job runs about 1 hour. The logs will be saved for the last 14 days. Set it up with `kubectl -n c8-payment-demo apply -f complete-usertasks-cronjob.yaml`.
+Trigger the cronjob immediately with the command `kc -n c8-payment-demo create job --from cronjob/complete-usertasks complete-usertasks-manual-<date>>`.
 
-#### 4. Run the Complete User Tasks Process
+#### 3. Run the Complete User Tasks Process
 
 The BPMN Diagram `complete-usertasks/complete-user-tasks.bpmn` reads open user tasks from the Tasklist API and completes all tasks in a multi-instance service task. Both tasks use the REST connector and require secrets configured in the connectors deployment. 
 
