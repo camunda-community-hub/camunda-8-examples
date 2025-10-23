@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
 import com.camunda.consulting.web_shop_process_app.worker.CustomerCreditHandler;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.client.api.response.ActivatedJob;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

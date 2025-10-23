@@ -7,20 +7,19 @@ import static org.mockito.BDDMockito.*;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardExpiredException;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardService;
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.api.search.response.UserTask;
 import io.camunda.process.test.api.CamundaAssert;
 import io.camunda.process.test.api.CamundaProcessTestContext;
 import io.camunda.process.test.api.CamundaSpringProcessTest;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.client.api.search.response.UserTask;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +29,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 public class ProcessUnitTest {
 
-  @Autowired ZeebeClient zeebeClient;
+  @Autowired CamundaClient camundaClient;
   @MockitoBean CustomerService mockedCustomerService;
   @MockitoBean CreditCardService mockedCreditCardService;
   @Autowired private CamundaProcessTestContext processTestContext;
@@ -38,7 +37,7 @@ public class ProcessUnitTest {
   @BeforeEach
   void init() {
     CamundaAssert.setAssertionTimeout(Duration.ofMinutes(1));
-    zeebeClient
+    camundaClient
         .newDeployResourceCommand()
         .addResourceFromClasspath("check-payment.form")
         .addResourceFromClasspath("payment_process.bpmn")
@@ -51,7 +50,7 @@ public class ProcessUnitTest {
     given(mockedCustomerService.deductCredit(anyString(), anyDouble(), anyDouble()))
         .willReturn(90.0);
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -72,7 +71,7 @@ public class ProcessUnitTest {
     given(mockedCustomerService.deductCredit(anyString(), anyDouble(), anyDouble()))
         .willReturn(0.0);
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -88,12 +87,11 @@ public class ProcessUnitTest {
   }
 
   @Test
-  @Disabled("further research requiried")
   public void testIncident() throws InterruptedException, TimeoutException {
     given(mockedCustomerService.deductCredit(anyString(), anyDouble(), anyDouble()))
         .willThrow(RuntimeException.class);
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -103,8 +101,8 @@ public class ProcessUnitTest {
     CamundaAssert.assertThat(processInstance)
         .isActive()
         .hasCompletedElements(byName("Payment requested"))
-        .hasActiveElements(byName("Charge customer credit"));
-    // missing: assert on incident state
+        .hasActiveElements(byName("Charge customer credit"))
+        .hasActiveIncidents();
   }
 
   @Test
@@ -114,7 +112,7 @@ public class ProcessUnitTest {
         .chargeAmount("1234 5678", "123", "05/23", 100.0);
 
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -139,10 +137,9 @@ public class ProcessUnitTest {
   }
 
   @Test
-  @Disabled("user task testing")
   public void testCheckPayment() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -161,10 +158,9 @@ public class ProcessUnitTest {
   }
 
   @Test
-  @Disabled("user task testing")
   public void testRetryPayment() throws InterruptedException, TimeoutException {
     ProcessInstanceEvent processInstance =
-        zeebeClient
+        camundaClient
             .newCreateInstanceCommand()
             .bpmnProcessId("paymentProcess")
             .latestVersion()
@@ -186,24 +182,28 @@ public class ProcessUnitTest {
     System.out.println("Searching user task");
 
     var response =
-        zeebeClient
-            .newUserTaskQuery()
+        camundaClient
+            .newUserTaskSearchRequest()
             .filter(t -> t.processInstanceKey(processInstanceKey).elementId("CheckPaymentDataTask"))
             .send()
             .join();
 
     UserTask userTask = response.items().get(0);
     System.out.println("User Task: " + userTask);
-    zeebeClient.newUserTaskCompleteCommand(userTask.getKey()).variables(variables).send().join();
+    camundaClient
+        .newCompleteUserTaskCommand(userTask.getUserTaskKey())
+        .variables(variables)
+        .send()
+        .join();
   }
 
-  protected void completeUserTask(long processInstanceKey, Map<String, Object> variables)
+  protected void completeJobWorkerUserTask(long processInstanceKey, Map<String, Object> variables)
       throws InterruptedException, TimeoutException {
     List<ActivatedJob> userTaskJobs =
         Awaitility.await()
             .until(
                 () ->
-                    zeebeClient
+                    camundaClient
                         .newActivateJobsCommand()
                         .jobType("io.camunda.zeebe:userTask")
                         .maxJobsToActivate(1000)
@@ -216,6 +216,6 @@ public class ProcessUnitTest {
                 list -> list.size() == 1);
     assertThat(userTaskJobs).hasSize(1);
     ActivatedJob activatedJob = userTaskJobs.get(0);
-    zeebeClient.newCompleteCommand(activatedJob).variables(variables).send().join();
+    camundaClient.newCompleteCommand(activatedJob).variables(variables).send().join();
   }
 }
