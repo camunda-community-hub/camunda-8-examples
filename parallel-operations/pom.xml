@@ -46,7 +46,7 @@
       </dependency>
       <dependency>
         <groupId>io.camunda</groupId>
-        <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
+        <artifactId>camunda-process-test-spring</artifactId>
         <version>${version.camunda}</version>
       </dependency>
     </dependencies>
@@ -84,7 +84,7 @@
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-test-testcontainer</artifactId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
