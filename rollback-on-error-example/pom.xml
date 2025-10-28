@@ -34,6 +34,11 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>io.camunda</groupId>
+        <artifactId>camunda-process-test-spring</artifactId>
+        <version>${version.camunda}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -44,14 +49,15 @@
       <version>${version.camunda}</version>
     </dependency>
     <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
-      <version>${version.camunda}</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-process-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

@@ -1,14 +1,13 @@
 package com.camunda.consulting;
 
-import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.assertions.BpmnAssert;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
+import io.camunda.process.test.api.CamundaAssert;
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import java.time.Duration;
 import java.util.List;
 import org.awaitility.Awaitility;
@@ -16,11 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@ZeebeSpringTest
+@CamundaSpringProcessTest
 @SpringBootTest
 public class RollbackTest {
 
-  @Autowired ZeebeClient zeebeClient;
+  @Autowired CamundaClient zeebeClient;
 
   @Autowired UserTaskService userTaskService;
 
@@ -34,11 +33,11 @@ public class RollbackTest {
             .send()
             .join();
     userTaskService.complete(awaitUserTask().getKey(), JsonNodeFactory.instance.objectNode());
-    waitForProcessInstanceCompleted(process, Duration.ofSeconds(30));
-    BpmnAssert.assertThat(process)
-        .hasPassedElement("EnterDataTask", 1)
-        .hasPassedElement("ValidateDataTask", 1)
-        .hasPassedElement("SaveDataTask", 1);
+    CamundaAssert.assertThat(process)
+        .isCompleted()
+        .hasCompletedElement("EnterDataTask", 1)
+        .hasCompletedElement("ValidateDataTask", 1)
+        .hasCompletedElement("SaveDataTask", 1);
   }
 
   @Test
@@ -54,15 +53,13 @@ public class RollbackTest {
             () -> userTaskService.complete(awaitUserTask().getKey(), createVariables(true, false)))
         .isInstanceOf(RuntimeException.class);
     awaitUserTask();
-    BpmnAssert.assertThat(process)
-        .hasNotPassedElement("ValidateDataTask")
-        .hasNotPassedElement("SaveDataTask");
+    CamundaAssert.assertThat(process).hasNotActivatedElements("SaveDataTask");
     userTaskService.complete(awaitUserTask().getKey(), createVariables(false, false));
-    waitForProcessInstanceCompleted(process, Duration.ofSeconds(30));
-    BpmnAssert.assertThat(process)
-        .hasPassedElement("EnterDataTask", 2)
-        .hasPassedElement("ValidateDataTask", 1)
-        .hasPassedElement("SaveDataTask", 1);
+    CamundaAssert.assertThat(process)
+        .isCompleted()
+        .hasCompletedElement("EnterDataTask", 2)
+        .hasCompletedElement("ValidateDataTask", 1)
+        .hasCompletedElement("SaveDataTask", 1);
   }
 
   @Test
@@ -78,15 +75,13 @@ public class RollbackTest {
             () -> userTaskService.complete(awaitUserTask().getKey(), createVariables(false, true)))
         .isInstanceOf(RuntimeException.class);
     awaitUserTask();
-    BpmnAssert.assertThat(process)
-        .hasPassedElement("ValidateDataTask", 1)
-        .hasNotPassedElement("SaveDataTask");
+    CamundaAssert.assertThat(process).hasCompletedElement("ValidateDataTask", 1);
     userTaskService.complete(awaitUserTask().getKey(), createVariables(false, false));
-    waitForProcessInstanceCompleted(process, Duration.ofSeconds(30));
-    BpmnAssert.assertThat(process)
-        .hasPassedElement("EnterDataTask", 2)
-        .hasPassedElement("ValidateDataTask", 2)
-        .hasPassedElement("SaveDataTask", 1);
+    CamundaAssert.assertThat(process)
+        .isCompleted()
+        .hasCompletedElement("EnterDataTask", 2)
+        .hasCompletedElement("ValidateDataTask", 2)
+        .hasCompletedElement("SaveDataTask", 1);
   }
 
   private UserTask awaitUserTask() {
