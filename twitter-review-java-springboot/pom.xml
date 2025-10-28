@@ -10,7 +10,7 @@
   <properties>
     <java.version>21</java.version>
     <version.spring-boot>3.5.7</version.spring-boot>
-    <version.camunda>8.8.1</version.camunda>
+    <version.camunda>8.8.2</version.camunda>
     <camunda-process-test-coverage.version>3.0.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -54,16 +54,10 @@
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-test</artifactId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.camunda.community.process_test_coverage</groupId>
-      <artifactId>camunda-process-test-coverage-junit5-platform-8</artifactId> 
-      <version>${camunda-process-test-coverage.version}</version>
-      <scope>test</scope>
-    </dependency>    
 
     <!-- Required to offer a REST API via Spring Webflux (of course you could use any other framework too) -->
     <dependency>

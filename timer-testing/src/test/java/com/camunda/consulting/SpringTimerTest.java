@@ -1,38 +1,30 @@
 package com.camunda.consulting;
 
 import static com.camunda.consulting.ExampleApplication.*;
-import static io.camunda.zeebe.process.test.assertions.BpmnAssert.*;
-import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
-import static org.assertj.core.api.Assertions.*;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
-import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
-import io.camunda.zeebe.process.test.filters.RecordStream;
-import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
-import io.camunda.zeebe.spring.test.ZeebeSpringTest;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
+import io.camunda.process.test.api.CamundaAssert;
+import io.camunda.process.test.api.CamundaProcessTestContext;
+import io.camunda.process.test.api.CamundaSpringProcessTest;
 import java.time.Duration;
 import java.util.concurrent.TimeoutException;
-import org.awaitility.Awaitility;
-import org.camunda.community.process_test_coverage.junit5.platform8.ProcessEngineCoverageExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@ZeebeSpringTest
+@CamundaSpringProcessTest
 @SpringBootTest
-@ExtendWith(ProcessEngineCoverageExtension.class)
 public class SpringTimerTest {
   private static final Duration DEFAULT = Duration.ofSeconds(30);
-  @Autowired ZeebeTestEngine zeebeTestEngine;
-  @Autowired ZeebeClient zeebeClient;
+  @Autowired CamundaClient camundaClient;
+  @Autowired CamundaProcessTestContext camundaProcessTestContext;
 
   @BeforeEach
   void deploy() {
-    zeebeClient.newDeployResourceCommand().addResourceFromClasspath("get-up.bpmn").send().join();
+    camundaClient.newDeployResourceCommand().addResourceFromClasspath("get-up.bpmn").send().join();
   }
 
   @AfterEach
@@ -44,86 +36,71 @@ public class SpringTimerTest {
   void happyPath() throws InterruptedException, TimeoutException {
     progressOverride = "ready";
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
-    InspectedProcessInstance inspectedProcessInstance =
-        new InspectedProcessInstance(processInstance.getProcessInstanceKey());
-    waitForProcessInstanceHasPassedElement(processInstance, "TellKidsToGetUpTask", DEFAULT);
-    skipTimer(inspectedProcessInstance, "Wait15MinutesEvent", Duration.ofMinutes(15));
-    waitForProcessInstanceHasPassedElement(processInstance, "CheckCurrentProgressTask", DEFAULT);
-    skipTimer(inspectedProcessInstance, "Wait15MinutesEvent1", Duration.ofMinutes(15));
-    skipTimer(inspectedProcessInstance, "Wait5MinutesEvent1", Duration.ofMinutes(5));
-    waitForProcessInstanceCompleted(processInstance);
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("TellKidsToGetUpTask", 1)
+        .hasActiveElement("Wait15MinutesEvent", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(15));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("Wait15MinutesEvent", 1)
+        .hasCompletedElement("CheckCurrentProgressTask", 1)
+        .hasActiveElement("Wait15MinutesEvent1", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(15));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("Wait15MinutesEvent1", 1)
+        .hasActiveElement("Wait5MinutesEvent1", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(5));
+    CamundaAssert.assertThat(processInstance).isCompleted();
   }
 
   @RepeatedTest(10)
   void boundaryEvent() throws InterruptedException, TimeoutException {
     progressOverride = "in bed";
     ProcessInstanceEvent processInstance = createInstance("GetUpProcess");
-    InspectedProcessInstance inspectedProcessInstance =
-        new InspectedProcessInstance(processInstance.getProcessInstanceKey());
-    waitForProcessInstanceHasPassedElement(processInstance, "TellKidsToGetUpTask", DEFAULT);
-    skipTimer(inspectedProcessInstance, "Wait15MinutesEvent", Duration.ofMinutes(15));
-    waitForProcessInstanceHasPassedElement(processInstance, "CheckCurrentProgressTask", DEFAULT);
-    waitForProcessInstanceHasPassedElement(
-        inspectedProcessInstance, "TellKidsToGetUpTask", DEFAULT, 2);
-    skipTimer(inspectedProcessInstance, "Wait15MinutesEvent", Duration.ofMinutes(15), 2);
-    waitForProcessInstanceHasPassedElement(
-        inspectedProcessInstance, "CheckCurrentProgressTask", DEFAULT, 2);
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("TellKidsToGetUpTask", 1)
+        .hasActiveElement("Wait15MinutesEvent", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(15));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("Wait15MinutesEvent", 1)
+        .hasCompletedElement("CheckCurrentProgressTask", 1)
+        .hasCompletedElement("TellKidsToGetUpTask", 2)
+        .hasActiveElement("Wait15MinutesEvent", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(15));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("Wait15MinutesEvent", 2)
+        .hasCompletedElement("CheckCurrentProgressTask", 2)
+        .hasCompletedElement("TellKidsToGetUpTask", 3)
+        .hasActiveElement("Wait15MinutesEvent", 1);
     progressOverride = "dressing";
-    waitForProcessInstanceHasPassedElement(
-        inspectedProcessInstance, "TellKidsToGetUpTask", DEFAULT, 3);
-    skipTimer(inspectedProcessInstance, "Wait15MinutesEvent", Duration.ofMinutes(15), 3);
-    waitForProcessInstanceHasPassedElement(
-        inspectedProcessInstance, "CheckCurrentProgressTask", DEFAULT, 3);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(15));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("CheckCurrentProgressTask", 3)
+        .hasActiveElement("Wait5MinutesEvent", 1);
     progressOverride = "ready";
-    skipTimer(inspectedProcessInstance, "Wait5MinutesEvent", Duration.ofMinutes(5));
-    waitForProcessInstanceHasPassedElement(
-        inspectedProcessInstance, "CheckCurrentProgressTask", DEFAULT, 4);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(5));
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("CheckCurrentProgressTask", 4)
+        .hasActiveElement("Wait15MinutesEvent1", 1);
     // we start having breakfast (finally)
-    zeebeTestEngine.increaseTime(Duration.ofMinutes(10));
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(10));
     // we are running late at this point (15+15+15+5+10 = 60) so the boundary event gets triggered
     // instead
-    waitForProcessInstanceHasPassedElement(processInstance, "RunningLateBoundaryEvent", DEFAULT);
-    skipTimer(inspectedProcessInstance, "Wait5MinutesEvent1", Duration.ofMinutes(5));
-    waitForProcessInstanceCompleted(processInstance);
-    assertThat(processInstance)
+    CamundaAssert.assertThat(processInstance)
+        .hasCompletedElement("RunningLateBoundaryEvent", 1)
+        .hasActiveElement("Wait5MinutesEvent1", 1);
+    camundaProcessTestContext.increaseTime(Duration.ofMinutes(5));
+    CamundaAssert.assertThat(processInstance)
         .isCompleted()
-        .hasPassedElement("MakeThemReadyTask")
-        .hasNotPassedElement("KidsAreFedEndEvent");
+        .hasCompletedElement("MakeThemReadyTask", 1)
+        .hasNotActivatedElements("KidsAreFedEndEvent");
   }
 
-  private void skipTimer(
-      InspectedProcessInstance processInstance, String timerElementId, Duration timerDuration)
-      throws InterruptedException, TimeoutException {
-    skipTimer(processInstance, timerElementId, timerDuration, 1);
-  }
-
-  private void skipTimer(
-      InspectedProcessInstance processInstance,
-      String timerElementId,
-      Duration timerDuration,
-      int times)
-      throws InterruptedException, TimeoutException {
-    Awaitility.await()
-        .atMost(DEFAULT)
-        .pollInterval(Duration.ofSeconds(1))
-        .untilAsserted(
-            () -> {
-              initRecordStream(RecordStream.of(zeebeTestEngine.getRecordStreamSource()));
-              assertThat(processInstance).isWaitingAtElements(timerElementId);
-            });
-    zeebeTestEngine.increaseTime(timerDuration);
-    waitForProcessInstanceHasPassedElement(processInstance, timerElementId, DEFAULT, times);
-  }
-
-  private ProcessInstanceEvent createInstance(String bpmnProcessId)
-      throws InterruptedException, TimeoutException {
-    ProcessInstanceEvent instance =
-        zeebeClient
-            .newCreateInstanceCommand()
-            .bpmnProcessId(bpmnProcessId)
-            .latestVersion()
-            .send()
-            .join();
-    return instance;
+  private ProcessInstanceEvent createInstance(String bpmnProcessId) {
+    return camundaClient
+        .newCreateInstanceCommand()
+        .bpmnProcessId(bpmnProcessId)
+        .latestVersion()
+        .send()
+        .join();
   }
 }
