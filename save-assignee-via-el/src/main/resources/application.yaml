@@ -1,0 +1,6 @@
+tasklist:
+  client:
+    profile: simple
+camunda:
+  client:
+    mode: selfmanaged
