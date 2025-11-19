@@ -18,7 +18,7 @@
 
   <properties>
     <java.version>21</java.version>
-    <version.camunda>8.8.3</version.camunda>
+    <version.camunda>8.8.4</version.camunda>
   </properties>
 
   <dependencies>
