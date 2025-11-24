@@ -15,28 +15,32 @@ spec:
     spec:
       containers:
       - name: payment-example-process-application
-        image: ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:8.7.0
+        image: ghcr.io/camunda-community-hub/camunda-8-examples/payment-example-process-application:8.8.0-SNAPSHOT
         ports:
         - containerPort: 8080
           name: http
         env:
         - name: CAMUNDA_CLIENT_MODE
           value: "self-managed"
-        - name: CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS
+        - name: CAMUNDA_CLIENT_GRPCADDRESS
           value: "http://camunda-zeebe-gateway.camunda.svc.cluster.local:26500"
-        - name: CAMUNDA_CLIENT_ZEEBE_RESTADDRESS
+        - name: CAMUNDA_CLIENT_RESTADDRESS
           value: "http://camunda-zeebe-gateway.camunda.svc.cluster.local:8080"
         - name: CAMUNDA_CLIENT_AUTH_CLIENTID
           value: "payment-app"
         - name: CAMUNDA_CLIENT_AUTH_ISSUER
-          value: http://camunda-keycloak.camunda.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token
-        - name: CAMUNDA_CLIENT_ZEEBE_AUDIENCE
-          value: zeebe-api
+          value: http://keycloak.camunda.svc.cluster.local:18080/realms/ingo-keycloak-as-oidc/protocol/openid-connect/token
+        - name: CAMUNDA_CLIENT_AUTH_AUDIENCE
+          value: camunda-orchestration
         - name: CAMUNDA_CLIENT_AUTH_CLIENTSECRET
           valueFrom:
             secretKeyRef:
               name: payment-example-process-application-secrets
               key: CAMUNDA_CLIENT_AUTH_CLIENTSECRET
+        - name: LOGGING_LEVEL_ROOT
+          value: INFO
+        - name: CAMUNA_CLIENT_PREFERRESTOVERGRPC
+          value: "TRUE"
         resources:
           limits:
             memory: "768Mi"

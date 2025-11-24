@@ -21,14 +21,9 @@ For example, after running the command, you might see output similar to:
 
 ```text
 NAME                                              READY   STATUS       RESTARTS        AGE
+camunda-platform-connectors-cc88756d-k9vw8        1/1     Running      1 (3d16h ago)   3d17h
 camunda-platform-elasticsearch-master-0           1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-identity-56bdc66dd6-wqw77        1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-keycloak-0                       1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-operate-59c6b564cc-hc5l4         1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-postgresql-0                     1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-tasklist-647b8b9fb5-hlj7d        1/1     Running      1 (3d16h ago)   3d17h
 camunda-platform-zeebe-0                          1/1     Running      1 (3d16h ago)   3d17h
-camunda-platform-zeebe-gateway-796c8885d5-85hnm   1/1     Running      1 (3d16h ago)   3d17h
 ```
 
 The list may vary depending on your installation, but it should be consistent with the components you chose to install (refer to [C8 Platform Overview](https://academy.camunda.com/c8-platform-overview)).
@@ -48,56 +43,13 @@ By creating a dedicated namespace for application installation, we ensure proper
 
 ## 4. Generating an M2M Token for Our Application
 
-To enable communication with Zeebe, any application needs an authentication token if the authentication layer is enabled. The **Identity** component ([documentation](https://docs.camunda.io/docs/self-managed/identity/what-is-identity/)) is responsible for managing this authentication.
+If you run your cluster with an OIDC Provider, create a client application providing a M2M token for authentication.
 
-<details>
-  <summary>How to get the Identity URL?</summary>
+Set the audience of the client to the value of `orchestration.security.authentication.oidc.audience` from your orchestration cluster configuration.
 
-To obtain the Identity URL, retrieve the ingress of the platform:
+Copy the clientId and the clientSecret from your identity provider.
 
-```bash
-kubectl get ingress -n camunda-platform   
-```
-
-This command provides a list of ingresses:
-
-```text
-NAME                             CLASS   HOSTS                                ADDRESS         PORTS     AGE
-camunda-platform                 nginx   local.distro.ultrawombat.com         10.96.189.147   80, 443   3d18h
-camunda-platform-zeebe-gateway   nginx   zeebe.local.distro.ultrawombat.com   10.96.189.147   80, 443   3d18h
-```
-
-In Kubernetes, an ingress exposes internal HTTP and HTTPS services outside the cluster. Note that there are multiple listed ingresses, one dedicated to the Zeebe Gateway and another to other services. We are interested in the latter, which hosts most of the C8 platform services.
-
-To introspect the ingress and obtain the route associated with the Identity service:
-
-```bash
-kubectl describe ingress camunda-platform -n camunda-platform
-```
-
-This command provides details about the ingress:
-
-```text
-Name:             camunda-platform
-Namespace:        camunda-platform
-Address:          10.96.189.147
-Ingress Class:    nginx
-Default backend:  <default>
-TLS:
-  camunda-platform terminates local.distro.ultrawombat.com
-Rules:
-  Host                          Path  Backends
-  ----                          ----  --------
-  local.distro.ultrawombat.com  
-                                /auth       camunda-platform-keycloak:80 (10.244.1.7:8080)
-                                /identity   camunda-platform-identity:80 (10.244.1.5:8080)
-                                /operate    camunda-platform-operate:80 (10.244.2.3:8080)
-                                /optimize   camunda-platform-optimize:80 ()
-                                /tasklist   camunda-platform-tasklist:80 (10.244.2.5:8080)
-```
-
-We are interested in the `/identity` backend, which provides the URL `https://local.distro.ultrawombat.com/identity`. Keep in mind that accessing a service via the ingress corresponds to external access.
-</details>
+If you have basic auth enabled, create a new user with a password for the payment example process application.
 
 ### Generating the Token and adding access to the Zeebe-API via the Identity UI
 
@@ -117,6 +69,11 @@ We are interested in the `/identity` backend, which provides the URL `https://lo
    ![Reveal Secret](doc-images/identity-reveal-secret.png)
 
 Save both the **Client ID** and the **Client secret** for later use.
+
+### Grant Authorizations to the new Client
+
+`RESOURCE`: Resource ID: `*`, Authorization: CREATE
+`PROCESS_DEFINITION`: Resource ID: `*`, Authorizations: CREATE_PROCESS_INSTANCE, READ_PROCESS_DEFINITION, READ_PROCESS_INSTANCE, READ_USER_TASK, UPDATE_PROCESS_INSTANCE, UPDATE_USER_TASK
 
 ## 5. Deploying the Application Using Kubernetes Manifests
 
@@ -236,14 +193,16 @@ Once the route is created, you can access your application using the provided ho
 
         # depending on your Keycloak location, you may need to edit the authorization server URL
         - name: CAMUNDA_CLIENT_AUTH_TOKENURL
-          value: http://camunda-platform-keycloak.camunda-platform.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token
+          value: http://camunda-keycloak.camunda.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token
 
         # This is the address of the Zeebe broker service, you should not have to change it
-        - name: CAMUNDA_CLIENT_ZEEBE_GRPCADDRESS
-          value: "http://camunda-platform-zeebe-gateway.camunda-platform.svc.cluster.local:26500"
+        - name: CAMUNDA_CLIENT_GRPCADDRESS
+          value: "http://camunda-zeebe-gateway.camunda.svc.cluster.local:26500"
+        - name: CAMUNDA_CLIENT_RESTADDRESS
+          value: "http://camunda-zeebe-gateway.camunda.svc.cluster.local:8080"
         # What will the token be used for?
-        - name: CAMUNDA_CLIENT_ZEEBE_AUDIENCE
-          value: zeebe-api
+        - name: CAMUNDA_CLIENT_AUDIENCE
+          value: camunda-orchestartion
 ``` 
 Note: In Kubernetes, services are accessible through the following composition (ref: [Kubernetes Services](https://kubernetes.io/docs/concepts/services-networking/service/)):
 ```

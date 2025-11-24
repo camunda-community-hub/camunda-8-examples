@@ -36,7 +36,7 @@ spec:
                 echo $I
                 I=$((I + 1))
                 echo 'Get the token'
-                TOKEN=$(curl -s --location --request POST 'http://camunda-keycloak.camunda.svc.cluster.local/auth/realms/camunda-platform/protocol/openid-connect/token' \
+                TOKEN=$(curl -s --location --request POST 'http://keycloak.camunda.svc.cluster.local:18080/realms/ingo-keycloak-as-oidc/protocol/openid-connect/token' \
               --header 'Content-Type: application/x-www-form-urlencoded' \
               --data-urlencode 'client_id=payment-app' \
               --data-urlencode "client_secret=$CLIENT_SECRET" \
@@ -47,7 +47,7 @@ spec:
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $TOKEN" \
               -d "{\"state\":\"CREATED\",\"sort\":[{\"field\": \"creationTime\", \"order\": \"ASC\"}], \"pageSize\":200}" \
-              "http://camunda-tasklist.camunda.svc.cluster.local/v1/tasks/search" | jq -r '.[].id')
+              "http://camunda-zeebe-gateway.camunda.svc.cluster.local:8080/v1/tasks/search" | jq -r '.[].id')
               
                 echo -n "Number of tasks to complete: "
                 printf '%s' "$IDLIST" | jq -Rsc 'split("\n") | map(select(length>0)) | length'
@@ -61,8 +61,8 @@ spec:
                 done
                 
                 if [ $I -lt $ROUNDS ]; then
-                  echo "Waiting 30 s for the next round"
-                  sleep 30
+                  echo "Waiting 15 s for the next round"
+                  sleep 15
                 fi
 
               done 
