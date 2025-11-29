@@ -25,7 +25,7 @@
     <plugin.version.maven-compiler-plugin>3.14.1</plugin.version.maven-compiler-plugin>
     <plugin.version.maven-depdendency-plugin>3.9.0</plugin.version.maven-depdendency-plugin>
     <plugin.version.maven-site-plugin>3.21.0</plugin.version.maven-site-plugin>
-    <plugin.version.maven-source-plugin>3.3.1</plugin.version.maven-source-plugin>
+    <plugin.version.maven-source-plugin>3.4.0</plugin.version.maven-source-plugin>
   </properties>
 
   <dependencyManagement>
