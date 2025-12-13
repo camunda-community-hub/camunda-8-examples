@@ -14,7 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <version.camunda-connectors>8.8.4</version.camunda-connectors>
-    <version.camunda>8.8.7</version.camunda>
+    <version.camunda>8.8.8</version.camunda>
   </properties>
   <dependencyManagement>
     <dependencies>
