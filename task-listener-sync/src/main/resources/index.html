@@ -1,0 +1,79 @@
+<head>
+    <title>Tasklist micro frontend</title>
+    <!--
+      required viewer styles
+    -->
+    <link rel="stylesheet" href="https://unpkg.com/@bpmn-io/form-js@1.17.0/dist/assets/form-js.css">
+    <style>
+        #form {
+            max-width: 800px;
+            max-height: 80%;
+        }
+    </style>
+</head>
+<body>
+<div class="fjs-container">
+    <button class="fjs-button" id="assign">Assign</button>
+    <div id="form"></div>
+    <button type="submit" class="fjs-button" id="submit">Complete</button>
+</div>
+
+<script src="https://unpkg.com/@bpmn-io/form-js@1.17.0/dist/form-viewer.umd.js"></script>
+<script>
+  const assignButton = document.getElementById("assign")
+  const submitButton = document.getElementById("submit");
+  const displayForm = async () => {
+    const taskUrl = window.location.href;
+    const taskResponse = await fetch(taskUrl, {headers: {"Accept": "application/json"}});
+    const taskJson = await taskResponse.json();
+    console.log(taskJson);
+    const schema = taskJson.formSchema;
+    const data = taskJson.variables || {};
+    const container = document.querySelector('#form');
+    if (!schema) {
+      console.log("No schema found!");
+      return;
+    }
+    if (!schema.components) {
+      schema.components = [];
+      console.log("Empty schema found!")
+    }
+    schema.components = schema.components.filter(comp => comp.type !== 'button' && comp.action !== 'submit')
+    if (taskJson.status !== "CREATED") {
+      schema.components.forEach(comp => comp.readonly = true)
+    }
+
+    const form = await FormViewer.createForm({
+      container,
+      schema,
+      data
+    });
+    form.on('submit', (event) => {
+      fetch(taskUrl, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}, body: JSON.stringify({
+          "changeType": "complete",
+          "data": {
+            "result": event.data
+          }
+        })
+      })
+    });
+    submitButton.addEventListener("click", () => {
+      form.submit();
+    });
+    assignButton.addEventListener("click", () => {
+      fetch(taskUrl, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}, body: JSON.stringify({
+          "changeType": "assign",
+          "data": {
+            "assignee": "demo"
+          }
+        })
+      })
+    });
+  };
+  displayForm();
+</script>
+</body>
