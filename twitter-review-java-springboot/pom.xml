@@ -9,8 +9,8 @@
   <name>Camunda 8 Twitter Review Example</name>
   <properties>
     <java.version>21</java.version>
-    <version.spring-boot>3.5.9</version.spring-boot>
-    <version.camunda>8.8.8</version.camunda>
+    <version.spring-boot>4.0.1</version.spring-boot>
+    <version.camunda>8.8.9</version.camunda>
     <camunda-process-test-coverage.version>3.0.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -42,19 +42,29 @@
     </dependency>
 
     <dependency>
-      <groupId>io.camunda</groupId>
-      <artifactId>camunda-spring-boot-starter</artifactId>
-      <version>${version.camunda}</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!-- CPT -->
+<!--    <dependency>-->
+<!--      <groupId>io.camunda</groupId>-->
+<!--      <artifactId>camunda-process-test-spring-4</artifactId>-->
+<!--      <version>${version.camunda}</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>camunda-process-test-spring</artifactId>
+      <artifactId>camunda-spring-boot-4-starter</artifactId>
+      <version>${version.camunda}</version>
+    </dependency>
+
+    <!-- ZPT -->
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>spring-boot-starter-camunda-test</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
     </dependency>

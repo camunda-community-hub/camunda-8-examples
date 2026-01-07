@@ -1,15 +1,22 @@
 package org.camunda.community.examples.twitter;
 
-import static io.camunda.process.test.api.assertions.ProcessInstanceSelectors.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static io.camunda.zeebe.process.test.assertions.BpmnAssert.assertThat;
+import static io.camunda.zeebe.protocol.Protocol.USER_TASK_JOB_TYPE;
+import static io.camunda.zeebe.spring.test.ZeebeTestThreadSupport.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 
-import io.camunda.client.CamundaClient;
-import io.camunda.client.api.response.ProcessInstanceEvent;
-import io.camunda.process.test.api.CamundaAssert;
-import io.camunda.process.test.api.CamundaProcessTestContext;
-import io.camunda.process.test.api.CamundaSpringProcessTest;
-import java.util.Collections;
+import io.camunda.zeebe.client.ZeebeClient;
+import io.camunda.zeebe.client.api.response.ActivatedJob;
+import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
+import io.camunda.zeebe.process.test.inspections.InspectionUtility;
+import io.camunda.zeebe.process.test.inspections.model.InspectedProcessInstance;
+import io.camunda.zeebe.spring.test.ZeebeSpringTest;
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeoutException;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
 import org.camunda.community.examples.twitter.process.TwitterProcessVariables;
@@ -20,42 +27,50 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+
 @SpringBootTest
-@CamundaSpringProcessTest
+@ZeebeSpringTest
 public class TestTwitterProcess {
 
-  @Autowired private CamundaClient camundaClient;
+  @Autowired private ZeebeClient zeebe;
 
-  @Autowired private CamundaProcessTestContext testContext;
+  // TODO: We should probably get rid of this in Spring tests or at least hide it somewhere
+  // At the moment we have two different ways of waiting: Multi-threaded waiting, and the "engine
+  // run to completion"
+  @Autowired private ZeebeTestEngine zeebeTestEngine;
 
-  @MockitoBean private TwitterService twitterService;
+  @MockitoBean
+  private TwitterService twitterService;
   @Autowired private ReviewTweetRestApi restApi;
 
   @Test
   public void testTweetApproved() throws Exception {
     // Prepare data input
     TwitterProcessVariables variables =
-        new TwitterProcessVariables().setTweet("Hello world").setBoss("Zeebot");
+            new TwitterProcessVariables().setTweet("Hello world").setBoss("Zeebot");
 
     // start a process instance
     ProcessInstanceEvent processInstance =
-        camundaClient
-            .newCreateInstanceCommand()
-            .bpmnProcessId("TwitterDemoProcess")
-            .latestVersion()
-            .variables(variables)
-            .send()
-            .join();
+            zeebe
+                    .newCreateInstanceCommand() //
+                    .bpmnProcessId("TwitterDemoProcess")
+                    .latestVersion() //
+                    .variables(variables) //
+                    .send()
+                    .join();
 
     // And then retrieve the UserTask and complete it with 'approved = true'
-    testContext.completeJob(
-        "io.camunda.zeebe:userTask", Collections.singletonMap("approved", true));
+    waitForUserTaskAndComplete(
+            "user_task_review_tweet", Collections.singletonMap("approved", true));
+
+    // Now the process should run to the end
+    waitForProcessInstanceCompleted(processInstance);
 
     // Let's assert that it passed certain BPMN elements (more to show off features here)
-    CamundaAssert.assertThat(processInstance)
-        .isCompleted()
-        .hasCompletedElement("end_event_tweet_published", 1)
-        .hasNotActivatedElements("end_event_tweet_rejected");
+    assertThat(processInstance)
+            .hasPassedElement("end_event_tweet_published")
+            .hasNotPassedElement("end_event_tweet_rejected")
+            .isCompleted();
 
     // And verify it caused the right side effects b calling the business methods
     Mockito.verify(twitterService).tweet("Hello world");
@@ -65,21 +80,20 @@ public class TestTwitterProcess {
   @Test
   public void testRejectionPath() throws Exception {
     TwitterProcessVariables variables =
-        new TwitterProcessVariables().setTweet("Hello world").setBoss("Zeebot");
+            new TwitterProcessVariables().setTweet("Hello world").setBoss("Zeebot");
 
     ProcessInstanceEvent processInstance =
-        camundaClient
-            .newCreateInstanceCommand()
-            .bpmnProcessId("TwitterDemoProcess")
-            .latestVersion()
-            .variables(variables)
-            .startBeforeElement("gateway_approved")
-            .send()
-            .join();
+            zeebe
+                    .newCreateInstanceCommand() //
+                    .bpmnProcessId("TwitterDemoProcess")
+                    .latestVersion() //
+                    .variables(variables) //
+                    .startBeforeElement("gateway_approved")
+                    .send()
+                    .join();
 
-    CamundaAssert.assertThat(processInstance)
-        .isCompleted()
-        .hasCompletedElement("end_event_tweet_rejected", 1);
+    waitForProcessInstanceCompleted(processInstance);
+    waitForProcessInstanceHasPassedElement(processInstance, "end_event_tweet_rejected");
     Mockito.verify(twitterService, never()).tweet(anyString());
   }
 
@@ -87,34 +101,67 @@ public class TestTwitterProcess {
   public void testDuplicateTweet() throws Exception {
     // throw exception simulating duplicateM
     Mockito.doThrow(new DuplicateTweetException("DUPLICATE"))
-        .when(twitterService)
-        .tweet(anyString());
+            .when(twitterService)
+            .tweet(anyString());
 
     TwitterProcessVariables variables =
-        new TwitterProcessVariables()
-            .setTweet("Hello world")
-            .setAuthor("bernd")
-            .setBoss("Zeebot")
-            .setApproved(false);
+            new TwitterProcessVariables()
+                    .setTweet("Hello world")
+                    .setAuthor("bernd")
+                    .setBoss("Zeebot")
+                    .setApproved(false);
 
     ProcessInstanceEvent processInstance =
-        camundaClient
-            .newCreateInstanceCommand()
-            .bpmnProcessId("TwitterDemoProcess")
-            .latestVersion()
-            .variables(variables)
-            .startBeforeElement("service_task_publish_on_twitter")
-            .send()
-            .join();
+            zeebe
+                    .newCreateInstanceCommand() //
+                    .bpmnProcessId("TwitterDemoProcess")
+                    .latestVersion() //
+                    .variables(variables) //
+                    .startBeforeElement("service_task_publish_on_twitter")
+                    .send()
+                    .join();
 
-    CamundaAssert.assertThat(processInstance)
-        .hasCompletedElement("boundary_event_tweet_duplicated", 1);
-    testContext.completeJob("io.camunda.zeebe:userTask");
+    waitForProcessInstanceHasPassedElement(processInstance, "boundary_event_tweet_duplicated");
+    waitForUserTaskAndComplete("user_task_handle_duplicate", new HashMap<>());
+    // second try :-) --> TODO: Think about isolation of test cases when we can better cleanup the
+    // engine
 
     Mockito.doNothing().when(twitterService).tweet(anyString());
-    testContext.completeJob(
-        "io.camunda.zeebe:userTask", Collections.singletonMap("approved", true));
-    CamundaAssert.assertThat(processInstance).isCompleted();
+    waitForUserTaskAndComplete(
+            "user_task_review_tweet", Collections.singletonMap("approved", true));
+    waitForProcessInstanceCompleted(processInstance);
+  }
+
+  public void waitForUserTaskAndComplete(String userTaskId, Map<String, Object> variables)
+          throws InterruptedException, TimeoutException {
+    // Let the workflow engine do whatever it needs to do
+    zeebeTestEngine.waitForIdleState(Duration.ofMinutes(5));
+
+    // Now get all user tasks
+    List<ActivatedJob> jobs =
+            zeebe
+                    .newActivateJobsCommand()
+                    .jobType(USER_TASK_JOB_TYPE)
+                    .maxJobsToActivate(1)
+                    .workerName("waitForUserTaskAndComplete")
+                    .send()
+                    .join()
+                    .getJobs();
+
+    // Should be only one
+    assertTrue(jobs.size() > 0, "Job for user task '" + userTaskId + "' does not exist");
+    ActivatedJob userTaskJob = jobs.get(0);
+    // Make sure it is the right one
+    if (userTaskId != null) {
+      assertEquals(userTaskId, userTaskJob.getElementId());
+    }
+
+    // And complete it passing the variables
+    if (variables != null && variables.size() > 0) {
+      zeebe.newCompleteCommand(userTaskJob.getKey()).variables(variables).send().join();
+    } else {
+      zeebe.newCompleteCommand(userTaskJob.getKey()).send().join();
+    }
   }
 
   /**
@@ -124,12 +171,23 @@ public class TestTwitterProcess {
   @Test
   public void testTweetApprovedByRestApi() throws Exception {
     restApi.startTweetReviewProcess("bernd", "Hello REST world", "Zeebot");
-    testContext.completeJob(
-        "io.camunda.zeebe:userTask", Collections.singletonMap("approved", true));
-    CamundaAssert.assertThat(byProcessId("TwitterDemoProcess"))
-        .isCompleted()
-        .hasCompletedElement("end_event_tweet_published", 1)
-        .hasNotActivatedElements("end_event_tweet_rejected");
+    zeebeTestEngine.waitForIdleState(Duration.ofMinutes(5));
+    InspectedProcessInstance processInstance =
+            InspectionUtility.findProcessInstances().findLastProcessInstance().get();
+
+    // Let the workflow engine do whatever it needs to do
+    // And then retrieve the UserTask and complete it with 'approved = true'
+    waitForUserTaskAndComplete(
+            "user_task_review_tweet", Collections.singletonMap("approved", true));
+
+    waitForProcessInstanceCompleted(processInstance.getProcessInstanceKey());
+
+    // Let's assert that it passed certain BPMN elements (more to show off features here)
+    assertThat(processInstance)
+            .hasPassedElement("end_event_tweet_published")
+            .hasNotPassedElement("end_event_tweet_rejected")
+            .isCompleted();
+
     // And verify it caused the right side effects b calling the business methods
     Mockito.verify(twitterService).tweet("Hello REST world");
     Mockito.verifyNoMoreInteractions(twitterService);
