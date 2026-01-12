@@ -13,12 +13,6 @@ import io.camunda.client.api.search.request.SearchRequestPage;
 import io.camunda.client.api.search.response.SearchResponse;
 import io.camunda.client.api.search.response.UserTask;
 import io.camunda.client.api.search.response.Variable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +21,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 @Service
 @EnableScheduling
@@ -37,7 +36,9 @@ public class TaskService {
   private final CamundaClient camundaClient;
   private String cursor;
 
-  public TaskService(CamundaClient camundaClient) {this.camundaClient = camundaClient;}
+  public TaskService(CamundaClient camundaClient) {
+    this.camundaClient = camundaClient;
+  }
 
   private static Consumer<SearchRequestPage> page(String cursor) {
     return p -> {
@@ -49,88 +50,65 @@ public class TaskService {
   }
 
   public List<CustomUserTaskDto> getUserTasks() {
-    return userTasks
-        .entrySet()
-        .stream()
-        .map(e -> new CustomUserTaskDto(
-            e.getKey(),
-            e
-                .getValue()
-                .variables(),
-            e
-                .getValue()
-                .formSupplier()
-                .get(),
-            e
-                .getValue()
-                .state(),
-            e
-                .getValue()
-                .syncType()
-        ))
+    return userTasks.entrySet().stream()
+        .map(
+            e ->
+                new CustomUserTaskDto(
+                    e.getKey(),
+                    e.getValue().variables(),
+                    e.getValue().formSupplier().get(),
+                    e.getValue().state(),
+                    e.getValue().syncType()))
         .toList();
   }
 
   @JobWorker(type = "custom:creating")
   public void onCreating(ActivatedJob activatedJob) {
     UserTaskProperties userTask = activatedJob.getUserTask();
-    String taskSystem = activatedJob
-        .getCustomHeaders()
-        .get("taskSystem");
+    String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
     if (userTask != null && "custom".equals(taskSystem)) {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
           () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
           State.CREATED,
-          SyncType.REACTIVE
-      );
+          SyncType.REACTIVE);
     }
   }
 
   @JobWorker(type = "custom:completing")
   public void onCompleting(ActivatedJob activatedJob) {
     UserTaskProperties userTask = activatedJob.getUserTask();
-    String taskSystem = activatedJob
-        .getCustomHeaders()
-        .get("taskSystem");
+    String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
     if (userTask != null && "custom".equals(taskSystem)) {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
           () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
           State.COMPLETED,
-          SyncType.REACTIVE
-      );
+          SyncType.REACTIVE);
     }
   }
 
   @JobWorker(type = "custom:canceling")
   public void onCanceling(ActivatedJob activatedJob) {
     UserTaskProperties userTask = activatedJob.getUserTask();
-    String taskSystem = activatedJob
-        .getCustomHeaders()
-        .get("taskSystem");
+    String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
     if (userTask != null && "custom".equals(taskSystem)) {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
           () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
           State.CANCELED,
-          SyncType.REACTIVE
-      );
+          SyncType.REACTIVE);
     }
   }
 
   @Scheduled(fixedDelay = 1L, timeUnit = TimeUnit.SECONDS)
   public void updateUserTasks() {
-    SearchResponse<UserTask> activeUserTasks = camundaClient
-        .newUserTaskSearchRequest()
-        .page(page(cursor))
-        .execute();
-    if (activeUserTasks
-        .items()
-        .isEmpty()) {
+    SearchResponse<UserTask> activeUserTasks =
+        camundaClient.newUserTaskSearchRequest().page(page(cursor)).execute();
+    if (activeUserTasks.items().isEmpty()) {
       cursor = null;
     } else {
       syncUserTasks(activeUserTasks.items());
@@ -142,29 +120,21 @@ public class TaskService {
   }
 
   private void syncUserTask(UserTask userTask) {
-    if (!"custom".equals(userTask
-        .getCustomHeaders()
-        .get("taskSystem"))) {
+    if (!"custom".equals(userTask.getCustomHeaders().get("taskSystem"))) {
       return;
     }
     if (userTasks.containsKey(userTask.getUserTaskKey())) {
-      if (List
-          .of(State.COMPLETED, State.CANCELED)
-          .contains(userTasks
-              .get(userTask.getUserTaskKey())
-              .state())) {
+      if (List.of(State.COMPLETED, State.CANCELED)
+          .contains(userTasks.get(userTask.getUserTaskKey()).state())) {
         return;
       }
-      if (userTasks
-          .get(userTask.getUserTaskKey())
-          .syncType() == SyncType.POLLING) {
+      if (userTasks.get(userTask.getUserTaskKey()).syncType() == SyncType.POLLING) {
         putUserTask(
             userTask.getUserTaskKey(),
             getVariables(userTask.getUserTaskKey()),
             () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
             fromUserTaskState(userTask.getState()),
-            SyncType.POLLING
-        );
+            SyncType.POLLING);
       }
     }
     if (!userTasks.containsKey(userTask.getUserTaskKey())) {
@@ -173,8 +143,7 @@ public class TaskService {
           getVariables(userTask.getUserTaskKey()),
           () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
           fromUserTaskState(userTask.getState()),
-          SyncType.POLLING
-      );
+          SyncType.POLLING);
     }
   }
 
@@ -183,7 +152,8 @@ public class TaskService {
       case FAILED, CREATED, CREATING, UPDATING, ASSIGNING -> State.CREATED;
       case COMPLETED, COMPLETING -> State.COMPLETED;
       case CANCELED, CANCELING -> State.CANCELED;
-      case UNKNOWN_ENUM_VALUE -> throw new IllegalArgumentException("Unknown enum value cannot be handled");
+      case UNKNOWN_ENUM_VALUE ->
+          throw new IllegalArgumentException("Unknown enum value cannot be handled");
     };
   }
 
@@ -201,10 +171,7 @@ public class TaskService {
     if (v.isTruncated()) {
       return getVariable(v.getVariableKey());
     } else {
-      return camundaClient
-          .getConfiguration()
-          .getJsonMapper()
-          .fromJson(v.getValue(), Object.class);
+      return camundaClient.getConfiguration().getJsonMapper().fromJson(v.getValue(), Object.class);
     }
   }
 
@@ -213,20 +180,13 @@ public class TaskService {
         .getConfiguration()
         .getJsonMapper()
         .fromJson(
-            camundaClient
-                .newVariableGetRequest(variableKey)
-                .execute()
-                .getValue(), Object.class
-        );
+            camundaClient.newVariableGetRequest(variableKey).execute().getValue(), Object.class);
   }
 
   private Object getForm(Long userTaskKey, int retries, Duration retryDelay) {
     if (!formsCache.containsKey(userTaskKey)) {
       try {
-        Object schema = camundaClient
-            .newUserTaskGetFormRequest(userTaskKey)
-            .execute()
-            .getSchema();
+        Object schema = camundaClient.newUserTaskGetFormRequest(userTaskKey).execute().getSchema();
         if (schema != null) {
           formsCache.put(userTaskKey, schema);
         }
@@ -250,8 +210,7 @@ public class TaskService {
       Map<String, Object> variables,
       Supplier<Object> formSupplier,
       State state,
-      SyncType syncType
-  ) {
+      SyncType syncType) {
     LOG.info("{}: Syncing user task {} in state {}", userTaskKey, syncType, state);
     userTasks.put(userTaskKey, new InternalTask(variables, formSupplier, state, syncType));
   }
@@ -260,39 +219,27 @@ public class TaskService {
     if (userTasks.containsKey(key)) {
       InternalTask internalTask = userTasks.get(key);
       return new TaskDto(
-          internalTask.variables(),
-          internalTask
-              .formSupplier()
-              .get(),
-          internalTask.state()
-      );
+          internalTask.variables(), internalTask.formSupplier().get(), internalTask.state());
     }
     throw new IllegalArgumentException("Did not find user task with key" + key);
   }
 
   public void handleUpdate(long id, UpdateTaskDto content) {
     switch (content.data()) {
-    case CompleteTaskDto complete -> completeTask(id, complete);
+      case CompleteTaskDto complete -> completeTask(id, complete);
 
-    case AssignTaskDto assignTaskDto -> assignTask(id, assignTaskDto);
+      case AssignTaskDto assignTaskDto -> assignTask(id, assignTaskDto);
     }
   }
 
   private void assignTask(long id, AssignTaskDto assignTaskDto) {
-    camundaClient
-        .newAssignUserTaskCommand(id)
-        .assignee(assignTaskDto.assignee())
-        .execute();
+    camundaClient.newAssignUserTaskCommand(id).assignee(assignTaskDto.assignee()).execute();
   }
 
   private void completeTask(long id, CompleteTaskDto content) {
-    camundaClient
-        .newCompleteUserTaskCommand(id)
-        .variables(content.result())
-        .execute();
+    camundaClient.newCompleteUserTaskCommand(id).variables(content.result()).execute();
   }
 
-  public record CustomUserTaskDto(long key, Map<String, Object> variables, Object form, State state,
-                                  SyncType syncType) {}
-
+  public record CustomUserTaskDto(
+      long key, Map<String, Object> variables, Object form, State state, SyncType syncType) {}
 }
