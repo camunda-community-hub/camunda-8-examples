@@ -15,7 +15,7 @@
     <version.camunda-connectors>8.8.5</version.camunda-connectors>
     <version.camunda>8.8.9</version.camunda>
     <version.spring-boot>3.5.9</version.spring-boot>
-    <version.jackson>2.20.1</version.jackson>
+    <version.jackson>2.21.0</version.jackson>
 
     <plugin.version.maven-enforcer-plugin>3.6.2</plugin.version.maven-enforcer-plugin>
     <plugin.version.maven-install-plugin>3.1.4</plugin.version.maven-install-plugin>
