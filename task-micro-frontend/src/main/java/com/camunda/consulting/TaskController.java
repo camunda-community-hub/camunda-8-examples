@@ -22,18 +22,18 @@ public class TaskController {
   }
 
   @GetMapping(value = "/{id}", produces = "*/*")
-  public Resource homePage(@PathVariable(name = "id") String id) {
+  public Resource homePage(@PathVariable(name = "id") long id) {
     LOG.info("Loading task {}", id);
     return new ClassPathResource("index.html");
   }
 
   @GetMapping(value = "/{id}", produces = "application/json")
-  public TaskDto getTask(@PathVariable(name = "id") String id) {
+  public TaskDto getTask(@PathVariable(name = "id") long id) {
     return taskService.getTask(id);
   }
 
   @PatchMapping(value = "/{id}")
-  public void updateTask(@PathVariable(name = "id") String id, @RequestBody UpdateTaskDto request) {
+  public void updateTask(@PathVariable(name = "id") long id, @RequestBody UpdateTaskDto request) {
     taskService.handleUpdate(id, request);
   }
 }
