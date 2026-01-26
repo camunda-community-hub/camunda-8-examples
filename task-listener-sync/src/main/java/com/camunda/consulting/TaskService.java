@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import io.camunda.client.lifecycle.CamundaClientLifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -31,6 +33,7 @@ import org.springframework.stereotype.Service;
 @EnableScheduling
 public class TaskService {
   private static final Logger LOG = LoggerFactory.getLogger(TaskService.class);
+  // TODO replace this with a repository so that user tasks are persisted
   private final Map<Long, InternalTask> userTasks = new ConcurrentHashMap<>();
   private final Map<Long, Object> formsCache = new ConcurrentHashMap<>();
   private final CamundaClient camundaClient;
@@ -49,11 +52,11 @@ public class TaskService {
     };
   }
 
-  public List<CustomUserTaskDto> getUserTasks() {
+  public List<TaskDto> getUserTasks() {
     return userTasks.entrySet().stream()
         .map(
             e ->
-                new CustomUserTaskDto(
+                new TaskDto(
                     e.getKey(),
                     e.getValue().variables(),
                     e.getValue().formSupplier().get(),
@@ -70,7 +73,7 @@ public class TaskService {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
+          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
           State.CREATED,
           SyncType.REACTIVE);
     }
@@ -84,7 +87,7 @@ public class TaskService {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
+          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
           State.COMPLETED,
           SyncType.REACTIVE);
     }
@@ -98,7 +101,7 @@ public class TaskService {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
+          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
           State.CANCELED,
           SyncType.REACTIVE);
     }
@@ -123,16 +126,16 @@ public class TaskService {
     if (!"custom".equals(userTask.getCustomHeaders().get("taskSystem"))) {
       return;
     }
-    if (userTasks.containsKey(userTask.getUserTaskKey())) {
+    if (userTasks.containsKey(userTask.getFormKey())) {
       if (List.of(State.COMPLETED, State.CANCELED)
           .contains(userTasks.get(userTask.getUserTaskKey()).state())) {
         return;
       }
-      if (userTasks.get(userTask.getUserTaskKey()).syncType() == SyncType.POLLING) {
+      if (userTasks.get(userTask.getFormKey()).syncType() == SyncType.POLLING) {
         putUserTask(
             userTask.getUserTaskKey(),
             getVariables(userTask.getUserTaskKey()),
-            () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
+            () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
             fromUserTaskState(userTask.getState()),
             SyncType.POLLING);
       }
@@ -141,7 +144,7 @@ public class TaskService {
       putUserTask(
           userTask.getUserTaskKey(),
           getVariables(userTask.getUserTaskKey()),
-          () -> getForm(userTask.getUserTaskKey(), 10, Duration.ofSeconds(1)),
+          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
           fromUserTaskState(userTask.getState()),
           SyncType.POLLING);
     }
@@ -183,12 +186,15 @@ public class TaskService {
             camundaClient.newVariableGetRequest(variableKey).execute().getValue(), Object.class);
   }
 
-  private Object getForm(Long userTaskKey, int retries, Duration retryDelay) {
-    if (!formsCache.containsKey(userTaskKey)) {
+  private Object getForm(Long userTaskKey, Long formKey, int retries, Duration retryDelay) {
+    if(formKey == null){
+      return null;
+    }
+    if (!formsCache.containsKey(formKey)) {
       try {
         Object schema = camundaClient.newUserTaskGetFormRequest(userTaskKey).execute().getSchema();
         if (schema != null) {
-          formsCache.put(userTaskKey, schema);
+          formsCache.put(formKey, schema);
         }
       } catch (Exception e) {
         if (retries > 0) {
@@ -197,7 +203,7 @@ public class TaskService {
           } catch (InterruptedException ex) {
             throw new RuntimeException("Error while sleeping", ex);
           }
-          return getForm(userTaskKey, retries - 1, retryDelay);
+          return getForm(userTaskKey, formKey,retries - 1, retryDelay);
         }
         throw new RuntimeException("Error while loading form for user task " + userTaskKey, e);
       }
@@ -218,8 +224,8 @@ public class TaskService {
   public TaskDto getTask(long key) {
     if (userTasks.containsKey(key)) {
       InternalTask internalTask = userTasks.get(key);
-      return new TaskDto(
-          internalTask.variables(), internalTask.formSupplier().get(), internalTask.state());
+      return new TaskDto(key,
+          internalTask.variables(), internalTask.formSupplier().get(), internalTask.state(), internalTask.syncType());
     }
     throw new IllegalArgumentException("Did not find user task with key" + key);
   }
@@ -239,7 +245,4 @@ public class TaskService {
   private void completeTask(long id, CompleteTaskDto content) {
     camundaClient.newCompleteUserTaskCommand(id).variables(content.result()).execute();
   }
-
-  public record CustomUserTaskDto(
-      long key, Map<String, Object> variables, Object form, State state, SyncType syncType) {}
 }
