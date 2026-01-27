@@ -35,16 +35,16 @@
     </dependency>
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>spring-boot-starter-camunda-tasklist</artifactId>
-      <version>8.8.3</version>
-    </dependency>
-    <dependency>
-      <groupId>io.camunda</groupId>
       <artifactId>camunda-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.camunda</groupId>
+      <artifactId>camunda-process-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
