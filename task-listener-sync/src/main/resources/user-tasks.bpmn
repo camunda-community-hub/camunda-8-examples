@@ -13,9 +13,9 @@
         </zeebe:taskHeaders>
         <zeebe:userTask />
         <zeebe:taskListeners>
-          <zeebe:taskListener eventType="creating" type="custom:creating" />
-          <zeebe:taskListener eventType="completing" type="custom:completing" />
-          <zeebe:taskListener eventType="canceling" type="custom:canceling" />
+          <zeebe:taskListener eventType="creating" type="custom:sync" />
+          <zeebe:taskListener eventType="completing" type="custom:sync" />
+          <zeebe:taskListener eventType="canceling" type="custom:sync" />
         </zeebe:taskListeners>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1euxbay</bpmn:incoming>

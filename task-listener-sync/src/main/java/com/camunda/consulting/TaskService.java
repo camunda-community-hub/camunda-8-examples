@@ -8,6 +8,7 @@ import io.camunda.client.CamundaClient;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.response.UserTaskProperties;
+import io.camunda.client.api.search.enums.ListenerEventType;
 import io.camunda.client.api.search.enums.UserTaskState;
 import io.camunda.client.api.search.request.SearchRequestPage;
 import io.camunda.client.api.search.response.SearchResponse;
@@ -21,8 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
-import io.camunda.client.lifecycle.CamundaClientLifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -35,6 +34,7 @@ public class TaskService {
   private static final Logger LOG = LoggerFactory.getLogger(TaskService.class);
   // TODO replace this with a repository so that user tasks are persisted
   private final Map<Long, InternalTask> userTasks = new ConcurrentHashMap<>();
+  // TODO optionally replace this with a shared cache
   private final Map<Long, Object> formsCache = new ConcurrentHashMap<>();
   private final CamundaClient camundaClient;
   private String cursor;
@@ -52,6 +52,16 @@ public class TaskService {
     };
   }
 
+  private State fromListenerEventType(ListenerEventType listenerEventType) {
+    return switch (listenerEventType) {
+      case CREATING, ASSIGNING, UPDATING -> State.CREATED;
+      case COMPLETING -> State.COMPLETED;
+      case CANCELING -> State.CANCELED;
+      default ->
+          throw new IllegalArgumentException("Unable to handle state change " + listenerEventType);
+    };
+  }
+
   public List<TaskDto> getUserTasks() {
     return userTasks.entrySet().stream()
         .map(
@@ -65,44 +75,18 @@ public class TaskService {
         .toList();
   }
 
-  @JobWorker(type = "custom:creating")
-  public void onCreating(ActivatedJob activatedJob) {
+  @JobWorker(type = "custom:sync")
+  public void onSync(ActivatedJob activatedJob) {
     UserTaskProperties userTask = activatedJob.getUserTask();
+    State state = fromListenerEventType(activatedJob.getListenerEventType());
     String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
     if (userTask != null && "custom".equals(taskSystem)) {
       putUserTask(
           userTask.getUserTaskKey(),
           activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
-          State.CREATED,
-          SyncType.REACTIVE);
-    }
-  }
-
-  @JobWorker(type = "custom:completing")
-  public void onCompleting(ActivatedJob activatedJob) {
-    UserTaskProperties userTask = activatedJob.getUserTask();
-    String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
-    if (userTask != null && "custom".equals(taskSystem)) {
-      putUserTask(
-          userTask.getUserTaskKey(),
-          activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
-          State.COMPLETED,
-          SyncType.REACTIVE);
-    }
-  }
-
-  @JobWorker(type = "custom:canceling")
-  public void onCanceling(ActivatedJob activatedJob) {
-    UserTaskProperties userTask = activatedJob.getUserTask();
-    String taskSystem = activatedJob.getCustomHeaders().get("taskSystem");
-    if (userTask != null && "custom".equals(taskSystem)) {
-      putUserTask(
-          userTask.getUserTaskKey(),
-          activatedJob.getVariablesAsMap(),
-          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
-          State.CANCELED,
+          () ->
+              getForm(userTask.getUserTaskKey(), userTask.getFormKey(), 10, Duration.ofSeconds(1)),
+          state,
           SyncType.REACTIVE);
     }
   }
@@ -123,19 +107,22 @@ public class TaskService {
   }
 
   private void syncUserTask(UserTask userTask) {
-    if (!"custom".equals(userTask.getCustomHeaders().get("taskSystem"))) {
-      return;
-    }
-    if (userTasks.containsKey(userTask.getFormKey())) {
+    // TODO uncomment this as soon as this is fixed: https://github.com/camunda/camunda/issues/44731
+    //    if (!"custom".equals(userTask.getCustomHeaders().get("taskSystem"))) {
+    //      return;
+    //    }
+    if (userTasks.containsKey(userTask.getUserTaskKey())) {
       if (List.of(State.COMPLETED, State.CANCELED)
           .contains(userTasks.get(userTask.getUserTaskKey()).state())) {
         return;
       }
-      if (userTasks.get(userTask.getFormKey()).syncType() == SyncType.POLLING) {
+      if (userTasks.get(userTask.getUserTaskKey()).syncType() == SyncType.POLLING) {
         putUserTask(
             userTask.getUserTaskKey(),
             getVariables(userTask.getUserTaskKey()),
-            () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
+            () ->
+                getForm(
+                    userTask.getUserTaskKey(), userTask.getFormKey(), 10, Duration.ofSeconds(1)),
             fromUserTaskState(userTask.getState()),
             SyncType.POLLING);
       }
@@ -144,7 +131,8 @@ public class TaskService {
       putUserTask(
           userTask.getUserTaskKey(),
           getVariables(userTask.getUserTaskKey()),
-          () -> getForm(userTask.getUserTaskKey(), userTask.getFormKey(),10, Duration.ofSeconds(1)),
+          () ->
+              getForm(userTask.getUserTaskKey(), userTask.getFormKey(), 10, Duration.ofSeconds(1)),
           fromUserTaskState(userTask.getState()),
           SyncType.POLLING);
     }
@@ -187,7 +175,7 @@ public class TaskService {
   }
 
   private Object getForm(Long userTaskKey, Long formKey, int retries, Duration retryDelay) {
-    if(formKey == null){
+    if (formKey == null) {
       return null;
     }
     if (!formsCache.containsKey(formKey)) {
@@ -203,7 +191,7 @@ public class TaskService {
           } catch (InterruptedException ex) {
             throw new RuntimeException("Error while sleeping", ex);
           }
-          return getForm(userTaskKey, formKey,retries - 1, retryDelay);
+          return getForm(userTaskKey, formKey, retries - 1, retryDelay);
         }
         throw new RuntimeException("Error while loading form for user task " + userTaskKey, e);
       }
@@ -224,16 +212,19 @@ public class TaskService {
   public TaskDto getTask(long key) {
     if (userTasks.containsKey(key)) {
       InternalTask internalTask = userTasks.get(key);
-      return new TaskDto(key,
-          internalTask.variables(), internalTask.formSupplier().get(), internalTask.state(), internalTask.syncType());
+      return new TaskDto(
+          key,
+          internalTask.variables(),
+          internalTask.formSupplier().get(),
+          internalTask.state(),
+          internalTask.syncType());
     }
-    throw new IllegalArgumentException("Did not find user task with key" + key);
+    throw new IllegalArgumentException("Did not find user task with key " + key);
   }
 
   public void handleUpdate(long id, UpdateTaskDto content) {
     switch (content.data()) {
       case CompleteTaskDto complete -> completeTask(id, complete);
-
       case AssignTaskDto assignTaskDto -> assignTask(id, assignTaskDto);
     }
   }
