@@ -11,9 +11,9 @@ For business-focused tutorials and process blueprints, see the [Camunda 8 Tutori
 This repository contains standalone Maven projects (and some Python examples) that demonstrate specific technical patterns and use cases:
 
 ### Getting Started & Client Usage
+- **[camunda-client-plain-java](camunda-client-plain-java/)** - Basic examples using the Camunda Java client ([docs](https://docs.camunda.io/docs/apis-tools/java-client/getting-started))
+- **[zeebe-client-plain-java](zeebe-client-plain-java/)** - Examples using the Zeebe Java client ([docs](https://docs.camunda.io/docs/8.7/apis-tools/java-client))
 
-- **[camunda-client-plain-java](camunda-client-plain-java/)** - Basic examples using the Camunda Java client ([docs](https://docs.camunda.io/docs/apis-tools/java-client-examples/))
-- **[zeebe-client-plain-java](zeebe-client-plain-java/)** - Examples using the Zeebe Java client ([docs](https://docs.camunda.io/docs/product-manuals/clients/java-client-examples/index))
 - **[weatherinfo-pyzeebe-connectors](weatherinfo-pyzeebe-connectors/)** - Python worker example using pyzeebe with REST and SendGrid connectors
 
 ### Complete Process Applications
