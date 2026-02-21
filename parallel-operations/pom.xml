@@ -11,7 +11,7 @@
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <version.spring-boot>3.5.11</version.spring-boot>
+    <version.spring-boot>4.0.3</version.spring-boot>
     <version.camunda>8.8.14</version.camunda>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -103,7 +103,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.11</version>
+        <version>4.0.3</version>
       </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
