@@ -9,8 +9,8 @@
   <name>Camunda 8 Twitter Review Example</name>
   <properties>
     <java.version>21</java.version>
-    <version.spring-boot>4.0.1</version.spring-boot>
-    <version.camunda>8.8.9</version.camunda>
+    <version.spring-boot>4.0.3</version.spring-boot>
+    <version.camunda>8.7.24-SNAPSHOT</version.camunda>
     <camunda-process-test-coverage.version>3.0.0</camunda-process-test-coverage.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -47,13 +47,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- CPT -->
-<!--    <dependency>-->
-<!--      <groupId>io.camunda</groupId>-->
-<!--      <artifactId>camunda-process-test-spring-4</artifactId>-->
-<!--      <version>${version.camunda}</version>-->
-<!--      <scope>test</scope>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>io.camunda</groupId>
@@ -67,6 +65,12 @@
       <artifactId>spring-boot-starter-camunda-test</artifactId>
       <version>${version.camunda}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.camunda</groupId>
+          <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Required to offer a REST API via Spring Webflux (of course you could use any other framework too) -->
