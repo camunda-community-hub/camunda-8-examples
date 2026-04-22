@@ -1,0 +1,58 @@
+name: 'Deploy updated BPMNs to Zeebe'
+
+on:
+  push:
+    branches:
+      - saas
+    paths:
+      - 'src/main/resources/*.bpmn' # match '*.bpmn' files (created or updated)
+      - 'src/main/resources/*.dmn' # match '*.dmn' files (created or updated)
+      - 'src/main/resources/*.form' # match '*.form' files (created or updated)
+
+jobs:
+  prepare-files:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-modified: ${{ steps.file-changes.outputs.files }}
+    steps:
+      - name: Select added and changed resources to deploy
+        uses: yumemi-inc/changed-files@v3
+        id: file-changes
+        with:
+          statuses: added|modified
+          format: 'json'
+          patterns: |
+            src/main/resources/*.{bpmn,dmn,form}
+
+  deploy-modified-files:
+    if: ${{ needs.prepare-files.outputs.matrix-modified != '[]' }}
+    needs: prepare-files
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file:  ${{ fromJSON(needs.prepare-files.outputs.matrix-modified) }}
+    steps:
+      - name: Check Out File for Deployment
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+              ${{ matrix.file }}
+          sparse-checkout-cone-mode: false
+
+      - name: Echo File
+        run: |
+          echo ${{ matrix.file }} # to test if the correct file was passed
+
+      - name: Get Bearer Token
+        id: get-bearer-token
+        run: |
+          token=$(curl -s "${{ secrets.OAUTH_TOKEN_URL }}" --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'grant_type=client_credentials' --data-urlencode "client_id=${{ secrets.ZEEBE_CLIENT_ID}}" --data-urlencode "client_secret=${{ secrets.ZEEBE_CLIENT_SECRET }}" --data-urlencode 'audience=zeebe.camunda.io' | jq -r '.access_token')
+          echo $token
+          echo "token=$token" >> $GITHUB_OUTPUT
+      
+      - name: Deploy to Zeebe
+        id: deploy-to-zeebe
+        run: |
+          response=$(curl -s -X POST "https://${{ secrets.CLUSTER_REGION }}.zeebe.camunda.io/${{ secrets.CLUSTER_ID }}/v2/deployments" -H "Authorization: Bearer ${{ steps.get-bearer-token.outputs.token }}" -F "resources=@${{ github.workspace }}/${{ matrix.file }}")
+          echo "$response"
+          echo "response=$response" >> $GITHUB_OUTPUT
