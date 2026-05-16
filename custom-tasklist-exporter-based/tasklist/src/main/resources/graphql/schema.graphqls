@@ -1,0 +1,61 @@
+type Query {
+  allUserTasks(page: Int, size: Int): [UserTask]
+  userTaskById(userTaskId: ID!): UserTask
+  filteredUserTasks(
+    userTaskId: ID
+    processInstanceId: String
+    taskElementName: String
+    formKey: String
+    assignee: String
+    candidateUsers: [String]
+    candidateGroups: [String]
+    dueDate: String
+    followUpDate: String
+    priority: Int
+    source: String
+    eventType: EventType
+    page: Int
+    size: Int): [UserTask]
+  diagramById(diagramId: ID!): Diagram
+}
+
+type Mutation {
+  completeUserTask(userTaskId: ID!, variables: String): UserTask
+  assignUserTask(userTaskId: ID!, assignee: String): UserTask
+}
+
+type UserTask {
+  userTaskId: ID
+  processInstanceId: String
+  processDefinitionId: String
+  taskElementName: String
+  formKey: String
+  assignee: String
+  candidateUsers: [String]
+  candidateGroups: [String]
+  dueDate: String
+  followUpDate: String
+  priority: Int
+  variables: String
+  source: String
+  eventType: EventType
+}
+
+type Diagram {
+  diagramId: ID
+  processDefinition: String
+}
+
+enum EventType  {
+  CREATED,
+  COMPLETED,
+  ENDED
+}
+
+enum Types {
+  STRING,
+  INTEGER,
+  DOUBLE,
+  BOOLEAN,
+  JSON
+}
