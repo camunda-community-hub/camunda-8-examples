@@ -1,0 +1,146 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins';
+    font-style: normal;
+}
+
+.header {
+    background-color: #4F6D7A;
+    color: #F8FAFC;
+}
+
+.task-list-name {
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.task-list-icon {
+    padding-right: 20px;
+}
+
+html {
+    background-color: #F8FAFC;
+}
+
+.main {
+    /*
+    TODO: Find Better solution to have sticky header but still not overlap with main content
+     */
+    background-color: #F8FAFC;
+    padding-top: 100px;
+    padding-bottom: 50px;
+}
+
+.primary {
+    color: #13070C;
+}
+
+.secondary {
+    color: #4F6D7A;
+}
+
+.warning-yellow {
+    color: #FCD581;
+}
+
+.warning-red {
+    color: #EF5B5B;
+}
+
+.good-green {
+    color: #8AE9C1;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.task {
+    padding: 20px 10px 10px;
+    margin: 20px;
+    border: none;
+}
+
+.badge {
+    font-size: x-small;
+    vertical-align: middle;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+.orange-badge {
+    background-color: #FCD581;
+    color: #13070C;
+}
+
+.green-badge {
+    background-color: #8AE9C1;
+    color: #13070C;
+}
+
+.red-badge {
+    background-color: #EF5B5B;
+    color: white;
+}
+
+.tab-content {
+    margin: 20px;
+    font-size: small;
+}
+
+.task-info {
+    font-size: x-small;
+    margin-bottom: 0px;
+    padding-right: 10px;
+}
+.task-info > p > span {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.nav-link {
+    font-size: small;
+    color: #13070C;
+}
+
+.task-name {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.task-header {
+    cursor: pointer;
+}
+
+.info-header{
+    font-size: small;
+    color: #4F6D7A;
+}
+
+.djs-container > svg {
+    height: 500px
+}
+
+.bjs-breadcrumbs{
+    visibility: hidden;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+    overflow: visible;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    color: #F8FAFC;
+    background-color: #4F6D7A;
+    margin-bottom: -5000px;
+    padding-bottom: 5000px;
+    z-index: 10000
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
