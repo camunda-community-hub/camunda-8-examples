@@ -1,9 +1,9 @@
 package com.camunda.consulting;
 
 import com.camunda.consulting.AsyncService.TransactionResult;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.annotation.JobWorker;
 import java.time.Duration;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 public class AsyncJobWorker {
   private static final String TRANSACTION_ID_VAR_NAME = "transactionId";
 
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
   private final AsyncService asyncService;
 
   @Autowired
-  public AsyncJobWorker(ZeebeClient zeebeClient, AsyncService asyncService) {
+  public AsyncJobWorker(CamundaClient zeebeClient, AsyncService asyncService) {
     this.zeebeClient = zeebeClient;
     this.asyncService = asyncService;
   }

@@ -1,10 +1,10 @@
 package com.camunda.consulting.worker.multi_instance;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.PublishMessageResponse;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.response.PublishMessageResponse;
+import io.camunda.client.api.worker.JobClient;
+import io.camunda.client.annotation.JobWorker;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CampaignWorker {
   @Value("${multi-instance-example.number-of-elements}")
   public long numberOfElements;
 
-  @Autowired ZeebeClient zeebeClient;
+  @Autowired CamundaClient zeebeClient;
 
   @JobWorker
   public Map<String, Object> bucketCreation(JobClient client, ActivatedJob job) throws Exception {

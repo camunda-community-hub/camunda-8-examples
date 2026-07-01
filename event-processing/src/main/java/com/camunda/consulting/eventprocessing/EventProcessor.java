@@ -2,10 +2,10 @@ package com.camunda.consulting.eventprocessing;
 
 import com.camunda.consulting.eventprocessing.EventService.Event;
 import com.camunda.consulting.eventprocessing.EventService.Event.State.StateName;
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.command.ClientStatusException;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
-import io.camunda.zeebe.spring.client.annotation.Variable;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.command.ClientStatusException;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.annotation.Variable;
 import io.grpc.Status.Code;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -22,9 +22,9 @@ import org.springframework.stereotype.Component;
 public class EventProcessor {
   private static final Logger LOG = LoggerFactory.getLogger(EventProcessor.class);
   private final EventService eventService;
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
 
-  public EventProcessor(EventService eventService, ZeebeClient zeebeClient) {
+  public EventProcessor(EventService eventService, CamundaClient zeebeClient) {
     this.eventService = eventService;
     this.zeebeClient = zeebeClient;
   }
