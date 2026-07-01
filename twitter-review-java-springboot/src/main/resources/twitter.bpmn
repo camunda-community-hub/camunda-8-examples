@@ -27,7 +27,7 @@
     <sequenceFlow id="sequence_flow_tweet_reviewed" name="" sourceRef="user_task_review_tweet" targetRef="gateway_approved" />
     <serviceTask id="service_task_send_rejection_notification" name="Send rejection notification" camunda:class="twitter.RejectionNotificationDelegate">
       <extensionElements>
-        <zeebe:taskDefinition type="send-rejection" />
+        <zeebe:taskDefinition type="sendRejection" />
       </extensionElements>
       <incoming>sequence_flow_approved_no</incoming>
       <outgoing>sequqnce_flow_rejection_sent</outgoing>
@@ -43,7 +43,7 @@
     <sequenceFlow id="sequence_flow_tweet_duplicated" name="" sourceRef="boundary_event_tweet_duplicated" targetRef="user_task_handle_duplicate" />
     <serviceTask id="service_task_publish_on_twitter" name="Publish on Twitter" camunda:delegateExpression="#{tweetPublicationDelegate}">
       <extensionElements>
-        <zeebe:taskDefinition type="publish-tweet" />
+        <zeebe:taskDefinition type="publishTweet" />
       </extensionElements>
       <incoming>sequence_flow_approved_yes</incoming>
       <outgoing>sequence_flow_tweet_published</outgoing>

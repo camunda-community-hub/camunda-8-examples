@@ -1,8 +1,8 @@
 package com.camunda.consulting.web_shop_process_app.worker;
 
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.annotation.Variable;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +19,13 @@ public class CustomerCreditHandler {
     this.customerService = customerService;
   }
 
-  @JobWorker(type = "customerCreditHandling")
-  public Map<String, Object> handle(ActivatedJob job) {
-    LOG.info("Handling customer credit for process instance {}", job.getProcessInstanceKey());
-
-    Map<String, Object> variables = job.getVariablesAsMap();
-    String customerId = (String) variables.get("customerId");
-    Double amount = Double.valueOf(variables.get("orderTotal").toString());
+  @JobWorker
+  public Map<String, Object> customerCreditHandling(
+      @Variable String customerId, @Variable Double orderTotal) {
+    LOG.info("Handling customer credit for customerId {}", customerId);
 
     Double customerCredit = customerService.getCustomerCredit(customerId);
-    Double remainingAmount = customerService.deductCredit(customerId, amount, customerCredit);
+    Double remainingAmount = customerService.deductCredit(customerId, orderTotal, customerCredit);
 
     return Map.of("customerCredit", customerCredit, "remainingAmount", remainingAmount);
   }

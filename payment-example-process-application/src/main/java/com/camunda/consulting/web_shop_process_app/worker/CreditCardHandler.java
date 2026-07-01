@@ -2,9 +2,10 @@ package com.camunda.consulting.web_shop_process_app.worker;
 
 import com.camunda.consulting.web_shop_process_app.service.CreditCardExpiredException;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardService;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobClient;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.annotation.Variable;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +22,17 @@ public class CreditCardHandler {
     this.creditCardService = creditCardService;
   }
 
-  @JobWorker(type = "creditCardCharging", autoComplete = false)
-  public void handle(JobClient client, ActivatedJob job) {
+  @JobWorker(autoComplete = false)
+  public void creditCardCharging(
+      JobClient client,
+      ActivatedJob job,
+      @Variable String cardNumber,
+      @Variable String cvc,
+      @Variable String expiryDate,
+      @Variable Double openAmount) {
     LOG.info("Handling credit card payment for process instance {}", job.getProcessInstanceKey());
-    Map<String, Object> variables = job.getVariablesAsMap();
-    String cardNumber = (String) variables.get("cardNumber");
-    String cvc = (String) variables.get("cvc");
-    String expiryDate = (String) variables.get("expiryDate");
-    Double amount = Double.valueOf(variables.get("openAmount").toString());
     try {
-      creditCardService.chargeAmount(cardNumber, cvc, expiryDate, amount);
+      creditCardService.chargeAmount(cardNumber, cvc, expiryDate, openAmount);
       client.newCompleteCommand(job).send();
     } catch (CreditCardExpiredException e) {
       LOG.info("Credit card payment failed: {}", e.getLocalizedMessage());
