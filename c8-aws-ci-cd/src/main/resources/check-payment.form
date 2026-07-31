@@ -1,0 +1,108 @@
+{
+  "components": [
+    {
+      "text": "### Check failed payment",
+      "label": "Text view",
+      "type": "text",
+      "layout": {
+        "row": "Row_0b0uu3b",
+        "columns": null
+      },
+      "id": "Field_0ao1zwt"
+    },
+    {
+      "label": "Card number",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0jbalz2",
+        "columns": null
+      },
+      "id": "Field_0mmy6bd",
+      "key": "cardNumber"
+    },
+    {
+      "label": "Amount to pay",
+      "type": "number",
+      "layout": {
+        "row": "Row_12ziqrj",
+        "columns": null
+      },
+      "id": "Field_0qvng39",
+      "key": "remainingAmount"
+    },
+    {
+      "label": "Order total",
+      "type": "number",
+      "layout": {
+        "row": "Row_12ziqrj",
+        "columns": null
+      },
+      "id": "Field_1swwjkm",
+      "key": "orderTotal"
+    },
+    {
+      "label": "CVC",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0d2wojq",
+        "columns": null
+      },
+      "id": "Field_0u5ryv1",
+      "key": "cvc"
+    },
+    {
+      "label": "Expiry date",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0d2wojq",
+        "columns": null
+      },
+      "id": "Field_11op78b",
+      "key": "expiryDate",
+      "description": "MM/YY"
+    },
+    {
+      "label": "Error message",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_1ncj2jb",
+        "columns": null
+      },
+      "id": "Field_0wy0w0o",
+      "key": "creditCardErrorMessage",
+      "readonly": true
+    },
+    {
+      "label": "Customer ID",
+      "type": "textfield",
+      "layout": {
+        "row": "Row_0src291",
+        "columns": null
+      },
+      "id": "Field_19rfpnd",
+      "key": "customerId",
+      "readonly": true
+    },
+    {
+      "label": "Error resolved?",
+      "type": "checkbox",
+      "layout": {
+        "row": "Row_1rp85wb",
+        "columns": null
+      },
+      "id": "Field_1ikwxl3",
+      "key": "errorResolved",
+      "description": "Payment is retried when checked"
+    }
+  ],
+  "type": "default",
+  "id": "Form_18qwi4t",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.3.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.31.0"
+  },
+  "schemaVersion": 18,
+  "versionTag": "1"
+}
