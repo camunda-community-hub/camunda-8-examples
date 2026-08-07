@@ -1,8 +1,8 @@
 package org.camunda.community.examples.twitter.process;
 
+import io.camunda.client.CamundaError;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.annotation.VariablesAsType;
-import io.camunda.client.CamundaError;
 import org.camunda.community.examples.twitter.business.DuplicateTweetException;
 import org.camunda.community.examples.twitter.business.TwitterService;
 import org.springframework.beans.factory.annotation.Autowired;

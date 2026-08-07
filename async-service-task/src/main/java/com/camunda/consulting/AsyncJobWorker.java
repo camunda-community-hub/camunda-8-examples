@@ -2,8 +2,8 @@ package com.camunda.consulting;
 
 import com.camunda.consulting.AsyncService.TransactionResult;
 import io.camunda.client.CamundaClient;
-import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
 import java.time.Duration;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
