@@ -1,7 +1,7 @@
 package org.camunda.community.examples.twitter.rest;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import org.camunda.community.examples.twitter.process.TwitterProcessVariables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.springframework.web.server.ServerWebExchange;
 @RestController
 public class ReviewTweetRestApi {
 
-  @Autowired private ZeebeClient zeebeClient;
+  @Autowired private CamundaClient zeebeClient;
 
   @PutMapping("/tweet")
   public ResponseEntity<String> startTweetReviewProcess(ServerWebExchange exchange) {
