@@ -7,12 +7,13 @@ TOKEN=$(curl -s --location --request POST 'http://localhost:18080/realms/ingo-ke
 --data-urlencode "client_secret=$CLIENT_SECRET" \
 --data-urlencode 'grant_type=client_credentials' | jq -r .access_token)
 
+echo "Token:" $TOKEN
 echo "Get the task list"
 IDLIST=$(curl -s -X POST \
 -H "Content-Type: application/json" \
 -H "Authorization: Bearer $TOKEN" \
--d '{"state":"CREATED","sort":[{"field": "creationTime", "order": "ASC"}], "pageSize":200}' \
-'http://localhost:8088/v1/tasks/search' | jq -r '.[].id')
+-d '{"filter":{"state":"CREATED","processDefinitionId":"paymentProcess"},"sort":[{"field": "creationDate", "order": "ASC"}], "page":{"from":0, "limit":200}}' \
+'http://localhost:8088/v2/user-tasks/search' | jq -r '.items[].userTaskKey')
 
 echo -n "Number of tasks to complete: "
 printf '%s' "$IDLIST" | jq -Rsc 'split("\n") | map(select(length>0)) | length'

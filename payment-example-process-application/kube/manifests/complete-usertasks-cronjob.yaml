@@ -46,8 +46,8 @@ spec:
                 IDLIST=$(curl -s -X POST \
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $TOKEN" \
-              -d "{\"state\":\"CREATED\",\"sort\":[{\"field\": \"creationTime\", \"order\": \"ASC\"}], \"pageSize\":200}" \
-              "http://camunda-zeebe-gateway.camunda.svc.cluster.local:8080/v1/tasks/search" | jq -r '.[].id')
+              -d "{\"filter\":{\"state\":\"CREATED\",\"processDefinitionId\":\"paymentProcess\"},\"sort\":[{\"field\": \"creationDate\", \"order\": \"ASC\"}], \"page\":{\"from\":0, \"limit\":200}}" \
+              "http://camunda-zeebe-gateway.camunda.svc.cluster.local:8080/v2/user-tasks/search" | jq -r '.items[].userTaskKey')
               
                 echo -n "Number of tasks to complete: "
                 printf '%s' "$IDLIST" | jq -Rsc 'split("\n") | map(select(length>0)) | length'
@@ -61,8 +61,8 @@ spec:
                 done
                 
                 if [ $I -lt $ROUNDS ]; then
-                  echo "Waiting 15 s for the next round"
-                  sleep 15
+                  echo "Waiting 7 s for the next round"
+                  sleep 7
                 fi
 
               done 
