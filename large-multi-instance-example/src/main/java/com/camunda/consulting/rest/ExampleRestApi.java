@@ -1,7 +1,7 @@
 package com.camunda.consulting.rest;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class ExampleRestApi {
 
   private static final Logger LOG = LoggerFactory.getLogger(ExampleRestApi.class);
 
-  @Autowired ZeebeClient client;
+  @Autowired CamundaClient client;
 
   @PostMapping("/start-example")
   public ResponseEntity<String> startExampleProcess(@RequestBody String businessKey) {
