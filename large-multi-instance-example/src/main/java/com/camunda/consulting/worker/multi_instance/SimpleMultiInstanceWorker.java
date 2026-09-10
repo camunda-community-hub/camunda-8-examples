@@ -1,8 +1,8 @@
 package com.camunda.consulting.worker.multi_instance;
 
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobClient;
+import io.camunda.client.annotation.JobWorker;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -2,9 +2,9 @@ package com.camunda.consulting.web_shop_process_app.worker;
 
 import com.camunda.consulting.web_shop_process_app.service.CreditCardExpiredException;
 import com.camunda.consulting.web_shop_process_app.service.CreditCardService;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.worker.JobClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobClient;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
