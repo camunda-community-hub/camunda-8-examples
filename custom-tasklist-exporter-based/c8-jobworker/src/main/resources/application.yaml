@@ -1,0 +1,21 @@
+server:
+  port: 8084
+tasklist:
+  kafka:
+    topic: C8LocalMachine
+spring:
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      group-id: usertask-worker
+      properties:
+        spring:
+          deserializer:
+            value:
+              delegate:
+                class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: "com.camunda.consulting.*"
+        spring.json.use.type.headers: true
+        spring.json.value.default.type: com.camunda.consulting.CompleteAction
