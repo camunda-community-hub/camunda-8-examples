@@ -1,0 +1,36 @@
+{
+  "components": [
+    {
+      "text": "# Inform Manager\n\nA pending application is due for more than 2 days now. Please look into it!",
+      "type": "text",
+      "id": "Field_0t77edf"
+    },
+    {
+      "label": "Application",
+      "type": "textfield",
+      "id": "Field_0jai2y0",
+      "key": "applicationId",
+      "description": "ID of the application",
+      "disabled": true
+    },
+    {
+      "label": "Comment",
+      "type": "textfield",
+      "id": "Field_0cwtk5c",
+      "key": "comment",
+      "description": "Comment about why you were informed",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "type": "default",
+  "id": "Form_0kescq4",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.0.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.1.0"
+  },
+  "schemaVersion": 4
+}
