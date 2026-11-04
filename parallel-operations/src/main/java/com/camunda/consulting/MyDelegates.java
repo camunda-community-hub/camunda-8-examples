@@ -1,8 +1,8 @@
 package com.camunda.consulting;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
-import io.camunda.zeebe.spring.client.annotation.Variable;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.annotation.Variable;
 import java.util.Map;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class MyDelegates {
   private static final Logger LOG = LoggerFactory.getLogger(MyDelegates.class);
   private final RuntimeService runtimeService;
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
   private final StringService stringService;
 
   public MyDelegates(
-      RuntimeService runtimeService, ZeebeClient zeebeClient, StringService stringService) {
+      RuntimeService runtimeService, CamundaClient zeebeClient, StringService stringService) {
     this.runtimeService = runtimeService;
     this.zeebeClient = zeebeClient;
     this.stringService = stringService;

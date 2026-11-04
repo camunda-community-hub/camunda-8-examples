@@ -1,8 +1,8 @@
 package com.camunda.consulting.web_shop_process_app.worker;
 
 import com.camunda.consulting.web_shop_process_app.service.CustomerService;
-import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 package org.example.camunda.process.solution.worker;
 
-import io.camunda.zeebe.spring.client.annotation.JobWorker;
+import io.camunda.client.annotation.JobWorker;
 import java.util.Collections;
 import java.util.Map;
 import org.slf4j.Logger;
