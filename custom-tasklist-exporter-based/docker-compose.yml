@@ -1,0 +1,141 @@
+version: '2'
+services:
+  zeebe: # https://docs.camunda.io/docs/self-managed/platform-deployment/docker/#zeebe
+    image: camunda/zeebe:${CAMUNDA_PLATFORM_VERSION:-8.0.5}
+    container_name: zeebe
+    depends_on:
+      kafka:
+        condition: service_healthy
+    ports:
+      - "26500:26500"
+      - "9600:9600"
+    environment: # https://docs.camunda.io/docs/self-managed/zeebe-deployment/configuration/environment-variables/
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_CLASSNAME=com.camunda.consulting.KafkaExporter
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_JARPATH=lib/c8-exporter-1.0-SNAPSHOT.jar
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_SOURCEID=C8LocalMachine
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_JOBTYPE=io.camunda.zeebe:userTask
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_KAFKATOPICUSERTASK=usertask-info
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_KAFKATOPICDEPLOY=deploy-info
+      - ZEEBE_BROKER_EXPORTERS_KAFKA_ARGS_URL=kafka:9092
+      # allow running with low disk space
+      - ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK=0.998
+      - ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK=0.999
+      - "JAVA_TOOL_OPTIONS=-Xms512m -Xmx512m"
+    restart: always
+    volumes:
+      - zeebe:/usr/local/zeebe/data
+      - type: bind
+        source: ./c8-exporter/target/c8-exporter-1.0-SNAPSHOT.jar
+        target: /usr/local/zeebe/lib/c8-exporter-1.0-SNAPSHOT.jar
+      - type: bind
+        source: ./config/log4j2.xml
+        target: /usr/local/zeebe/config/log4j2.xml
+  camunda-run:
+    image: registry.camunda.cloud/cambpm-ee/camunda-bpm-platform-ee:run-7.17.5
+    container_name: camunda-run
+    volumes:
+      - type: bind
+        source: ./config/c7-default.yml
+        target: /camunda/configuration/default.yml
+      - type: bind
+        source: ./c7-exporter/target/c7-exporter-1.0-SNAPSHOT.jar
+        target: /camunda/configuration/userlib/c7-exporter-1.0-SNAPSHOT.jar
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-express
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=demo
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=demo
+    depends_on:
+      - mongodb
+    ports:
+      - 8081:8081
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/apps/mongo:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=demo
+      - MONGO_INITDB_ROOT_PASSWORD=demo
+      - MONGO_INITDB_DATABASE=tasks
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    depends_on:
+      - kafka
+    container_name: kafka-ui
+    ports:
+      - "8082:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+  tasklist:
+    image: camundomanu/tasklist:latest
+    container_name: tasklist
+    restart: always
+    depends_on:
+      - mongodb
+      - kafka
+    ports:
+      - 8083:8083
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      SPRING_DATA_MONGODB_HOST: mongodb
+  tasklist-worker:
+    image: camundomanu/tasklist-worker:latest
+    container_name: tasklist-worker
+    restart: always
+    depends_on:
+      - kafka
+      - zeebe
+    ports:
+      - 8084:8084
+    environment:
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
+      ZEEBE_ADDRESS: zeebe:26500
+volumes:
+  zeebe:
