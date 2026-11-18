@@ -1,0 +1,23 @@
+{
+  "$schema": "https://unpkg.com/@camunda/zeebe-element-templates-json-schema/resources/schema.json",
+  "name": "Custom user task",
+  "id": "custom-user-task",
+  "version": 1,
+  "appliesTo": [
+    "bpmn:Activity"
+  ],
+  "elementType": {
+    "value": "bpmn:UserTask"
+  },
+  "entriesVisible": true,
+  "properties": [
+    {
+      "type": "Hidden",
+      "value": "custom",
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "taskSystem"
+      }
+    }
+  ]
+}
