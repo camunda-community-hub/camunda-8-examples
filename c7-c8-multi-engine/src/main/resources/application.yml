@@ -1,0 +1,54 @@
+camunda:
+  autoDeploy:
+    bpmnResources: classpath*:**/*-c7.bpmn
+  bpm:
+    client:
+      base-url: http://localhost:8080/engine-rest # The URL pointing to the Camunda Platform Runtime REST API
+      async-response-timeout: 1000 # Defines the maximum duration of the long-polling request
+      worker-id: spring-boot-client # Identifies the worker towards the Engine
+  #      basic-auth: # Configure if REST API is secured with basic authentication
+  #        username: my-username
+  #        password: my-password
+      subscriptions:
+        start-c8-instance: # This topic name must match the respective `@ExternalTaskSubscription`
+          lock-duration: 10000 # Defines for how long the External Tasks are locked until they can be fetched again
+          variable-names:
+              - bpmnProcessId
+              - version
+              - correlationKey
+              - payload
+        message-to-c8:
+          lock-duration: 10000
+          variable-names: # Defines the names of the process variables that are to be fetched
+            - messageName
+            - correlationKey
+            - payload
+        signal-to-c8:
+          lock-duration: 10000
+          variable-names:
+            - signalName
+            - payload
+        error-message-c8:
+          lock-duration: 10000
+          variable-names:
+            - errorCode
+            - errorMessage
+        do-something:
+          lock-duration: 10000
+
+zeebe:
+  client:
+    broker:
+      gateway-address: 127.0.0.1:26500
+    security:
+      plaintext: true
+
+
+optimize:
+  interceptor:
+    enabled: true
+    ingestionEndpoint: http://localhost:8090/api/ingestion/event/batch
+    token: my-token
+
+server:
+  port: 8082
