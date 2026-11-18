@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0n9tswy" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="AsyncRetryCounterProcess" name="Async Retry Counter" isExecutable="true">
+    <bpmn:startEvent id="AsyncMessagingRequiredStartEvent" name="Async messaging required">
+      <bpmn:outgoing>Flow_1g8wwcp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_1uhx8ty">
+      <bpmn:incoming>Flow_1g8wwcp</bpmn:incoming>
+      <bpmn:incoming>Flow_0n8m323</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uebumt</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1g8wwcp" sourceRef="AsyncMessagingRequiredStartEvent" targetRef="Gateway_1uhx8ty" />
+    <bpmn:sequenceFlow id="Flow_0uebumt" sourceRef="Gateway_1uhx8ty" targetRef="SendMessageTask" />
+    <bpmn:sendTask id="SendMessageTask" name="Send message">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sendMessage" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0uebumt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ga8sdi</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0ga8sdi" sourceRef="SendMessageTask" targetRef="Gateway_0lo9ey2" />
+    <bpmn:eventBasedGateway id="Gateway_0lo9ey2">
+      <bpmn:incoming>Flow_0ga8sdi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fybakl</bpmn:outgoing>
+      <bpmn:outgoing>Flow_17w47wv</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="ResponseReceivedEvent" name="Response received">
+      <bpmn:incoming>Flow_0fybakl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w6kefz</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1fddpep" messageRef="Message_0s95vg4" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0fybakl" sourceRef="Gateway_0lo9ey2" targetRef="ResponseReceivedEvent" />
+    <bpmn:intermediateCatchEvent id="ErrorReceivedEvent" name="Error received">
+      <bpmn:incoming>Flow_17w47wv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t44whk</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_10g3cex" messageRef="Message_058d1q8" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_17w47wv" sourceRef="Gateway_0lo9ey2" targetRef="ErrorReceivedEvent" />
+    <bpmn:sequenceFlow id="Flow_0t44whk" sourceRef="ErrorReceivedEvent" targetRef="DeferRetryEvent" />
+    <bpmn:intermediateCatchEvent id="DeferRetryEvent" name="Defer retry">
+      <bpmn:incoming>Flow_0t44whk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0n8m323</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0dz87wj">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0n8m323" sourceRef="DeferRetryEvent" targetRef="Gateway_1uhx8ty" />
+    <bpmn:endEvent id="AsyncMessagingDoneEndEvent" name="Async messaging done">
+      <bpmn:incoming>Flow_0w6kefz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0w6kefz" sourceRef="ResponseReceivedEvent" targetRef="AsyncMessagingDoneEndEvent" />
+  </bpmn:process>
+  <bpmn:message id="Message_0s95vg4" name="success">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=callbackId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_058d1q8" name="fail">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=callbackId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="AsyncRetryCounterProcess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="AsyncMessagingRequiredStartEvent">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="154" y="142" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1uhx8ty_di" bpmnElement="Gateway_1uhx8ty" isMarkerVisible="true">
+        <dc:Bounds x="265" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p4e2cq_di" bpmnElement="SendMessageTask">
+        <dc:Bounds x="370" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0093v8l_di" bpmnElement="Gateway_0lo9ey2">
+        <dc:Bounds x="525" y="92" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0m0k2pk_di" bpmnElement="ResponseReceivedEvent">
+        <dc:Bounds x="632" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="625" y="142" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0r7jt4i_di" bpmnElement="ErrorReceivedEvent">
+        <dc:Bounds x="632" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="615" y="255" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dxbo7e_di" bpmnElement="DeferRetryEvent">
+        <dc:Bounds x="452" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="444" y="345" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wyqlll_di" bpmnElement="AsyncMessagingDoneEndEvent">
+        <dc:Bounds x="732" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="707" y="142" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1g8wwcp_di" bpmnElement="Flow_1g8wwcp">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="265" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n8m323_di" bpmnElement="Flow_0n8m323">
+        <di:waypoint x="452" y="320" />
+        <di:waypoint x="290" y="320" />
+        <di:waypoint x="290" y="142" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uebumt_di" bpmnElement="Flow_0uebumt">
+        <di:waypoint x="315" y="117" />
+        <di:waypoint x="370" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ga8sdi_di" bpmnElement="Flow_0ga8sdi">
+        <di:waypoint x="470" y="117" />
+        <di:waypoint x="525" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fybakl_di" bpmnElement="Flow_0fybakl">
+        <di:waypoint x="575" y="117" />
+        <di:waypoint x="632" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17w47wv_di" bpmnElement="Flow_17w47wv">
+        <di:waypoint x="550" y="142" />
+        <di:waypoint x="550" y="230" />
+        <di:waypoint x="632" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w6kefz_di" bpmnElement="Flow_0w6kefz">
+        <di:waypoint x="668" y="117" />
+        <di:waypoint x="732" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t44whk_di" bpmnElement="Flow_0t44whk">
+        <di:waypoint x="668" y="230" />
+        <di:waypoint x="730" y="230" />
+        <di:waypoint x="730" y="320" />
+        <di:waypoint x="488" y="320" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
