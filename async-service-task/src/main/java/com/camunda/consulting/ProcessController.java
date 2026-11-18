@@ -1,15 +1,15 @@
 package com.camunda.consulting;
 
-import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
+import io.camunda.client.CamundaClient;
+import io.camunda.client.api.response.ProcessInstanceEvent;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProcessController {
-  private final ZeebeClient zeebeClient;
+  private final CamundaClient zeebeClient;
 
-  public ProcessController(ZeebeClient zeebeClient) {
+  public ProcessController(CamundaClient zeebeClient) {
     this.zeebeClient = zeebeClient;
   }
 
